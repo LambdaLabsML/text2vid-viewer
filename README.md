@@ -10,20 +10,20 @@ Displays videos using URLs fetched from the backend.
 
 ## Self-hosted inference endpoints
 
-Lambda cloud hosted inference endpoints for opensora 1.1 and 1.2
-Responsible for offline, batch processing video generation based on input list of prompts
+* Lambda cloud hosted inference endpoints; for now `opensora1.1` and `opensora1.2` with default serving config.
+* Responsible for offline, batch processing video generation based on input list of prompts
 
 ## Storage
 
-Video generated are exported to S3 and frontend load them from there for rendering
-Available video files and metadata are maintained in a small relational database
+* Video generated are exported to S3 and frontend load them from there for rendering
+* Available video files and metadata are maintained in a small relational database
 
 ## Backend API
 
-Endpoint to fetch available videos and metadata
-(later) Endpoint for prompt submission:
-video generation tasks sent to inference endpoint
-files are uploaded to S3
-video database gets updated
+* available videos and metadata
+* (later) prompt submission:
+  1. video generation tasks sent to inference endpoint
+  2. files are uploaded to S3
+  3. video database gets updated
 
 
