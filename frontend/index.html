@@ -37,6 +37,16 @@
             width: 100%;
             height: auto;
         }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination button {
+            margin: 0 5px;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -50,6 +60,11 @@
         <label for="model-select">Choose a Model:</label>
         <select id="model-select" onchange="updateModelView()"></select>
         <div id="model-grid" class="grid"></div>
+        <div class="pagination">
+            <button onclick="prevPage('model')">Previous</button>
+            <span id="model-page-indicator">Page 1</span>
+            <button onclick="nextPage('model')">Next</button>
+        </div>
     </div>
 
     <!-- Prompt View Tab -->
@@ -57,10 +72,19 @@
         <label for="prompt-select">Choose a Prompt:</label>
         <select id="prompt-select" onchange="updatePromptView()"></select>
         <div id="prompt-grid" class="grid"></div>
+        <div class="pagination">
+            <button onclick="prevPage('prompt')">Previous</button>
+            <span id="prompt-page-indicator">Page 1</span>
+            <button onclick="nextPage('prompt')">Next</button>
+        </div>
     </div>
 
     <script>
+        const bucketName = "text2videoviewer";
         let videoData = [];
+        let modelPage = 1;
+        let promptPage = 1;
+        const itemsPerPage = 6;
 
         document.addEventListener("DOMContentLoaded", () => {
             loadCSVData('db.csv');
@@ -80,8 +104,9 @@
         function parseCSVData(csv) {
             const lines = csv.split("\n").filter(line => line.trim() !== "");
             videoData = lines.slice(1).map(line => {
-                const [model, prompt, location] = line.split(",");
-                return { model, prompt, location: location.trim() };
+                const [model, prompt] = line.split(",");
+                const location = `https://${bucketName}.s3.amazonaws.com/${model.trim()}/${prompt.trim()}.mp4`;
+                return { model: model.trim(), prompt: prompt.trim(), location };
             });
         }
 
@@ -111,6 +136,8 @@
                 tab.classList.remove('active-tab');
             });
             document.getElementById(tabId).classList.add('active-tab');
+            if(tabId === 'model-view') updateModelView();
+            if(tabId === 'prompt-view') updatePromptView();
         }
 
         function updateModelView() {
@@ -119,12 +146,16 @@
             modelGrid.innerHTML = ""; // Clear previous content
 
             const filteredVideos = videoData.filter(video => video.model === selectedModel);
-            filteredVideos.forEach(video => {
+            const paginatedVideos = paginate(filteredVideos, modelPage, itemsPerPage);
+            paginatedVideos.forEach(video => {
                 const videoElement = document.createElement("video");
                 videoElement.src = video.location;
                 videoElement.controls = true;
+                videoElement.autoplay = true;
                 modelGrid.appendChild(videoElement);
             });
+
+            document.getElementById('model-page-indicator').textContent = `Page ${modelPage}`;
         }
 
         function updatePromptView() {
@@ -133,12 +164,40 @@
             promptGrid.innerHTML = ""; // Clear previous content
 
             const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt);
-            filteredVideos.forEach(video => {
+            const paginatedVideos = paginate(filteredVideos, promptPage, itemsPerPage);
+            paginatedVideos.forEach(video => {
                 const videoElement = document.createElement("video");
                 videoElement.src = video.location;
                 videoElement.controls = true;
+                videoElement.autoplay = true;
                 promptGrid.appendChild(videoElement);
             });
+
+            document.getElementById('prompt-page-indicator').textContent = `Page ${promptPage}`;
+        }
+
+        function paginate(array, pageNumber, pageSize) {
+            return array.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
+        }
+
+        function nextPage(view) {
+            if (view === 'model') {
+                modelPage++;
+                updateModelView();
+            } else if (view === 'prompt') {
+                promptPage++;
+                updatePromptView();
+            }
+        }
+
+        function prevPage(view) {
+            if (view === 'model' && modelPage > 1) {
+                modelPage--;
+                updateModelView();
+            } else if (view === 'prompt' && promptPage > 1) {
+                promptPage--;
+                updatePromptView();
+            }
         }
     </script>
 </body>
