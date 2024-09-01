@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text2Vid Viewer</title>
+    <style>
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .tab {
+            display: none;
+        }
+
+        .tab-buttons {
+            margin-bottom: 10px;
+        }
+
+        .tab-buttons button {
+            margin-right: 10px;
+            padding: 10px;
+        }
+
+        .active-tab {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .grid video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="tab-buttons">
+        <button onclick="showTab('model-view')">Model View</button>
+        <button onclick="showTab('prompt-view')">Prompt View</button>
+    </div>
+
+    <!-- Model View Tab -->
+    <div id="model-view" class="tab">
+        <label for="model-select">Choose a Model:</label>
+        <select id="model-select" onchange="updateModelView()"></select>
+        <div id="model-grid" class="grid"></div>
+    </div>
+
+    <!-- Prompt View Tab -->
+    <div id="prompt-view" class="tab">
+        <label for="prompt-select">Choose a Prompt:</label>
+        <select id="prompt-select" onchange="updatePromptView()"></select>
+        <div id="prompt-grid" class="grid"></div>
+    </div>
+
+    <script>
+        let videoData = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadCSVData('db.csv');
+            showTab('model-view');
+        });
+
+        function loadCSVData(csvFile) {
+            fetch(csvFile)
+                .then(response => response.text())
+                .then(data => {
+                    parseCSVData(data);
+                    populateDropdowns();
+                })
+                .catch(error => console.error('Error loading CSV:', error));
+        }
+
+        function parseCSVData(csv) {
+            const lines = csv.split("\n").filter(line => line.trim() !== "");
+            videoData = lines.slice(1).map(line => {
+                const [model, prompt, location] = line.split(",");
+                return { model, prompt, location: location.trim() };
+            });
+        }
+
+        function populateDropdowns() {
+            const models = [...new Set(videoData.map(video => video.model))];
+            const prompts = [...new Set(videoData.map(video => video.prompt))];
+            const modelSelect = document.getElementById("model-select");
+            const promptSelect = document.getElementById("prompt-select");
+
+            models.forEach(model => {
+                const option = document.createElement("option");
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
+
+            prompts.forEach(prompt => {
+                const option = document.createElement("option");
+                option.value = prompt;
+                option.textContent = prompt;
+                promptSelect.appendChild(option);
+            });
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active-tab');
+            });
+            document.getElementById(tabId).classList.add('active-tab');
+        }
+
+        function updateModelView() {
+            const selectedModel = document.getElementById("model-select").value;
+            const modelGrid = document.getElementById("model-grid");
+            modelGrid.innerHTML = ""; // Clear previous content
+
+            const filteredVideos = videoData.filter(video => video.model === selectedModel);
+            filteredVideos.forEach(video => {
+                const videoElement = document.createElement("video");
+                videoElement.src = video.location;
+                videoElement.controls = true;
+                modelGrid.appendChild(videoElement);
+            });
+        }
+
+        function updatePromptView() {
+            const selectedPrompt = document.getElementById("prompt-select").value;
+            const promptGrid = document.getElementById("prompt-grid");
+            promptGrid.innerHTML = ""; // Clear previous content
+
+            const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt);
+            filteredVideos.forEach(video => {
+                const videoElement = document.createElement("video");
+                videoElement.src = video.location;
+                videoElement.controls = true;
+                promptGrid.appendChild(videoElement);
+            });
+        }
+    </script>
+</body>
+</html>
