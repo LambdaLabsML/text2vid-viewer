@@ -1,4 +1,11 @@
-# Architecture POC
+# Text2Video Model Viewer
+
+```bash
+cd frontend
+python3 -m http.server
+```
+
+
 
 ## Frontend
 

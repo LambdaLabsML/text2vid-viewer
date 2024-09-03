@@ -33,9 +33,23 @@
             gap: 10px;
         }
 
-        .grid video {
+        .grid-item {
+            text-align: center;
+        }
+
+        .video-container {
             width: 100%;
-            height: auto;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            position: relative;
+            background-color: #e0e0e0; /* Placeholder background color */
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
 
         .pagination {
@@ -46,6 +60,11 @@
         .pagination button {
             margin: 0 5px;
             padding: 10px;
+        }
+
+        .pagination button[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -61,9 +80,9 @@
         <select id="model-select" onchange="updateModelView()"></select>
         <div id="model-grid" class="grid"></div>
         <div class="pagination">
-            <button onclick="prevPage('model')">Previous</button>
+            <button id="model-prev-btn" onclick="prevPage('model')">Previous</button>
             <span id="model-page-indicator">Page 1</span>
-            <button onclick="nextPage('model')">Next</button>
+            <button id="model-next-btn" onclick="nextPage('model')">Next</button>
         </div>
     </div>
 
@@ -73,9 +92,9 @@
         <select id="prompt-select" onchange="updatePromptView()"></select>
         <div id="prompt-grid" class="grid"></div>
         <div class="pagination">
-            <button onclick="prevPage('prompt')">Previous</button>
+            <button id="prompt-prev-btn" onclick="prevPage('prompt')">Previous</button>
             <span id="prompt-page-indicator">Page 1</span>
-            <button onclick="nextPage('prompt')">Next</button>
+            <button id="prompt-next-btn" onclick="nextPage('prompt')">Next</button>
         </div>
     </div>
 
@@ -97,6 +116,7 @@
                 .then(data => {
                     parseCSVData(data);
                     populateDropdowns();
+                    updateModelView(); // Automatically render videos for the selected model when page loads
                 })
                 .catch(error => console.error('Error loading CSV:', error));
         }
@@ -148,14 +168,35 @@
             const filteredVideos = videoData.filter(video => video.model === selectedModel);
             const paginatedVideos = paginate(filteredVideos, modelPage, itemsPerPage);
             paginatedVideos.forEach(video => {
+                const gridItem = document.createElement("div");
+                gridItem.className = "grid-item";
+
+                const videoContainer = document.createElement("div");
+                videoContainer.className = "video-container";
+
                 const videoElement = document.createElement("video");
                 videoElement.src = video.location;
-                videoElement.controls = true;
+                videoElement.loop = true;
+                videoElement.muted = true;
                 videoElement.autoplay = true;
-                modelGrid.appendChild(videoElement);
+                videoElement.addEventListener('loadeddata', () => {
+                    videoContainer.style.backgroundColor = 'transparent'; // Remove placeholder background after video loads
+                });
+
+                const promptLabel = document.createElement("p");
+                promptLabel.textContent = video.prompt;
+
+                videoContainer.appendChild(videoElement);
+                gridItem.appendChild(videoContainer);
+                gridItem.appendChild(promptLabel);
+                modelGrid.appendChild(gridItem);
             });
 
             document.getElementById('model-page-indicator').textContent = `Page ${modelPage}`;
+
+            // Disable next/prev buttons if there are no more pages
+            document.getElementById('model-prev-btn').disabled = modelPage <= 1;
+            document.getElementById('model-next-btn').disabled = modelPage * itemsPerPage >= filteredVideos.length;
         }
 
         function updatePromptView() {
@@ -166,14 +207,35 @@
             const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt);
             const paginatedVideos = paginate(filteredVideos, promptPage, itemsPerPage);
             paginatedVideos.forEach(video => {
+                const gridItem = document.createElement("div");
+                gridItem.className = "grid-item";
+
+                const videoContainer = document.createElement("div");
+                videoContainer.className = "video-container";
+
                 const videoElement = document.createElement("video");
                 videoElement.src = video.location;
-                videoElement.controls = true;
+                videoElement.loop = true;
+                videoElement.muted = true;
                 videoElement.autoplay = true;
-                promptGrid.appendChild(videoElement);
+                videoElement.addEventListener('loadeddata', () => {
+                    videoContainer.style.backgroundColor = 'transparent'; // Remove placeholder background after video loads
+                });
+
+                const modelLabel = document.createElement("p");
+                modelLabel.textContent = video.model;
+
+                videoContainer.appendChild(videoElement);
+                gridItem.appendChild(videoContainer);
+                gridItem.appendChild(modelLabel);
+                promptGrid.appendChild(gridItem);
             });
 
             document.getElementById('prompt-page-indicator').textContent = `Page ${promptPage}`;
+
+            // Disable next/prev buttons if there are no more pages
+            document.getElementById('prompt-prev-btn').disabled = promptPage <= 1;
+            document.getElementById('prompt-next-btn').disabled = promptPage * itemsPerPage >= filteredVideos.length;
         }
 
         function paginate(array, pageNumber, pageSize) {
