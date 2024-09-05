@@ -24,7 +24,7 @@ def get_cmd_list(data):
         '--save-dir', os.environ.get('SAVE_DIR', '/data')
     ]
 
-    logging.debug(f"Running single-GPU command: {' '.join(cmd)}")
+    logging.debug(f"Running command: {' '.join(cmd)}")
     return cmd
 
 @app.route('/generate', methods=['POST'])

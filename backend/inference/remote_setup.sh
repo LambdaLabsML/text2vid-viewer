@@ -35,11 +35,11 @@ fi
 
 # Update inference server code
 cd ~
-if [ -d "image-eval" ]; then
-    echo "Removing existing image-eval directory..."
-    rm -rf image-eval
+if [ -d "text2vid-viewer" ]; then
+    echo "Removing existing text2vid-viewer directory..."
+    rm -rf text2vid-viewer
 fi
-git clone $IMAGE_EVAL_REPO || { echo "Failed to clone image-eval repository"; exit 1; }
+git clone $IMAGE_EVAL_REPO || { echo "Failed to clone text2vid-viewer repository"; exit 1; }
 
 # Check if opensora:latest exists
 opensora_image_id=$(sudo docker images -q opensora:latest)
@@ -71,20 +71,11 @@ else
     cd Open-Sora
     echo "Building OpenSora Docker image..."
     sudo docker build -t $IMAGE_NAME -f Dockerfile . || { echo "Failed to build OpenSora Docker image"; exit 1; }
-
-    # Clone image-eval repository
-    echo "Cloning image-eval repository..."
-    cd ~
-    if [ -d "image-eval" ]; then
-        echo "Removing existing image-eval directory..."
-        rm -rf image-eval
-    fi
-    git clone $IMAGE_EVAL_REPO || { echo "Failed to clone image-eval repository"; exit 1; }
 fi
 
 # Build OpenSora inference server image
 echo "Building OpenSora inference server Docker image..."
-cd image-eval/models/opensora
+cd text2vid-viewer/backend/inference
 sudo docker build -t ${IMAGE_NAME}_api . || { echo "Failed to build OpenSora inference server Docker image"; exit 1; }
 
 # Run the inference server
