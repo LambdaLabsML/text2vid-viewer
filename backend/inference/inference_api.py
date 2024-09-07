@@ -14,12 +14,14 @@ logging.basicConfig(filename='/data/api_server.log', level=logging.DEBUG,
 def get_cmd_list(data):
     """Prepare the command list for image generation."""
 
+    config = data.get('config', 'opensora-v1-2.py')
+    if config not in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']:
+        raise ValueError(f"Invalid config: {config}; should be in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']")
+    config_file = f'/configs/{config}'
+
     cmd = [
         'python', 'scripts/inference.py',
-        'configs/opensora-v1-2/inference/sample.py',
-        '--num-frames', data.get('num_frames', '4'),
-        '--resolution', data.get('resolution', '720p'),
-        '--aspect-ratio', data.get('aspect_ratio', '9:16'),
+        config_file,
         '--prompt', data.get('prompt', 'a beautiful waterfall'),
         '--save-dir', os.environ.get('SAVE_DIR', '/data')
     ]

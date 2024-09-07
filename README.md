@@ -34,3 +34,14 @@ Displays videos using URLs fetched from the backend.
   3. video database gets updated
 
 
+---
+
+Workflow for model training evaluation
+
+1. Train model
+
+2. Run evaluation
+
+* Generate validation images
+
+3. Generate video
