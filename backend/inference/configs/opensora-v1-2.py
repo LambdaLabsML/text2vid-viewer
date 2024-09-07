@@ -1,11 +1,11 @@
-resolution = "240p"
+resolution = "720p"
 aspect_ratio = "9:16"
-num_frames = 51
+num_frames = 4
 fps = 24
 frame_interval = 1
 save_fps = 24
 
-save_dir = "./samples/samples/"
+save_dir = "/data"
 seed = 42
 batch_size = 1
 multi_resolution = "STDiT2"
@@ -15,7 +15,7 @@ align = 5
 
 model = dict(
     type="STDiT3-XL/2",
-    from_pretrained="lambdalabs/OpenSora-STDiT-v3-Lambda",
+    from_pretrained="hpcai-tech/OpenSora-STDiT-v3",
     qk_norm=True,
     enable_flash_attn=True,
     enable_layernorm_kernel=True,

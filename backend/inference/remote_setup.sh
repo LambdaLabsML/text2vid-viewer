@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ -z "$1" ]; then
+    echo "Usage: $0 <model_name>"
+    exit 1
+fi
+
+MODEL_NAME=$1
+
 # Function to handle errors
 handle_error() {
     echo "Error occurred in script at line: $1"
@@ -12,8 +19,8 @@ trap 'handle_error $LINENO' ERR
 # Variables
 OPEN_SORA_REPO="https://github.com/hpcaitech/Open-Sora.git"
 IMAGE_EVAL_REPO="https://github.com/LambdaLabsML/text2vid-viewer.git"
-IMAGE_NAME="opensora"
-CONTAINER_NAME="opensora_api"
+IMAGE_NAME="${MODEL_NAME}"
+CONTAINER_NAME="${MODEL_NAME}_api"
 
 # Ensure required directories exist
 echo "Checking required directories..."
@@ -41,25 +48,24 @@ if [ -d "text2vid-viewer" ]; then
 fi
 git clone $IMAGE_EVAL_REPO || { echo "Failed to clone text2vid-viewer repository"; exit 1; }
 
-# Check if opensora:latest exists
-opensora_image_id=$(sudo docker images -q opensora:latest)
-if [ -n "$opensora_image_id" ]; then
-    echo "opensora:latest image found. Removing all other docker images..."
+# Check if the specific model image exists
+model_image_id=$(sudo docker images -q ${IMAGE_NAME}:latest)
+if [ -n "$model_image_id" ]; then
+    echo "${IMAGE_NAME}:latest image found. Removing all other docker images..."
     all_images=$(sudo docker images -q)
     for image in $all_images; do
-        if [ "$image" != "$opensora_image_id" ]; then
+        if [ "$image" != "$model_image_id" ]; then
             sudo docker rmi -f $image
         fi
     done
 else
-    echo "opensora:latest image not found. Removing all docker images and repositories..."
+    echo "${IMAGE_NAME}:latest image not found. Removing all docker images and repositories..."
     all_images=$(sudo docker images -q)
     if [ -n "$all_images" ]; then
         sudo docker rmi -f $all_images
     else
         echo "No images to remove"
     fi
-
 
     # Clone OpenSora repository
     echo "Cloning OpenSora repository..."
@@ -69,20 +75,21 @@ else
     fi
     git clone $OPEN_SORA_REPO || { echo "Failed to clone OpenSora repository"; exit 1; }
     cd Open-Sora
-    echo "Building OpenSora Docker image..."
-    sudo docker build -t $IMAGE_NAME -f Dockerfile . || { echo "Failed to build OpenSora Docker image"; exit 1; }
+    echo "Building ${IMAGE_NAME} Docker image..."
+    sudo docker build -t $IMAGE_NAME --build-arg MODEL_NAME=${MODEL_NAME} -f Dockerfile . || { echo "Failed to build ${IMAGE_NAME} Docker image"; exit 1; }
 fi
 
-# Build OpenSora inference server image
-echo "Building OpenSora inference server Docker image..."
+# Build the inference server image with the specific model name
+echo "Building ${IMAGE_NAME}_api Docker image..."
 cd text2vid-viewer/backend/inference
-sudo docker build -t ${IMAGE_NAME}_api . || { echo "Failed to build OpenSora inference server Docker image"; exit 1; }
+sudo docker build -t ${IMAGE_NAME}_api --build-arg MODEL_NAME=${MODEL_NAME} . || { echo "Failed to build ${IMAGE_NAME}_api Docker image"; exit 1; }
 
-# Run the inference server
-echo "Running OpenSora inference server..."
-sudo docker run -d --gpus all -p 5000:5000 -v /home/ubuntu/data:/data --name $CONTAINER_NAME ${IMAGE_NAME}_api:latest || { echo "Failed to run OpenSora inference server Docker container"; exit 1; }
+# Run the inference server with the specific model name
+echo "Running ${IMAGE_NAME}_api inference server..."
+sudo docker run -d --gpus all -p 5000:5000 -v /home/ubuntu/data:/data --name $CONTAINER_NAME ${IMAGE_NAME}_api:latest || { echo "Failed to run ${IMAGE_NAME}_api Docker container"; exit 1; }
 
 echo "Deployment script completed successfully."
+
 
 # Print example request
 echo "You can make a request to the inference server using the following command:"

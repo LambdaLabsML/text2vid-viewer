@@ -7,13 +7,16 @@ RUN pip install Flask
 COPY inference_api.py .
 
 # Copy the entire config directory
-COPY config/ config/
+COPY configs/ configs/
 
 # Set the environment variable for save directory
 ENV SAVE_DIR="/data"
 
+# Build argument for model name
+ARG MODEL_NAME
+
 # Expose the port the API server will run on
 EXPOSE 5000
 
-# Run the API server
-CMD ["python", "inference_api.py"]
+# Run the API server with the model name argument
+CMD ["python", "inference_api.py", "${MODEL_NAME}"]

@@ -88,6 +88,7 @@ cd ~/Workspaces/image-eval/models/opensora && chmod +x remote_deploy.sh
 ```
 
 ```bash
+chmod +x remote_deploy.sh
 ./remote_deploy.sh
 ```
 

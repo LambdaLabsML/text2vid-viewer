@@ -41,4 +41,4 @@ prompt = None  # prompt has higher priority than prompt_path
 # Others
 batch_size = 1
 seed = 42
-save_dir = "./samples/samples/"
+save_dir = "/data"
