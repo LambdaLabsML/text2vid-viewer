@@ -6,6 +6,9 @@ RUN pip install Flask
 # Copy the Flask API server script
 COPY inference_api.py .
 
+# Copy the entire config directory
+COPY config/ config/
+
 # Set the environment variable for save directory
 ENV SAVE_DIR="/data"
 
