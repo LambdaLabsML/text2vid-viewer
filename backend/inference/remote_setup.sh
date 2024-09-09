@@ -1,11 +1,12 @@
 #!/bin/bash
 
-if [ -z "$1" ]; then
-    echo "Usage: $0 <model_name>"
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Usage: $0 <model_name> <hf_token>"
     exit 1
 fi
 
 MODEL_NAME=$1
+HF_TOKEN=$2
 
 # Function to handle errors
 handle_error() {
