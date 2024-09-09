@@ -74,6 +74,14 @@ else
         rm -rf Open-Sora
     fi
     git clone $OPEN_SORA_REPO || { echo "Failed to clone OpenSora repository"; exit 1; }
+
+    # Replace ckpt_utils.py with the patched version
+    echo "Patching ckpt_utils.py..."
+    PATCH_URL="https://raw.githubusercontent.com/LambdaLabsML/text2vid-viewer/main/backend/inference/ckpt_utils_patch.py"
+    PATCH_FILE="Open-Sora/opensora/utils/ckpt_utils.py"
+    # Download the patched file and replace the original ckpt_utils.py
+    curl -o $PATCH_FILE $PATCH_URL || { echo "Failed to download the patch for ckpt_utils.py"; exit 1; }
+
     cd Open-Sora
     echo "Building ${IMAGE_NAME} Docker image..."
     sudo docker build -t $IMAGE_NAME --build-arg MODEL_NAME=${MODEL_NAME} -f Dockerfile . || { echo "Failed to build ${IMAGE_NAME} Docker image"; exit 1; }
