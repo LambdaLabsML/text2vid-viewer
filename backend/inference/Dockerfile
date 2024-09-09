@@ -14,6 +14,10 @@ ENV SAVE_DIR="/data"
 
 # Build argument for model name
 ARG MODEL_NAME
+ARG HF_TOKEN
+
+# Set the HF_TOKEN environment variable
+ENV HF_TOKEN=${HF_TOKEN}
 
 # Expose the port the API server will run on
 EXPOSE 5000
