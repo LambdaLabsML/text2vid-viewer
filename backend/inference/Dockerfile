@@ -1,4 +1,4 @@
-FROM opensora:latest
+FROM shivamsphn/opensora:latest
 
 # Install Flask
 RUN pip install Flask
