@@ -1,4 +1,4 @@
-FROM kutanov/opensora:latest
+FROM opensora:latest
 
 # Install Flask
 RUN pip install Flask
