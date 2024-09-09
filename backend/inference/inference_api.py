@@ -17,7 +17,7 @@ def get_cmd_list(data):
     config = data.get('config', 'opensora-v1-2.py')
     if config not in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']:
         raise ValueError(f"Invalid config: {config}; should be in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']")
-    config_file = f'/configs/{config}'
+    config_file = f'/text2vid-viewer/backend/inference/configs/{config}'
 
     cmd = [
         'python', 'scripts/inference.py',
