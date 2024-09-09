@@ -1,5 +1,12 @@
 # Deploying OpenSora 1.2 for inference on Lambda On-demand Cloud instances
 
+Usage
+```
+./remote_deploy.sh <model> <hf_token>
+```
+
+with `model` in opensora-v1-1, opensora-v1-2, lambda
+
 Requirements:
 * Build `opensora` or `opensora_api` image (see steps below)
 * Create `~/data` dir to mount to the opensora container (should be included in the setup for step#1)
