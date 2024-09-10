@@ -105,11 +105,8 @@ echo "You can make a request to the inference server using the following command
 echo '```'
 echo "$ SERVER_IP=<...>"
 echo ''
-echo "$ curl -X POST http://\${SERVER_IP}:5000/generate -H \"Content-Type: application/json\" -d '{
-        \"num_frames\": \"24\",
-        \"resolution\": \"240p\",
-        \"aspect_ratio\": \"16:9\",
-        \"prompt\": \"a beautiful sunset\",
+echo "$ curl -X POST http://209.20.156.108:5000/generate -H \"Content-Type: application/json\" -d '{
+        \"config\": \"lambda.py\",
         \"save_dir\" : \"/data\"
     }' --output /tmp/opensora_sample.mp4"
 echo '```'
