@@ -91,7 +91,7 @@ fi
 # Build the inference server image with the specific model name
 echo "Building ${IMAGE_NAME}_api Docker image..."
 cd /home/ubuntu/text2vid-viewer/backend/inference
-sudo docker build -t ${IMAGE_NAME}_api --build-arg MODEL_NAME=${MODEL_NAME} . || { echo "Failed to build ${IMAGE_NAME}_api Docker image"; exit 1; }
+sudo docker build -t ${IMAGE_NAME}_api --build-arg MODEL_NAME=${MODEL_NAME} --build-arg HF_TOKEN=${HF_TOKEN} . || { echo "Failed to build ${IMAGE_NAME}_api Docker image"; exit 1; }
 
 # Run the inference server with the specific model name
 echo "Running ${IMAGE_NAME}_api inference server..."

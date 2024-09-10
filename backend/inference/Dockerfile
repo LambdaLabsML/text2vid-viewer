@@ -16,8 +16,8 @@ ENV SAVE_DIR="/data"
 ARG MODEL_NAME
 ARG HF_TOKEN
 
-# Set the HF_TOKEN environment variable
-ENV HF_TOKEN=${HF_TOKEN}
+# Automate Hugging Face CLI login using the token
+RUN echo "$HF_TOKEN" | huggingface-cli login --token
 
 # Expose the port the API server will run on
 EXPOSE 5000
