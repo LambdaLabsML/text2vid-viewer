@@ -1,6 +1,6 @@
 resolution = "720p"
 aspect_ratio = "9:16"
-num_frames = 4
+num_frames = 96
 fps = 24
 frame_interval = 1
 save_fps = 24
