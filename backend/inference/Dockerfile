@@ -17,7 +17,7 @@ ARG MODEL_NAME
 ARG HF_TOKEN
 
 # Automate Hugging Face CLI login using the token
-RUN echo "$HF_TOKEN" | huggingface-cli login --token
+RUN huggingface-cli login --token "$HF_TOKEN"
 
 # Expose the port the API server will run on
 EXPOSE 5000
