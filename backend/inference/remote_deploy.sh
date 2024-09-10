@@ -16,7 +16,7 @@ if [[ "$MODEL_NAME" != "lambda" && "$MODEL_NAME" != "opensora-v1-1" && "$MODEL_N
     exit 1
 fi
 
-HOSTNAME=ubuntu@209.20.156.108
+HOSTNAME=ubuntu@129.146.68.60
 KEY_PATH=~/.ssh/x1.pem
 
 # Copy the deploy script to the remote host and execute it with the model name and HF token arguments

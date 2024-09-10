@@ -101,11 +101,12 @@ echo "Deployment script completed successfully."
 
 
 # Print example request
-echo "You can make a request to the inference server using the following command:"
+echo ''
+echo "Example request:"
 echo '```'
 echo "$ SERVER_IP=<...>"
 echo ''
-echo "$ curl -X POST http://209.20.156.108:5000/generate -H \"Content-Type: application/json\" -d '{
+echo "$ curl -X POST http://129.146.68.60:5000/generate -H \"Content-Type: application/json\" -d '{
         \"config\": \"lambda.py\",
         \"save_dir\" : \"/data\"
     }' --output /tmp/opensora_sample.mp4"
