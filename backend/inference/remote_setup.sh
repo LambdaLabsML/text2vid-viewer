@@ -104,7 +104,6 @@ echo "Deployment script completed successfully."
 echo ''
 echo "Example request:"
 echo '```'
-echo "$ SERVER_IP=<...>"
 echo ''
 echo "$ curl -X POST http://129.146.68.60:5000/generate -H \"Content-Type: application/json\" -d '{
         \"config\": \"lambda.py\",
