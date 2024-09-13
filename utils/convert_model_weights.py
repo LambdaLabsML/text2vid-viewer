@@ -24,7 +24,7 @@ def convert(input_dpath, output_dpath):
         model_weights[param_name] = tensor
 
     # Save all the tensors into a single safetensor file
-    save_file(model_weights, f'{output_dpath}/model.safetensors')
+    save_file(model_weights, f'{output_dpath}/model.safetensors', metadata={'format':'pt'})
 
     print("Model successfully converted to safetensors!")
 

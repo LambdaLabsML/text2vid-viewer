@@ -67,5 +67,9 @@ def generate_image():
         logging.exception("An unexpected error occurred")
         return jsonify({'message': 'Internal server error', 'error': str(e)}), 500
 
+
+def export_to_s3():
+    pass
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
