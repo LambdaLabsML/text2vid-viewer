@@ -5,8 +5,13 @@ if [ -z "$1" ] || [ -z "$2" ]; then
     exit 1
 fi
 
+# Arguments
 MODEL_NAME=$1
 HF_TOKEN=$2
+
+# Variables
+OPEN_SORA_REPO="https://github.com/hpcaitech/Open-Sora.git"
+IMAGE_EVAL_REPO="https://github.com/LambdaLabsML/text2vid-viewer.git"
 
 # Function to handle errors
 handle_error() {
@@ -17,11 +22,6 @@ handle_error() {
 # Trap errors
 trap 'handle_error $LINENO' ERR
 
-# Variables
-OPEN_SORA_REPO="https://github.com/hpcaitech/Open-Sora.git"
-IMAGE_EVAL_REPO="https://github.com/LambdaLabsML/text2vid-viewer.git"
-IMAGE_NAME="${MODEL_NAME}"
-CONTAINER_NAME="${MODEL_NAME}_api"
 
 # Ensure required directories exist
 echo "Checking required directories..."
@@ -50,9 +50,9 @@ fi
 git clone $IMAGE_EVAL_REPO || { echo "Failed to clone text2vid-viewer repository"; exit 1; }
 
 # Check if the specific model image exists
-model_image_id=$(sudo docker images -q ${IMAGE_NAME}:latest)
+model_image_id=$(sudo docker images -q opensora:latest)
 if [ -n "$model_image_id" ]; then
-    echo "${IMAGE_NAME}:latest image found. Removing all other docker images..."
+    echo "opensora:latest image found. Removing all other docker images..."
     all_images=$(sudo docker images -q)
     for image in $all_images; do
         if [ "$image" != "$model_image_id" ]; then
@@ -60,7 +60,7 @@ if [ -n "$model_image_id" ]; then
         fi
     done
 else
-    echo "${IMAGE_NAME}:latest image not found. Removing all docker images and repositories..."
+    echo "opensora:latest image not found. Removing all docker images and repositories..."
     all_images=$(sudo docker images -q)
     if [ -n "$all_images" ]; then
         sudo docker rmi -f $all_images
@@ -84,18 +84,18 @@ else
     curl -o $PATCH_FILE $PATCH_URL || { echo "Failed to download the patch for ckpt_utils.py"; exit 1; }
 
     cd Open-Sora
-    echo "Building ${IMAGE_NAME} Docker image..."
-    sudo docker build -t $IMAGE_NAME --build-arg MODEL_NAME=${MODEL_NAME} -f Dockerfile . || { echo "Failed to build ${IMAGE_NAME} Docker image"; exit 1; }
+    echo "Building opensora Docker image..."
+    sudo docker build -t opensora --build-arg MODEL_NAME=${MODEL_NAME} -f Dockerfile . || { echo "Failed to build opensora Docker image"; exit 1; }
 fi
 
 # Build the inference server image with the specific model name
-echo "Building ${IMAGE_NAME}_api Docker image..."
+echo "Building opensora_api Docker image..."
 cd /home/ubuntu/text2vid-viewer/backend/inference
-sudo docker build -t ${IMAGE_NAME}_api --build-arg MODEL_NAME=${MODEL_NAME} --build-arg HF_TOKEN=${HF_TOKEN} . || { echo "Failed to build ${IMAGE_NAME}_api Docker image"; exit 1; }
+sudo docker build -t opensora_api --build-arg MODEL_NAME=${MODEL_NAME} --build-arg HF_TOKEN=${HF_TOKEN} . || { echo "Failed to build opensora_api Docker image"; exit 1; }
 
 # Run the inference server with the specific model name
-echo "Running ${IMAGE_NAME}_api inference server..."
-sudo docker run -d --gpus all -p 5000:5000 -v /home/ubuntu/data:/data --name $CONTAINER_NAME ${IMAGE_NAME}_api:latest || { echo "Failed to run ${IMAGE_NAME}_api Docker container"; exit 1; }
+echo "Running opensora_api inference server..."
+sudo docker run -d --gpus all -p 5000:5000 -v /home/ubuntu/data:/data --name opensora_api opensora_api:latest || { echo "Failed to run opensora_api Docker container"; exit 1; }
 
 echo "Deployment script completed successfully."
 
@@ -105,7 +105,7 @@ echo ''
 echo "Example request:"
 echo '```'
 echo ''
-echo "$ curl -X POST http://129.146.68.60:5000/generate -H \"Content-Type: application/json\" -d '{
+echo "$ curl -X POST http://209.20.156.111:5000/generate -H \"Content-Type: application/json\" -d '{
         \"config\": \"lambda.py\",
         \"save_dir\" : \"/data\"
     }' --output /tmp/opensora_sample.mp4"

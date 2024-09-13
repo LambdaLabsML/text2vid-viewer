@@ -1,47 +1,36 @@
 # Text2Video Model Viewer
 
-```bash
-cd frontend
-python3 -m http.server
-```
+Visual comparison of T2V models on a set of prompts.  
 
+Backend generates video from user submitted prompts on opensora v1.1, v1.2, and lambda-opensora models and push these videos to S3.  
 
-
-## Frontend
-
-Displays videos using URLs fetched from the backend.
-* Model centric view: preview generations by batch of 6 prompts for a given model
+Frontend renders model outputs for visual comparisons:
+* Model centric view: preview generations by batch of 6 prompts for a given model.
 * Prompt centric view: preview generation by batch of 6 models for a given prompt
 
 ## Backend
 
-## Self-hosted inference endpoints
+Deploy T2V inference endpoint:
+```bash
+cd backend
+./remote_deploy.sh  <model_name> <hf_token>
+```
+with:
+* `model_name`: name of the model to deploy in ('opensora-v1-1', 'opensora-v1-2', 'lambda')
+* `hf_token`: huggingface token to access the model (for lambda model only)
 
-* Lambda cloud hosted inference endpoints; for now `opensora1.1` and `opensora1.2` with default serving config.
-* Responsible for offline, batch processing video generation based on input list of prompts
+Generate video from prompts and save to S3:
+```bash
+curl -X POST http://209.20.156.111:5000/generate -H "Content-Type: application/json" -d '{
+        "config": "lambda.py",
+        "save_dir" : "/data"
+    }' --output /tmp/opensora_sample.mp4
+```
 
-## Storage
+## Frontend
 
-* Video generated are exported to S3 and frontend load them from there for rendering
-* Available video files and metadata are maintained in a small relational database
-
-## Backend API
-
-* available videos and metadata
-* (later) prompt submission:
-  1. video generation tasks sent to inference endpoint
-  2. files are uploaded to S3
-  3. video database gets updated
-
-
----
-
-Workflow for model training evaluation
-
-1. Train model
-
-2. Run evaluation
-
-* Generate validation images
-
-3. Generate video
+Deploy frontend:
+```bash
+cd frontend
+python3 -m http.server
+```
