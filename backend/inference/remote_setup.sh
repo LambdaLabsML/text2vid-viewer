@@ -1,13 +1,20 @@
 #!/bin/bash
 
-if [ -z "$1" ] || [ -z "$2" ]; then
-    echo "Usage: $0 <model_name> <hf_token>"
+if [ -z "$1" ]; then
+    echo "Usage: $0 <model_name>"
     exit 1
 fi
 
 # Arguments
 MODEL_NAME=$1
-HF_TOKEN=$2
+
+# Load environment variables from the .env file
+if [ -f /tmp/.env ]; then
+    export $(cat /tmp/.env | xargs)
+else
+    echo ".env file not found!"
+    exit 1
+fi
 
 # Variables
 OPEN_SORA_REPO="https://github.com/hpcaitech/Open-Sora.git"
@@ -21,7 +28,6 @@ handle_error() {
 
 # Trap errors
 trap 'handle_error $LINENO' ERR
-
 
 # Ensure required directories exist
 echo "Checking required directories..."
@@ -91,14 +97,13 @@ fi
 # Build the inference server image with the specific model name
 echo "Building opensora_api Docker image..."
 cd /home/ubuntu/text2vid-viewer/backend/inference
-sudo docker build -t opensora_api --build-arg MODEL_NAME=${MODEL_NAME} --build-arg HF_TOKEN=${HF_TOKEN} . || { echo "Failed to build opensora_api Docker image"; exit 1; }
+sudo docker build -t opensora_api --build-arg MODEL_NAME=${MODEL_NAME} . || { echo "Failed to build opensora_api Docker image"; exit 1; }
 
 # Run the inference server with the specific model name
 echo "Running opensora_api inference server..."
 sudo docker run -d --gpus all -p 5000:5000 -v /home/ubuntu/data:/data --name opensora_api opensora_api:latest || { echo "Failed to run opensora_api Docker container"; exit 1; }
 
 echo "Deployment script completed successfully."
-
 
 # Print example request
 echo ''
@@ -108,6 +113,6 @@ echo ''
 echo "$ curl -X POST http://209.20.156.111:5000/generate -H \"Content-Type: application/json\" -d '{
         \"config\": \"lambda.py\",
         \"prompt\": \"a woman dancing\"
-    }' --output /tmp/opensora_sample.mp4"
+    }'"
 echo '```'
 echo ''
