@@ -118,4 +118,8 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
         return None
 
 if __name__ == '__main__':
+    
+    # export AWS_ACCESS_KEY_ID=<>
+    # export AWS_SECRET_ACCESS_KEY=<>
+    # export AWS_DEFAULT_REGION=us-east-1
     app.run(host='0.0.0.0', port=5000)
