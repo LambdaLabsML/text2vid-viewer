@@ -51,7 +51,21 @@ def generate_image():
             # Assuming the generated file is saved in the save_dir with a known name
             generated_file_path = os.path.join(save_dir, 'sample_0000.mp4')  # Update this with the correct filename
             if os.path.exists(generated_file_path):
-                response = send_file(generated_file_path, as_attachment=True)
+                
+                bucket_name = "text2videoviewer"
+                video_fpath = generated_file_path
+                object_name = f"{data.get('model', 'sora1.2-stdit-720p')}/{data.get('prompt', 'a beautiful waterfall')}.mp4"
+                metadata = None
+                response = upload_file_to_s3(video_fpath, bucket_name, object_name, metadata)
+                # response = send_file(generated_file_path, as_attachment=True)
+                
+                # Confirm file sent to S3
+                if response is not None:
+                    logging.debug("File uploaded successfully.")
+                    logging.debug(f"{response}")
+                else:
+                    logging.error("File upload failed.")
+
                 # Remove the file after sending it
                 os.remove(generated_file_path)
                 logging.debug(f"Removed file after sending: {generated_file_path}")
@@ -68,8 +82,40 @@ def generate_image():
         return jsonify({'message': 'Internal server error', 'error': str(e)}), 500
 
 
-def export_to_s3():
-    pass
+import boto3
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+
+
+def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
+    """
+    Uploads a file to an S3 bucket.
+
+    :param file_name: Path to the file to upload.
+    :param bucket_name: Name of the S3 bucket.
+    :param object_name: S3 object name. If not specified, file_name is used.
+    :return: The S3 object name if the file was uploaded successfully, else None.
+    """
+
+    # Create an S3 client
+    s3_client = boto3.client('s3')
+
+    try:
+        # Upload the file
+        s3_client.upload_file(file_name, bucket_name, object_name, ExtraArgs={'Metadata': metadata})
+        print(f"File {file_name} uploaded to {bucket_name}/{object_name}.")
+        return object_name
+    except FileNotFoundError:
+        print(f"The file {file_name} was not found.")
+        return None
+    except NoCredentialsError:
+        print("Credentials not available.")
+        return None
+    except PartialCredentialsError:
+        print("Incomplete credentials provided.")
+        return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
