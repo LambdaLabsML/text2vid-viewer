@@ -23,7 +23,7 @@ def get_cmd_list(config_file, prompts=["a beautiful waterfall"], save_dir="/data
         '--save-dir', save_dir
     ]
     for prompt in prompts:
-        cmd.extend(['--prompt', prompt])
+        cmd.extend(['--prompt', f'"{prompt}"'])
 
     logging.debug(f"Running command: {' '.join(cmd)}")
     return cmd
