@@ -58,7 +58,7 @@ def generate_image():
             if result.returncode == 0:
                 generated_file_path = os.path.join(save_dir, f'sample_{idx:04d}.mp4')
                 if os.path.exists(generated_file_path):
-                    bucket_name = "text2videoviewerdev"
+                    bucket_name = "text2videoviewer"
 
                     model_fullname = None
                     if model == 'lambda':
