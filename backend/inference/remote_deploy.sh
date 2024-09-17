@@ -25,3 +25,20 @@ scp -i ${KEY_PATH} .env remote_setup.sh ${HOSTNAME}:/tmp/ || { echo "Failed to c
 ssh -i ${KEY_PATH} ${HOSTNAME} "chmod +x /tmp/remote_setup.sh && /tmp/remote_setup.sh ${MODEL_NAME}" || { echo "Failed to execute the setup script on remote host"; exit 1; }
 
 echo "Script executed successfully on ${HOSTNAME}"
+
+
+# Print example request
+echo ''
+echo "Example requests:"
+echo '```'
+echo "$ curl -X POST http://209.20.156.111:5000/generate -H \"Content-Type: application/json\" -d '{
+        \"model\": \"lambda\",
+        \"prompt\": \"a woman dancing\"
+    }'"
+echo ''
+echo "$ curl -X POST http://209.20.156.111:5000/generate -H \"Content-Type: application/json\" -d '{
+        \"model\": \"lambda\",
+        \"prompt\": [\"a woman dancing\", \"a beautiful waterfall\"]
+    }'"
+echo '```'
+echo ''
