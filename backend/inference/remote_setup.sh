@@ -117,20 +117,25 @@ if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^opensora_api$"; then
     sudo docker rm -f opensora_api || { echo "Failed to remove existing opensora_api Docker container"; exit 1; }
 fi
 sudo docker run -d --gpus all -p 5000:5000 -v /home/ubuntu/data:/data -v /home/ubuntu/logs:/app/logs --name opensora_api opensora_api:latest
-echo "Deployment script completed successfully."
 
-# Print example request
-echo ''
-echo "Example requests:"
-echo '```'
-echo "$ curl -X POST http://209.20.156.111:5000/generate -H \"Content-Type: application/json\" -d '{
-        \"model\": \"lambda\",
-        \"prompt\": \"a woman dancing\"
-    }'"
-echo ''
-echo "$ curl -X POST http://209.20.156.111:5000/generate -H \"Content-Type: application/json\" -d '{
-        \"model\": \"lambda\",
-        \"prompt\": [\"a woman dancing\", \"a beautiful waterfall\"]
-    }'"
-echo '```'
-echo ''
+# Read env variables from .env file
+AWS_ACCESS_KEY_ID=$(grep AWS_ACCESS_KEY_ID /tmp/.env | cut -d '=' -f2)
+AWS_SECRET_ACCESS_KEY=$(grep AWS_SECRET_ACCESS_KEY /tmp/.env | cut -d '=' -f2)
+AWS_DEFAULT_REGION=$(grep AWS_DEFAULT_REGION /tmp/.env | cut -d '=' -f2)
+HF_TOKEN=$(grep HF_TOKEN /tmp/.env | cut -d '=' -f2)
+
+# Run container opensora_api with environment variables
+docker run -d \
+           -p 5000:5000 \
+           -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+           -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+           -e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
+           -e HF_TOKEN=${HF_TOKEN} \
+           -v /home/ubuntu/data:/data \
+           -v /home/ubuntu/logs:/app/logs \
+           --name opensora_api \
+           --gpus all \
+           opensora_api:latest
+
+
+echo "Deployment script completed successfully."

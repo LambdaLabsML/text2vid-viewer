@@ -7,12 +7,6 @@ RUN pip install Flask boto3
 RUN mkdir -p /app/logs && chmod -R 777 /app/logs
 ENV PYTHONUNBUFFERED=1
 
-# Copy the .env file to the container
-COPY .env /app/.env
-
-# Load environment variables from the .env file
-ENV $(grep -v '^#' /app/.env | xargs)
-
 # Copy the Flask API server script
 COPY inference_api.py /app/inference_api.py
 
