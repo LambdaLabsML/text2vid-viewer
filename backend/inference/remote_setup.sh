@@ -103,7 +103,7 @@ fi
 # Build the inference server image with the specific model name
 echo "Building opensora_api Docker image..."
 cd /home/ubuntu/text2vid-viewer/backend/inference
-sudo docker build -t opensora_api --build-arg MODEL_NAME=${MODEL_NAME} . || { echo "Failed to build opensora_api Docker image"; exit 1; }
+sudo docker build --no-cache -t opensora_api --build-arg MODEL_NAME=${MODEL_NAME} . || { echo "Failed to build opensora_api Docker image"; exit 1; }
 
 # Check images are built
 echo ""

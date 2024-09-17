@@ -149,7 +149,7 @@ def download_model(model_name=None, local_path=None, url=None):
 
         if "lambdalabs" in web_path:
             # Downloading from Hugging Face with token authentication
-            headers = {"Authorization": f"Bearer {os.environ['HF_TOKEN']}"}
+            headers = {"Authorization": f"Bearer {os.environ['HUGGINGFACE_HUB_TOKEN']}"}
             response = requests.get(web_path, headers=headers, stream=True)
             response.raise_for_status()  # Ensure the request was successful
             with open(local_path, 'wb') as f:
