@@ -148,6 +148,9 @@ def download_model(model_name=None, local_path=None, url=None):
         file_name = os.path.basename(local_path)
 
         if "lambdalabs" in web_path:
+            from huggingface_hub import login
+            login(token=os.getenv("HUGGINGFACE_HUB_TOKEN"))
+            
             # Downloading from Hugging Face with token authentication
             headers = {"Authorization": f"Bearer {os.environ['HUGGINGFACE_HUB_TOKEN']}"}
             response = requests.get(web_path, headers=headers, stream=True)
