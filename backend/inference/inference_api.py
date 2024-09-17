@@ -81,12 +81,14 @@ def generate_image():
                     if response is not None:
                         logging.debug(f"File {generated_file_path} uploaded successfully as {response}.")
                         responses.append({'prompt': prompt, 's3_path': response})
+
+                        os.remove(generated_file_path)
+                        logging.debug(f"Removed file after sending: {generated_file_path}")
                     else:
                         logging.error(f"File upload failed for {generated_file_path}.")
                         responses.append({'prompt': prompt, 'error': 'File upload failed'})
 
-                    os.remove(generated_file_path)
-                    logging.debug(f"Removed file after sending: {generated_file_path}")
+
                 else:
                     logging.error(f"Generated file not found: {generated_file_path}")
                     responses.append({'prompt': prompt, 'error': 'File not found'})
