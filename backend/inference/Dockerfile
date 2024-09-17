@@ -17,7 +17,7 @@ ENV $(grep -v '^#' /app/.env | xargs)
 COPY inference_api.py /app/inference_api.py
 
 # Copy the entire config directory
-COPY configs/ /workspace/Open-Sora/custom_configs/
+COPY configs/ /app/custom_configs/
 
 # Set the environment variable for save directory
 ENV SAVE_DIR="/data"

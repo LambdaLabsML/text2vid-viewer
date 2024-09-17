@@ -40,7 +40,7 @@ def generate_image():
         config = data.get('config', 'opensora-v1-2.py')
         if config not in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']:
             raise ValueError(f"Invalid config: {config}; should be in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']")
-        config_file = f'/workspace/Open-Sora/custom_configs/{config}'
+        config_file = f'/app/custom_configs/{config}'
 
         prompts = data.get('prompt', 'a beautiful waterfall')
         if not isinstance(prompts, list):
