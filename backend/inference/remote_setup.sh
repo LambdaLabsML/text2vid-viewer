@@ -110,8 +110,11 @@ echo ""
 echo "Docker images:"
 sudo docker images
 
+
+
 # Run the inference server with the specific model name
 echo "Running opensora_api inference server..."
+sudo docker rm -f opensora_api || { echo "Failed to remove existing opensora_api Docker container"; exit 1; }
 sudo docker run -d --gpus all -p 5000:5000 -v /home/ubuntu/data:/data --name opensora_api opensora_api:latest || { echo "Failed to run opensora_api Docker container"; exit 1; }
 
 echo "Deployment script completed successfully."
