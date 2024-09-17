@@ -25,4 +25,4 @@ ARG MODEL_NAME
 EXPOSE 5000
 
 # Run the API server with the model name argument
-CMD ["python", "/app/inference_api.py", "${MODEL_NAME}"]
+CMD ["python", "/app/inference_api.py"]
