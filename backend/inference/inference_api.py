@@ -3,6 +3,8 @@ import subprocess
 import os
 import logging
 import glob
+import boto3
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 
 app = Flask(__name__)
 
@@ -13,14 +15,13 @@ logging.basicConfig(filename='/app/logs/inference_api.log',
 logger = logging.getLogger(__name__)
 
 
-def get_cmd_list(config_file, prompt="a beautiful waterfall", save_dir="/data"):
+def get_cmd_list(config_file, prompts=["a beautiful waterfall"], save_dir="/data"):
     """Prepare the command list for image generation."""
     cmd = [
         'python', 'scripts/inference.py',
         config_file,
-        '--prompt', prompt,
-        '--save-dir', save_dir
-    ]
+        '--prompt'
+    ] + prompts + ['--save-dir', save_dir]
     logging.debug(f"Running command: {' '.join(cmd)}")
     return cmd
 
@@ -46,17 +47,22 @@ def generate_image():
         if not isinstance(prompts, list):
             prompts = [prompts]
 
+        # Run inference cmd with all prompts
+        cmd_list = get_cmd_list(config_file, prompts, save_dir)
+        result = subprocess.run(cmd_list, capture_output=True, text=True)
+        logging.debug(f"Command output: {result.stdout}")  
+        logging.error(f"Command error output: {result.stderr}")
+
         responses = []
 
-        for idx, prompt in enumerate(prompts):
-            # Run inference cmd for each prompt
-            cmd_list = get_cmd_list(config_file, prompt, save_dir)
-            result = subprocess.run(cmd_list, capture_output=True, text=True)
-            logging.debug(f"Command output: {result.stdout}")  
-            logging.error(f"Command error output: {result.stderr}")
+        if result.returncode == 0:
+            # Get the list of generated files
+            generated_files = sorted(glob.glob(os.path.join(save_dir, 'sample_*.mp4')))
+            if len(generated_files) != len(prompts):
+                logging.error(f"Number of generated files ({len(generated_files)}) does not match number of prompts ({len(prompts)})")
+                return jsonify({'message': 'Mismatch in number of generated files and prompts'}), 500
 
-            if result.returncode == 0:
-                generated_file_path = os.path.join(save_dir, f'sample_{idx:04d}.mp4')
+            for prompt, generated_file_path in zip(prompts, generated_files):
                 if os.path.exists(generated_file_path):
                     bucket_name = "text2videoviewer"
 
@@ -71,7 +77,7 @@ def generate_image():
                     object_name = f"{model_fullname}/{prompt}.mp4"
                     metadata = None
                     response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
-                    
+
                     if response is not None:
                         logging.debug(f"File {generated_file_path} uploaded successfully as {response}.")
                         responses.append({'prompt': prompt, 's3_path': response})
@@ -84,19 +90,15 @@ def generate_image():
                 else:
                     logging.error(f"Generated file not found: {generated_file_path}")
                     responses.append({'prompt': prompt, 'error': 'File not found'})
-            else:
-                logging.error(f"Image generation failed for prompt: {prompt}")
-                responses.append({'prompt': prompt, 'error': result.stderr})
 
-        return jsonify(responses), 200
+            return jsonify(responses), 200
+        else:
+            logging.error(f"Image generation failed")
+            return jsonify({'message': 'Image generation failed', 'error': result.stderr}), 500
 
     except Exception as e:
         logging.exception("An unexpected error occurred")
         return jsonify({'message': 'Internal server error', 'error': str(e)}), 500
-
-
-import boto3
-from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 
 
 def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
@@ -136,6 +138,5 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
         return None
 
 if __name__ == '__main__':
-    
     logger.info("Starting the inference API server")
     app.run(host='0.0.0.0', port=5000, debug=False)
