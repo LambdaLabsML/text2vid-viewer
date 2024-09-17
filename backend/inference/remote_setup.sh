@@ -16,6 +16,11 @@ else
     exit 1
 fi
 
+# Move .env to the build context directory (assuming text2vid-viewer is the context)
+echo "Moving .env file to the build context..."
+mv /tmp/.env ~/text2vid-viewer/backend/inference/.env || { echo "Failed to move .env file to build context"; exit 1; }
+
+
 # Variables
 OPEN_SORA_REPO="https://github.com/hpcaitech/Open-Sora.git"
 IMAGE_EVAL_REPO="https://github.com/LambdaLabsML/text2vid-viewer.git"
