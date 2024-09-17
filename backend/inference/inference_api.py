@@ -20,12 +20,10 @@ def get_cmd_list(config_file, prompts=["a beautiful waterfall"], save_dir="/data
     cmd = [
         'python', 'scripts/inference.py',
         config_file,
-        '--save-dir', save_dir,
-        '--prompt'
+        '--save-dir', save_dir
     ]
-
-    prompt_str = ' '.join([f'"{p}"' for p in prompts])
-    cmd.append(prompt_str)
+    for prompt in prompts:
+        cmd.extend(['--prompt', prompt])
 
     logging.debug(f"Running command: {' '.join(cmd)}")
     return cmd
