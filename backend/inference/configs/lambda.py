@@ -20,6 +20,7 @@ model = dict(
     enable_flash_attn=True,
     enable_layernorm_kernel=True,
     force_huggingface=True,
+    use_auth_token=True
 )
 vae = dict(
     type="OpenSoraVAE_V1_2",
