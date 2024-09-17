@@ -4,7 +4,7 @@ FROM shivamsphn/opensora:latest
 RUN pip install Flask
 
 # Copy the .env file to the container
-COPY .env /app/.env
+COPY /tmp/.env /app/.env
 
 # Load environment variables from the .env file
 ENV $(cat /app/.env | xargs)
