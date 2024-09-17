@@ -119,7 +119,7 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
             extra_args['Metadata'] = metadata
 
         # Upload the file
-        s3_client.upload_file(file_name, bucket_name, object_name, ExtraArgs={'Metadata': extra_args})
+        s3_client.upload_file(file_name, bucket_name, object_name, ExtraArgs=extra_args)
         logging.debug(f"File {file_name} uploaded to {bucket_name}/{object_name}.")
         return object_name
     except FileNotFoundError:
