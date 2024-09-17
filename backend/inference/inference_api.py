@@ -37,10 +37,10 @@ def generate_image():
             logging.debug(f"Removed file: {file_path}")
 
         # Determine config file
-        config = data.get('config', 'opensora-v1-2.py')
-        if config not in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']:
-            raise ValueError(f"Invalid config: {config}; should be in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']")
-        config_file = f'/app/custom_configs/{config}'
+        config = data.get('model', 'opensora-v1-2')
+        if config not in ['lambda', 'opensora-v1-1', 'opensora-v1-2']:
+            raise ValueError(f"Invalid config: {config}; should be in ['lambda', 'opensora-v1-1', 'opensora-v1-2']")
+        config_file = f'/app/custom_configs/{config}.py'
 
         prompts = data.get('prompt', 'a beautiful waterfall')
         if not isinstance(prompts, list):
