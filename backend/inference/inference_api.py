@@ -25,7 +25,6 @@ def get_cmd_list(config_file, prompts=["a beautiful waterfall"], save_dir="/data
     ]
 
     prompt_str = ' '.join([f'"{p}"' for p in prompts])
-    prompt_str = f'"{prompt_str}"'
     cmd.append(prompt_str)
 
     logging.debug(f"Running command: {' '.join(cmd)}")
