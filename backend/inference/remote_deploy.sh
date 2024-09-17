@@ -19,13 +19,12 @@ KEY_PATH=~/.ssh/x1.pem
 
 # Copy the .env file and deploy script to the remote host
 echo "Copying .env and remote_setup.sh files to remote host..."
-scp -i ${KEY_PATH} .env remote_setup.sh ${HOSTNAME}:/tmp/ || { echo "Failed to copy files to remote host"; exit 1; }
+scp -i ${KEY_PATH} .env remote_setup.sh prompts.txt ${HOSTNAME}:/tmp/ || { echo "Failed to copy files to remote host"; exit 1; }
 
 # Execute the deploy script on the remote host
 ssh -i ${KEY_PATH} ${HOSTNAME} "chmod +x /tmp/remote_setup.sh && /tmp/remote_setup.sh ${MODEL_NAME}" || { echo "Failed to execute the setup script on remote host"; exit 1; }
 
 echo "Script executed successfully on ${HOSTNAME}"
-
 
 # Print example request
 echo ''

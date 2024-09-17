@@ -20,10 +20,9 @@ def get_cmd_list(config_file, prompts=["a beautiful waterfall"], save_dir="/data
     cmd = [
         'python', 'scripts/inference.py',
         config_file,
-        '--save-dir', save_dir
+        '--save-dir', save_dir,
+        '--prompt-path', os.path.join(save_dir, 'prompts.txt')
     ]
-    for prompt in prompts:
-        cmd.extend(['--prompt', f'"{prompt}"'])
 
     logging.debug(f"Running command: {' '.join(cmd)}")
     return cmd
@@ -49,6 +48,12 @@ def generate_image():
         prompts = data.get('prompt', 'a beautiful waterfall')
         if not isinstance(prompts, list):
             prompts = [prompts]
+
+        # Save prompts to text file
+        prompts_file = os.path.join(save_dir, 'prompts.txt')
+        with open(prompts_file, 'w') as f:
+            for prompt in prompts:
+                f.write(prompt + '\n')
 
         # Run inference cmd with all prompts
         cmd_list = get_cmd_list(config_file, prompts, save_dir)
