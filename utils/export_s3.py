@@ -87,7 +87,7 @@ if __name__ == "__main__":
     # import os
     # bucket_name = "text2videoviewer"
     # video_base_path = "/home/eole/Desktop/lambda-opensora"
-    # model = "lambda-stdit-720"
+    # model = "lambda-stdit-720p"
     # prompt_fpath = "/home/eole/Workspaces/text2vid-viewer/backend/inference/prompts.txt"
 
     # with open(prompt_fpath, "r") as f:
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     # Save as CSV
     import pandas as pd
     df = pd.DataFrame(records)
-    df.to_csv("upload_records.csv", index=False)
+    df.to_csv("db.csv", index=False)
 
 
 
