@@ -7,7 +7,7 @@ RUN pip install Flask
 COPY .env /app/.env
 
 # Load environment variables from the .env file
-ENV $(cat /app/.env | xargs)
+ENV $(grep -v '^#' /app/.env | xargs)
 
 # Copy the Flask API server script
 COPY inference_api.py /app/inference_api.py
