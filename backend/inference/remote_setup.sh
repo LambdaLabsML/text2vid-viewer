@@ -105,6 +105,11 @@ echo "Building opensora_api Docker image..."
 cd /home/ubuntu/text2vid-viewer/backend/inference
 sudo docker build -t opensora_api --build-arg MODEL_NAME=${MODEL_NAME} . || { echo "Failed to build opensora_api Docker image"; exit 1; }
 
+# Check images are built
+echo ""
+echo "Docker images:"
+sudo docker images
+
 # Run the inference server with the specific model name
 echo "Running opensora_api inference server..."
 sudo docker run -d --gpus all -p 5000:5000 -v /home/ubuntu/data:/data --name opensora_api opensora_api:latest || { echo "Failed to run opensora_api Docker container"; exit 1; }
