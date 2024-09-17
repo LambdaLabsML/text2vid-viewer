@@ -16,10 +16,6 @@ else
     exit 1
 fi
 
-# Move .env to the build context directory (assuming text2vid-viewer is the context)
-echo "Moving .env file to the build context..."
-mv /tmp/.env ~/text2vid-viewer/backend/inference/.env || { echo "Failed to move .env file to build context"; exit 1; }
-
 
 # Variables
 OPEN_SORA_REPO="https://github.com/hpcaitech/Open-Sora.git"
@@ -59,6 +55,11 @@ if [ -d "text2vid-viewer" ]; then
     rm -rf text2vid-viewer
 fi
 git clone $IMAGE_EVAL_REPO || { echo "Failed to clone text2vid-viewer repository"; exit 1; }
+
+# Move .env to the build context directory (assuming text2vid-viewer is the context)
+echo "Moving .env file to the build context..."
+mv /tmp/.env ~/text2vid-viewer/backend/inference/.env || { echo "Failed to move .env file to build context"; exit 1; }
+
 
 # Check if the specific model image exists
 model_image_id=$(sudo docker images -q opensora:latest)
