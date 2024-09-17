@@ -122,7 +122,7 @@ sudo docker run -d \
            -p 5000:5000 \
            -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
            -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
-           -e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
+           -e AWS_REGION=${AWS_REGION} \
            -e HF_TOKEN=${HF_TOKEN} \
            -v /home/ubuntu/data:/data \
            -v /home/ubuntu/logs:/app/logs \

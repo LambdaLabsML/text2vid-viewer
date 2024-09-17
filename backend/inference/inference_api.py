@@ -122,7 +122,7 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
     """
 
     # Create an S3 client
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client('s3', region_name='us-east-1')
 
     try:
         # Prepare ExtraArgs

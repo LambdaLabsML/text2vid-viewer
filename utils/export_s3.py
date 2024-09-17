@@ -1,5 +1,14 @@
+"""
+export AWS_ACCESS_KEY_ID=<>
+export AWS_SECRET_ACCESS_KEY=<>
+export AWS_DEFAULT_REGION=us-east-1
+"""
+
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+from dotenv import load_dotenv
+
+load_dotenv("../backend/inference/.env")
 
 def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
     """
@@ -12,7 +21,10 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
     """
 
     # Create an S3 client
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client('s3',
+        region_name='us-east-1',
+        aws_access_key_id=os.environ["AWS_ACCESS_KEY"],
+        aws_secret_access_key=os.environ["AWS_SECRET_KEY"])
 
     try:
         # Upload the file
@@ -67,15 +79,73 @@ def list_s3_bucket_items(bucket_name):
 
 
 if __name__ == "__main__":
-
-
-    # export AWS_ACCESS_KEY_ID=<>
-    # export AWS_SECRET_ACCESS_KEY=<>
-    # export AWS_DEFAULT_REGION=us-east-1
         
-    # import os
-    # bucket_name = "text2videoviewer"
-    # fpath = "/home/eole/Workspaces/image-eval/frontend/assets"
+    import os
+    bucket_name = "text2videoviewer"
+    video_base_path = "/home/eole/Desktop/lambda-opensora"
+    model = "lambda-stdit-720"
+    prompt_fpath = "/home/eole/Workspaces/text2vid-viewer/backend/inference/prompts.txt"
+
+    with open(prompt_fpath, "r") as f:
+        prompts = [l.strip() for l in f.readlines()]
+        video_fnames =  os.listdir(video_base_path)
+        video_fnames.sort()
+
+        for prompt_i, prompt in enumerate(prompts):
+            video_fname = video_fnames[prompt_i]
+            video_fpath = f"{video_base_path}/{video_fname}"
+            object_name = f"{model}/{prompt}.mp4"
+            metadata = {
+                "model": model,
+                "prompt": prompt
+            }
+            print(f"Model: {model}")
+            print(f"Prompt: {prompt}")
+            print(f"Video path: {video_fpath}")
+            print(f"Object name: {object_name}")
+            
+            response = upload_file_to_s3(video_fpath, bucket_name, object_name, metadata)
+            if response is not None:
+                print("File uploaded successfully.")
+            else:
+                print("File uploaded failed.")
+            print()
+
+    #records.append({"model": model, "prompt": prompt, "object_name": object_name})
+    # # Save as CSV
+    # import pandas as pd
+    # df = pd.DataFrame(records)
+    # df.to_csv("upload_records.csv", index=False)
+
+    # Example usage
+    # bucket_name = 'text2videoviewer'
+    # all_objects = list_s3_bucket_items(bucket_name)
+    # print(all_objects)
+
+    # records = []
+    # for obj in all_objects:
+    #     model = obj.split("/")[0]
+    #     prompt = obj.split("/")[1].split(".")[0]
+    #     print(model, prompt)
+    #     records.append({"model": model, "prompt": prompt, "object_name": obj})
+    # # Save as CSV
+    # import pandas as pd
+    # df = pd.DataFrame(records)
+    # df.to_csv("upload_records.csv", index=False)
+
+
+
+
+
+
+
+
+
+
+
+    # -------------------------------
+
+
     # models = [
     #     "sora1.2-stdit-720p",
     #     "sora1.2-stdit-480p",
@@ -122,20 +192,20 @@ if __name__ == "__main__":
     # df.to_csv("upload_records.csv", index=False)
 
     # Example usage
-    bucket_name = 'text2videoviewer'
-    all_objects = list_s3_bucket_items(bucket_name)
-    print(all_objects)
+    # bucket_name = 'text2videoviewer'
+    # all_objects = list_s3_bucket_items(bucket_name)
+    # print(all_objects)
 
-    records = []
-    for obj in all_objects:
-        model = obj.split("/")[0]
-        prompt = obj.split("/")[1].split(".")[0]
-        print(model, prompt)
-        records.append({"model": model, "prompt": prompt, "object_name": obj})
-    # Save as CSV
-    import pandas as pd
-    df = pd.DataFrame(records)
-    df.to_csv("upload_records.csv", index=False)
+    # records = []
+    # for obj in all_objects:
+    #     model = obj.split("/")[0]
+    #     prompt = obj.split("/")[1].split(".")[0]
+    #     print(model, prompt)
+    #     records.append({"model": model, "prompt": prompt, "object_name": obj})
+    # # Save as CSV
+    # import pandas as pd
+    # df = pd.DataFrame(records)
+    # df.to_csv("upload_records.csv", index=False)
 
     
 
