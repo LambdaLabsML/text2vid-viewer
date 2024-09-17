@@ -3,6 +3,9 @@ FROM shivamsphn/opensora:latest
 # Install Flask
 RUN pip install Flask
 
+# Create the logs directory
+RUN mkdir -p /app/logs
+
 # Copy the .env file to the container
 COPY .env /app/.env
 
