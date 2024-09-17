@@ -164,6 +164,13 @@ def download_model(model_name=None, local_path=None, url=None):
             with open(local_path, 'wb') as f:
                 f.write(response.content)
         else:
+
+            print("***************")
+            print("DEBUG: UNRECOGNIZED URL")
+            print(web_path)
+            print("***************")
+
+
             download_url(web_path, dir_name, file_name)
     model = torch.load(local_path, map_location=lambda storage, loc: storage)
     return model
