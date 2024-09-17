@@ -13,6 +13,9 @@ COPY .env /app/.env
 # Load environment variables from the .env file
 ENV $(grep -v '^#' /app/.env | xargs)
 
+# HF Logging
+RUN huggingface-cli login --token $HF_TOKEN
+
 # Copy the Flask API server script
 COPY inference_api.py /app/inference_api.py
 
