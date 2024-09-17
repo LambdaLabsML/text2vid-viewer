@@ -15,7 +15,7 @@ align = 5
 
 model = dict(
     type="STDiT3-XL/2",
-    from_pretrained="lambdalabs/OpenSora-STDiT-v3-Lambda",
+    from_pretrained="eolecvk/OpenSora-STDiT-v3-Lambda",
     qk_norm=True,
     enable_flash_attn=True,
     enable_layernorm_kernel=True,

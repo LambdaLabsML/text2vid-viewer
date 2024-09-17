@@ -13,12 +13,6 @@ COPY .env /app/.env
 # Load environment variables from the .env file
 ENV $(grep -v '^#' /app/.env | xargs)
 
-# Explicitly set the Hugging Face token as an environment variable (already done by .env, but just to be sure)
-ENV HUGGINGFACE_HUB_TOKEN=${HUGGINGFACE_HUB_TOKEN}
-
-# Ensure that the Hugging Face CLI can pick up the token
-RUN mkdir -p /root/.huggingface && echo "{ \"token\": \"${HUGGINGFACE_HUB_TOKEN}\" }" > /root/.huggingface/token.json
-
 # Copy the Flask API server script
 COPY inference_api.py /app/inference_api.py
 
