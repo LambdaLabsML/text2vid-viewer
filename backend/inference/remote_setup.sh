@@ -121,12 +121,16 @@ echo "Deployment script completed successfully."
 
 # Print example request
 echo ''
-echo "Example request:"
+echo "Example requests:"
 echo '```'
+echo "$ curl -X POST http://209.20.156.111:5000/generate -H \"Content-Type: application/json\" -d '{
+        \"config\": \"lambda.py\",
+        \"prompt\": \"a woman dancing\"
+    }'"
 echo ''
 echo "$ curl -X POST http://209.20.156.111:5000/generate -H \"Content-Type: application/json\" -d '{
         \"config\": \"lambda.py\",
-        \"prompt\": \"a woman dancing\" \"a beautiful waterfall\"
+        \"prompt\": [\"a woman dancing\", \"a beautiful waterfall\"]
     }'"
 echo '```'
 echo ''
