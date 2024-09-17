@@ -4,7 +4,8 @@ FROM shivamsphn/opensora:latest
 RUN pip install Flask
 
 # Create the logs directory
-RUN mkdir -p /app/logs
+RUN mkdir -p /app/logs && chmod -R 777 /app/logs
+ENV PYTHONUNBUFFERED=1
 
 # Copy the .env file to the container
 COPY .env /app/.env
