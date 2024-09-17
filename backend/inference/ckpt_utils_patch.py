@@ -147,7 +147,7 @@ def download_model(model_name=None, local_path=None, url=None):
         dir_name = os.path.dirname(local_path)
         file_name = os.path.basename(local_path)
 
-        if "lambdalabs" in web_path:
+        if "lambdalabs" in web_path or "eolecvk" in web_path:
             from huggingface_hub import login
             login(token=os.getenv("HF_TOKEN"))
 
