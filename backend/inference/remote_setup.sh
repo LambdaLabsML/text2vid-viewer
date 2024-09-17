@@ -109,15 +109,13 @@ sudo docker build --no-cache -t opensora_api --build-arg MODEL_NAME=${MODEL_NAME
 echo ""
 echo "Docker images:"
 sudo docker images
-
+echo ""
 
 # Run the inference server with the specific model name
 echo "Running opensora_api inference server..."
 if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^opensora_api$"; then
     sudo docker rm -f opensora_api || { echo "Failed to remove existing opensora_api Docker container"; exit 1; }
 fi
-
-#sudo docker run -d --gpus all -p 5000:5000 -v /home/ubuntu/data:/data -v /home/ubuntu/logs:/app/logs --name opensora_api opensora_api:latest
 
 # Run container opensora_api with environment variables
 sudo docker run -d \
