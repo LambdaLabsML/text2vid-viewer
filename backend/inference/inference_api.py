@@ -59,7 +59,16 @@ def generate_image():
                 generated_file_path = os.path.join(save_dir, f'sample_{idx:04d}.mp4')
                 if os.path.exists(generated_file_path):
                     bucket_name = "text2videoviewerdev"
-                    object_name = f"{data.get('model', 'sora1.2-stdit-720p')}/{prompt}.mp4"
+
+                    model_fullname = None
+                    if model == 'lambda':
+                        model_fullname = 'lambda-stdit-720p'
+                    elif model == 'opensora-v1-1':
+                        model_fullname = 'sora1.1-stdit-480p'
+                    elif model == 'opensora-v1-2':
+                        model_fullname = 'sora1.2-stdit-720p'
+
+                    object_name = f"{model_fullname}/{prompt}.mp4"
                     metadata = None
                     response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
                     
@@ -104,6 +113,11 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
     s3_client = boto3.client('s3')
 
     try:
+        # Prepare ExtraArgs
+        extra_args = {}
+        if metadata is not None:
+            extra_args['Metadata'] = metadata
+
         # Upload the file
         s3_client.upload_file(file_name, bucket_name, object_name, ExtraArgs={'Metadata': metadata})
         logging.debug(f"File {file_name} uploaded to {bucket_name}/{object_name}.")
