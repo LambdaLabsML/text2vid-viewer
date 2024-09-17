@@ -1,7 +1,7 @@
 FROM shivamsphn/opensora:latest
 
 # Install Flask
-RUN pip install Flask
+RUN pip install Flask boto3
 
 # Create the logs directory
 RUN mkdir -p /app/logs && chmod -R 777 /app/logs
