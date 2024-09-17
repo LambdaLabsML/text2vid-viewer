@@ -153,6 +153,9 @@ def download_model(model_name=None, local_path=None, url=None):
             print("DEBUG: Downloading from Hugging Face with token authentication")
             print(web_path)
             print("***************")
+
+            import os
+            print(os.getenv('HF_TOKEN'))
             
             from huggingface_hub import login
             login(token=os.getenv("HF_TOKEN"))

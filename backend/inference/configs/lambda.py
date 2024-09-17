@@ -13,13 +13,16 @@ dtype = "bf16"
 condition_frame_length = 5
 align = 5
 
+import os
+
 model = dict(
     type="STDiT3-XL/2",
     from_pretrained="eolecvk/OpenSora-STDiT-v3-Lambda",
     qk_norm=True,
     enable_flash_attn=True,
     enable_layernorm_kernel=True,
-    force_huggingface=True
+    force_huggingface=True,
+    token=os.getenv('HF_TOKEN')
 )
 vae = dict(
     type="OpenSoraVAE_V1_2",
