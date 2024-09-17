@@ -124,4 +124,4 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
 if __name__ == '__main__':
     
     logger.info("Starting the inference API server")
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=False)
