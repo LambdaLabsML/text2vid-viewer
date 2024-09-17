@@ -11,21 +11,14 @@ logging.basicConfig(filename='/data/api_server.log', level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 
-def get_cmd_list(data):
+def get_cmd_list(config_file, prompt="a beautiful waterfall", save_dir="/data"):
     """Prepare the command list for image generation."""
-
-    config = data.get('config', 'opensora-v1-2.py')
-    if config not in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']:
-        raise ValueError(f"Invalid config: {config}; should be in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']")
-    config_file = f'/workspace/Open-Sora/custom_configs/{config}'
-
     cmd = [
         'python', 'scripts/inference.py',
         config_file,
-        '--prompt', data.get('prompt', 'a beautiful waterfall'),
-        '--save-dir', os.environ.get('SAVE_DIR', '/data')
+        '--prompt', prompt,
+        '--save-dir', save_dir
     ]
-
     logging.debug(f"Running command: {' '.join(cmd)}")
     return cmd
 
@@ -41,41 +34,50 @@ def generate_image():
             os.remove(file_path)
             logging.debug(f"Removed file: {file_path}")
 
-        # Run inference cmd
-        cmd_list = get_cmd_list(data)
-        result = subprocess.run(cmd_list, capture_output=True, text=True)
-        logging.debug(f"Command output: {result.stdout}")  
-        logging.error(f"Command error output: {result.stderr}")
-        
-        if result.returncode == 0:
-            # Assuming the generated file is saved in the save_dir with a known name
-            generated_file_path = os.path.join(save_dir, 'sample_0000.mp4')  # Update this with the correct filename
-            if os.path.exists(generated_file_path):
-                
-                bucket_name = "text2videoviewer"
-                video_fpath = generated_file_path
-                object_name = f"{data.get('model', 'sora1.2-stdit-720p')}/{data.get('prompt', 'a beautiful waterfall')}.mp4"
-                metadata = None
-                response = upload_file_to_s3(video_fpath, bucket_name, object_name, metadata)
-                # response = send_file(generated_file_path, as_attachment=True)
-                
-                # Confirm file sent to S3
-                if response is not None:
-                    logging.debug("File uploaded successfully.")
-                    logging.debug(f"{response}")
-                else:
-                    logging.error("File upload failed.")
+        # Determine config file
+        config = data.get('config', 'opensora-v1-2.py')
+        if config not in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']:
+            raise ValueError(f"Invalid config: {config}; should be in ['lambda.py', 'opensora-v1-1.py', 'opensora-v1-2.py']")
+        config_file = f'/workspace/Open-Sora/custom_configs/{config}'
 
-                # Remove the file after sending it
-                os.remove(generated_file_path)
-                logging.debug(f"Removed file after sending: {generated_file_path}")
-                return response
+        prompts = data.get('prompt', 'a beautiful waterfall')
+        if not isinstance(prompts, list):
+            prompts = [prompts]
+
+        responses = []
+
+        for idx, prompt in enumerate(prompts):
+            # Run inference cmd for each prompt
+            cmd_list = get_cmd_list(config_file, prompt, save_dir)
+            result = subprocess.run(cmd_list, capture_output=True, text=True)
+            logging.debug(f"Command output: {result.stdout}")  
+            logging.error(f"Command error output: {result.stderr}")
+
+            if result.returncode == 0:
+                generated_file_path = os.path.join(save_dir, f'sample_{idx:04d}.mp4')
+                if os.path.exists(generated_file_path):
+                    bucket_name = "text2videoviewerdev"
+                    object_name = f"{data.get('model', 'sora1.2-stdit-720p')}/{prompt}.mp4"
+                    metadata = None
+                    response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
+                    
+                    if response is not None:
+                        logging.debug(f"File {generated_file_path} uploaded successfully as {response}.")
+                        responses.append({'prompt': prompt, 's3_path': response})
+                    else:
+                        logging.error(f"File upload failed for {generated_file_path}.")
+                        responses.append({'prompt': prompt, 'error': 'File upload failed'})
+
+                    os.remove(generated_file_path)
+                    logging.debug(f"Removed file after sending: {generated_file_path}")
+                else:
+                    logging.error(f"Generated file not found: {generated_file_path}")
+                    responses.append({'prompt': prompt, 'error': 'File not found'})
             else:
-                logging.error(f"Generated file not found: {generated_file_path}")
-                return jsonify({'message': 'Image generation successful, but file not found', 'save_dir': save_dir}), 200
-        else:
-            logging.error("Image generation failed")
-            return jsonify({'message': 'Image generation failed', 'error': result.stderr}), 500
+                logging.error(f"Image generation failed for prompt: {prompt}")
+                responses.append({'prompt': prompt, 'error': result.stderr})
+
+        return jsonify(responses), 200
 
     except Exception as e:
         logging.exception("An unexpected error occurred")
@@ -119,7 +121,4 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
 
 if __name__ == '__main__':
     
-    # export AWS_ACCESS_KEY_ID=<>
-    # export AWS_SECRET_ACCESS_KEY=<>
-    # export AWS_DEFAULT_REGION=us-east-1
     app.run(host='0.0.0.0', port=5000)
