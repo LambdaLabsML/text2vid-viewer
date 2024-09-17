@@ -125,7 +125,7 @@ AWS_DEFAULT_REGION=$(grep AWS_DEFAULT_REGION /tmp/.env | cut -d '=' -f2)
 HF_TOKEN=$(grep HF_TOKEN /tmp/.env | cut -d '=' -f2)
 
 # Run container opensora_api with environment variables
-docker run -d \
+sudo docker run -d \
            -p 5000:5000 \
            -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
            -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
