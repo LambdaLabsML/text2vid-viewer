@@ -10,21 +10,28 @@ Frontend renders model outputs for visual comparisons:
 
 ## Backend
 
+Prepare `.env` file:
+```bash
+AWS_ACCESS_KEY_ID=<your-access-key-id>
+AWS_SECRET_ACCESS_KEY=<your-secret-access-key>
+AWS_DEFAULT_REGION=us-east-1
+HF_TOKEN=<your-hf-token>
+```
+
 Deploy T2V inference endpoint:
 ```bash
-cd backend
-./remote_deploy.sh  <model_name> <hf_token>
+cd backend/inference
+./remote_deploy.sh  <model_name>
 ```
 with:
 * `model_name`: name of the model to deploy in ('opensora-v1-1', 'opensora-v1-2', 'lambda')
-* `hf_token`: huggingface token to access the model (for lambda model only)
 
 Generate video from prompts and save to S3:
 ```bash
 curl -X POST http://209.20.156.111:5000/generate -H "Content-Type: application/json" -d '{
         "config": "lambda.py",
-        "save_dir" : "/data"
-    }' --output /tmp/opensora_sample.mp4
+        "prompt": "A video of a cat playing with a ball" "a beautiful waterfall" "a woman dancing in the rain",
+    }'
 ```
 
 ## Frontend
