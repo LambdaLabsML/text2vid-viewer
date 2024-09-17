@@ -106,19 +106,19 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
     try:
         # Upload the file
         s3_client.upload_file(file_name, bucket_name, object_name, ExtraArgs={'Metadata': metadata})
-        print(f"File {file_name} uploaded to {bucket_name}/{object_name}.")
+        logging.debug(f"File {file_name} uploaded to {bucket_name}/{object_name}.")
         return object_name
     except FileNotFoundError:
-        print(f"The file {file_name} was not found.")
+        logging.debug(f"The file {file_name} was not found.")
         return None
     except NoCredentialsError:
-        print("Credentials not available.")
+        logging.debug("Credentials not available.")
         return None
     except PartialCredentialsError:
-        print("Incomplete credentials provided.")
+        logging.debug("Incomplete credentials provided.")
         return None
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logging.debug(f"An error occurred: {e}")
         return None
 
 if __name__ == '__main__':
