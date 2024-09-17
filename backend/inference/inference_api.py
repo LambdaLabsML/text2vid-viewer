@@ -7,8 +7,10 @@ import glob
 app = Flask(__name__)
 
 # Configure logging to file
-logging.basicConfig(filename='/data/api_server.log', level=logging.DEBUG, 
-                    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+logging.basicConfig(filename='/app/logs/inference_api.log', 
+                    level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logger = logging.getLogger(__name__)
 
 
 def get_cmd_list(config_file, prompt="a beautiful waterfall", save_dir="/data"):
@@ -121,4 +123,5 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
 
 if __name__ == '__main__':
     
+    logger.info("Starting the inference API server")
     app.run(host='0.0.0.0', port=5000)
