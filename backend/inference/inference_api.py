@@ -40,9 +40,13 @@ def generate_image():
             logging.debug(f"Removed file: {file_path}")
 
         # Determine config file
+        import os
+        config_files = os.listdir('/app/custom_configs/')
+        config_models = [config_name[:-3] for config_name in config_files]
+
         model = data.get('model', 'opensora-v1-2')
-        if model not in ['lambda', 'lambda-speedrun', 'opensora-v1-1', 'opensora-v1-2']:
-            raise ValueError(f"Invalid model: {model}; should be in ['lambda', 'lambda-speedrun', 'opensora-v1-1', 'opensora-v1-2']")
+        if model not in config_models:
+            raise ValueError(f"Invalid model: {model}; should be in {' '.join(config_models)}")
         config_file = f'/app/custom_configs/{model}.py'
 
         prompts = data.get('prompt', 'a beautiful waterfall')

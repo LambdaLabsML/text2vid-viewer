@@ -20,17 +20,14 @@ HF_TOKEN=<your-hf-token>
 
 Deploy T2V inference endpoint:
 ```bash
-cd backend/inference
-./remote_deploy.sh  <model_name>
+/bin/bash backend/inference/remote_deploy.sh
 ```
-with:
-* `model_name`: name of the model to deploy in ('opensora-v1-1', 'opensora-v1-2', 'lambda')
 
 Generate video from prompts and save to S3:
 ```bash
 curl -X POST http://209.20.156.111:5000/generate -H "Content-Type: application/json" -d '{
-        "config": "lambda.py",
-        "prompt": "A video of a cat playing with a ball" "a beautiful waterfall" "a woman dancing in the rain",
+        "model": "lambda",
+        "prompt": ["A video of a cat playing with a ball", "a beautiful waterfall", "a woman dancing in the rain"]
     }'
 ```
 
@@ -38,6 +35,5 @@ curl -X POST http://209.20.156.111:5000/generate -H "Content-Type: application/j
 
 Deploy frontend:
 ```bash
-cd frontend
-python3 -m http.server
+python3 -m frontend/http.server
 ```

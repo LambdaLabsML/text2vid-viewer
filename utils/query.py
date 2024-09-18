@@ -9,17 +9,11 @@ df = pd.read_csv(csv_fpath)
 
 prompts = df["prompt"].unique().tolist()
 
-# Save all prompts to a .txt file
-# txt_fpath = "/home/eole/Workspaces/text2vid-viewer/backend/inference/prompts.txt"
-# with open(txt_fpath, "w") as f:
-#     for prompt in prompts:
-#         f.write(prompt + "\n")
-
 # Define the API endpoint
 api_url = "http://209.20.156.111:5000/generate"
 
 # Define the model to use
-model = "lambda"  # or 'opensora-v1-1', 'opensora-v1-2'
+model = "lambda-speedrun"  # or 'opensora-v1-1', 'opensora-v1-2'
 
 # Prepare the headers
 headers = {
