@@ -79,18 +79,7 @@ def generate_image():
             for prompt, generated_file_path in zip(prompts, generated_files):
                 if os.path.exists(generated_file_path):
                     bucket_name = "text2videoviewer"
-
-                    model_fullname = None
-                    if model == 'lambda':
-                        model_fullname = 'lambda-stdit-720p'
-                    if model == 'lambda-speedrun':
-                        model_fullname = 'lambda-stdit-720p-speedrun'
-                    elif model == 'opensora-v1-1':
-                        model_fullname = 'sora1.1-stdit-480p'
-                    elif model == 'opensora-v1-2':
-                        model_fullname = 'sora1.2-stdit-720p'
-
-                    object_name = f"{model_fullname}/{prompt}.mp4"
+                    object_name = f"{model}/{prompt}.mp4"
                     metadata = None
                     response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
 
