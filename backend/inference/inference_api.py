@@ -70,35 +70,26 @@ def generate_image():
         responses = []
 
         if result.returncode == 0:
-            # Get the list of generated files
-            generated_files = sorted(glob.glob(os.path.join(save_dir, '*.mp4')))
-            if len(generated_files) != len(prompts):
-                logging.error(f"Number of generated files ({len(generated_files)}) does not match number of prompts ({len(prompts)})")
-                return jsonify({'message': 'Mismatch in number of generated files and prompts'}), 500
 
-            for prompt, generated_file_path in zip(prompts, generated_files):
-                if os.path.exists(generated_file_path):
-                    bucket_name = "text2videoviewer"
-                    object_name = f"{model}/{prompt}.mp4"
-                    metadata = None
-                    response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
+            generated_files = glob.glob(os.path.join(save_dir, '*.mp4'))
+            for generated_file_path in generated_files:
+                prompt = os.path.basename(generated_file_path).split('.mp4')[0]
+                bucket_name = "text2videoviewer"
+                object_name = f"{model}/{prompt}.mp4"
+                metadata = None
+                response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
 
-                    if response is not None:
-                        logging.debug(f"File {generated_file_path} uploaded successfully as {response}.")
-                        responses.append({'prompt': prompt, 's3_path': response})
+                if response is not None:
+                    logging.debug(f"File {generated_file_path} uploaded successfully as {response}.")
+                    responses.append({'prompt': prompt, 's3_path': response})
 
-                        os.remove(generated_file_path)
-                        logging.debug(f"Removed file after sending: {generated_file_path}")
-                    else:
-                        logging.error(f"File upload failed for {generated_file_path}.")
-                        responses.append({'prompt': prompt, 'error': 'File upload failed'})
-
-
+                    os.remove(generated_file_path)
+                    logging.debug(f"Removed file after sending: {generated_file_path}")
                 else:
-                    logging.error(f"Generated file not found: {generated_file_path}")
-                    responses.append({'prompt': prompt, 'error': 'File not found'})
+                    logging.error(f"File upload failed for {generated_file_path}.")
+                    responses.append({'prompt': prompt, 'error': 'File upload failed'})
 
-            return jsonify(responses), 200
+                return jsonify(responses), 200
         else:
             logging.error(f"Image generation failed")
             return jsonify({'message': 'Image generation failed', 'error': result.stderr}), 500
