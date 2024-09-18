@@ -2,13 +2,12 @@
 
 Visual comparison of T2V models on a set of prompts.  
 
-Backend generates video from user submitted prompts on opensora v1.1, v1.2, and lambda-opensora models and push these videos to S3.  
-
+Backend serves T2V models and generates video from user submitted prompts.
 Frontend renders model outputs for visual comparisons:
 * Model centric view: preview generations by batch of 6 prompts for a given model.
 * Prompt centric view: preview generation by batch of 6 models for a given prompt
 
-## Backend
+## Serve model and generate outputs
 
 Prepare `.env` file:
 ```bash
@@ -27,7 +26,11 @@ Generate video from prompts and save to S3:
 ```bash
 curl -X POST http://209.20.156.111:5000/generate -H "Content-Type: application/json" -d '{
         "model": "lambda",
-        "prompt": ["A video of a cat playing with a ball", "a beautiful waterfall", "a woman dancing in the rain"]
+        "prompt": [
+            "A video of a cat playing with a ball",
+            "a beautiful waterfall",
+            "a woman dancing in the rain"
+            ]
     }'
 ```
 

@@ -21,8 +21,8 @@ def get_cmd_list(config_file, save_dir="/data"):
         'python', 'scripts/inference.py',
         config_file,
         '--save-dir', save_dir,
-        '--prompt-path', os.path.join(save_dir, 'prompts.txt')
-    ]
+        '--prompt-path', os.path.join(save_dir, 'prompts.txt'),
+        '--prompt-as-path', True]
 
     logging.debug(f"Running command: {' '.join(cmd)}")
     return cmd
@@ -35,7 +35,7 @@ def generate_image():
 
         # Remove files with name pattern `sample_*.mp4`
         save_dir = os.environ.get('SAVE_DIR', '/data')
-        for file_path in glob.glob(os.path.join(save_dir, 'sample_*.mp4')):
+        for file_path in glob.glob(os.path.join(save_dir, '*.mp4')):
             os.remove(file_path)
             logging.debug(f"Removed file: {file_path}")
 
