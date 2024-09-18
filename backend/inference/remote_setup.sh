@@ -1,13 +1,5 @@
 #!/bin/bash
 
-if [ -z "$1" ]; then
-    echo "Usage: $0 <model_name>"
-    exit 1
-fi
-
-# Arguments
-MODEL_NAME=$1
-
 # Load environment variables from the .env file
 if [ -f /tmp/.env ]; then
     export $(cat /tmp/.env | xargs)
@@ -97,13 +89,13 @@ else
 
     cd Open-Sora
     echo "Building opensora Docker image..."
-    sudo docker build -t opensora --build-arg MODEL_NAME=${MODEL_NAME} -f Dockerfile . || { echo "Failed to build opensora Docker image"; exit 1; }
+    sudo docker build -t opensora -f Dockerfile . || { echo "Failed to build opensora Docker image"; exit 1; }
 fi
 
 # Build the inference server image with the specific model name
 echo "Building opensora_api Docker image..."
 cd /home/ubuntu/text2vid-viewer/backend/inference
-sudo docker build --no-cache -t opensora_api --build-arg MODEL_NAME=${MODEL_NAME} . || { echo "Failed to build opensora_api Docker image"; exit 1; }
+sudo docker build --no-cache -t opensora_api . || { echo "Failed to build opensora_api Docker image"; exit 1; }
 
 # Check images are built
 echo ""

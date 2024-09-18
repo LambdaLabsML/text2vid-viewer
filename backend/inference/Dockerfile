@@ -16,9 +16,6 @@ COPY configs/ /app/custom_configs/
 # Set the environment variable for save directory
 ENV SAVE_DIR="/data"
 
-# Build argument for model name
-ARG MODEL_NAME
-
 # Expose the port the API server will run on
 EXPOSE 5000
 

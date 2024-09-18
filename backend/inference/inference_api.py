@@ -15,7 +15,7 @@ logging.basicConfig(filename='/app/logs/inference_api.log',
 logger = logging.getLogger(__name__)
 
 
-def get_cmd_list(config_file, prompts=["a beautiful waterfall"], save_dir="/data"):
+def get_cmd_list(config_file, save_dir="/data"):
     """Prepare the command list for image generation."""
     cmd = [
         'python', 'scripts/inference.py',
@@ -41,8 +41,8 @@ def generate_image():
 
         # Determine config file
         model = data.get('model', 'opensora-v1-2')
-        if model not in ['lambda', 'opensora-v1-1', 'opensora-v1-2']:
-            raise ValueError(f"Invalid model: {model}; should be in ['lambda', 'opensora-v1-1', 'opensora-v1-2']")
+        if model not in ['lambda', 'lambda-speedrun', 'opensora-v1-1', 'opensora-v1-2']:
+            raise ValueError(f"Invalid model: {model}; should be in ['lambda', 'lambda-speedrun', 'opensora-v1-1', 'opensora-v1-2']")
         config_file = f'/app/custom_configs/{model}.py'
 
         prompts = data.get('prompt', 'a beautiful waterfall')
@@ -77,6 +77,8 @@ def generate_image():
                     model_fullname = None
                     if model == 'lambda':
                         model_fullname = 'lambda-stdit-720p'
+                    if model == 'lambda-speedrun':
+                        model_fullname = 'lambda-stdit-720p-speedrun'
                     elif model == 'opensora-v1-1':
                         model_fullname = 'sora1.1-stdit-480p'
                     elif model == 'opensora-v1-2':
