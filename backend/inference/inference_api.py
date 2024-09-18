@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
 import subprocess
 import os
 import logging
@@ -29,6 +29,9 @@ def get_cmd_list(config_file, save_dir="/data"):
 
 @app.route('/generate', methods=['POST'])
 def generate_image():
+
+    import os
+
     try:
         data = request.json
         logging.debug(f"Request data: {data}")
