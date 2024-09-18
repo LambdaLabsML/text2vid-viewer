@@ -1,9 +1,3 @@
-"""
-export AWS_ACCESS_KEY_ID=<>
-export AWS_SECRET_ACCESS_KEY=<>
-export AWS_DEFAULT_REGION=us-east-1
-"""
-
 import pandas as pd
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
@@ -101,39 +95,39 @@ if __name__ == "__main__":
 
     #---------------------------
         
-    import os
-    bucket_name = "text2videoviewer"
-    video_base_path = "/home/eole/Desktop/lambda-opensora-speedrun"
-    model = "lambda-stdit-720p"
-    prompt_fpath = "/home/eole/Workspaces/text2vid-viewer/backend/inference/prompts.txt"
+    # import os
+    # bucket_name = "text2videoviewer"
+    # video_base_path = "/home/eole/Desktop/lambda-opensora-speedrun"
+    # model = "lambda-speedrun"
+    # prompt_fpath = "/home/eole/Workspaces/text2vid-viewer/backend/inference/prompts.txt"
 
-    with open(prompt_fpath, "r") as f:
-        prompts = [l.strip() for l in f.readlines()]
-        video_fnames =  os.listdir(video_base_path)
-        video_fnames.sort()
-        #prompts = [p for p in prompts if p != "close up shot of a yellow taxi turning left"] 
+    # with open(prompt_fpath, "r") as f:
+    #     prompts = [l.strip() for l in f.readlines()]
+    #     video_fnames =  os.listdir(video_base_path)
+    #     video_fnames.sort()
+    #     #prompts = [p for p in prompts if p != "close up shot of a yellow taxi turning left"] 
 
-    assert len(prompts) == len(video_fnames), "Number of prompts and videos do not match."
+    # assert len(prompts) == len(video_fnames), "Number of prompts and videos do not match."
 
-    for video_fname, prompt in zip(video_fnames, prompts):
-        video_fpath = f"{video_base_path}/{video_fname}"
-        object_name = f"{model}/{prompt}.mp4"
-        metadata = {
-            "model": model,
-            "prompt": prompt
-        }
-        print(f"Model: {model}")
-        print(f"Prompt: {prompt}")
-        print(f"Video path: {video_fpath}")
-        print(f"Object name: {object_name}")
-        print()
+    # for video_fname, prompt in zip(video_fnames, prompts):
+    #     video_fpath = f"{video_base_path}/{video_fname}"
+    #     object_name = f"{model}/{prompt}.mp4"
+    #     metadata = {
+    #         "model": model,
+    #         "prompt": prompt
+    #     }
+    #     print(f"Model: {model}")
+    #     print(f"Prompt: {prompt}")
+    #     print(f"Video path: {video_fpath}")
+    #     print(f"Object name: {object_name}")
+    #     print()
             
-        response = upload_file_to_s3(video_fpath, bucket_name, object_name, metadata)
-        if response is not None:
-            print("File uploaded successfully.")
-        else:
-            print("File uploaded failed.")
-        print()
+    #     response = upload_file_to_s3(video_fpath, bucket_name, object_name, metadata)
+    #     if response is not None:
+    #         print("File uploaded successfully.")
+    #     else:
+    #         print("File uploaded failed.")
+    #     print()
 
     # -------------------------------
     
