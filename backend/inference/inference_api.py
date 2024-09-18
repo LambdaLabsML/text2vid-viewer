@@ -22,7 +22,7 @@ def get_cmd_list(config_file, save_dir="/data"):
         config_file,
         '--save-dir', save_dir,
         '--prompt-path', os.path.join(save_dir, 'prompts.txt'),
-        '--prompt-as-path', True]
+        '--prompt-as-path', "True"]
 
     logging.debug(f"Running command: {' '.join(cmd)}")
     return cmd
