@@ -19,7 +19,8 @@ HF_TOKEN=<your-hf-token>
 
 Deploy T2V inference endpoint:
 ```bash
-/bin/bash backend/inference/remote_deploy.sh
+cd backend/inference
+./remote_deploy.sh
 ```
 
 Generate video from prompts and save to S3:
