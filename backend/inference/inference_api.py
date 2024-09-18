@@ -40,7 +40,6 @@ def generate_image():
             logging.debug(f"Removed file: {file_path}")
 
         # Determine config file
-        import os
         config_files = os.listdir('/app/custom_configs/')
         config_models = [config_name[:-3] for config_name in config_files]
 
@@ -69,7 +68,7 @@ def generate_image():
 
         if result.returncode == 0:
             # Get the list of generated files
-            generated_files = sorted(glob.glob(os.path.join(save_dir, 'sample_*.mp4')))
+            generated_files = sorted(glob.glob(os.path.join(save_dir, '*.mp4')))
             if len(generated_files) != len(prompts):
                 logging.error(f"Number of generated files ({len(generated_files)}) does not match number of prompts ({len(prompts)})")
                 return jsonify({'message': 'Mismatch in number of generated files and prompts'}), 500
