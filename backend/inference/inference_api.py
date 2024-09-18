@@ -56,7 +56,7 @@ def generate_image():
                 f.write(prompt + '\n')
 
         # Run inference cmd with all prompts
-        cmd_list = get_cmd_list(config_file, prompts, save_dir)
+        cmd_list = get_cmd_list(config_file)
         result = subprocess.run(cmd_list, capture_output=True, text=True)
         logging.debug(f"Command output: {result.stdout}")  
         logging.error(f"Command error output: {result.stderr}")
