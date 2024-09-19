@@ -8,6 +8,11 @@ else
     exit 1
 fi
 
+# Variables
+OPEN_SORA_REPO="https://github.com/hpcaitech/Open-Sora.git"
+IMAGE_EVAL_REPO="https://github.com/LambdaLabsML/text2vid-viewer.git"
+
+
 # Function to handle errors
 handle_error() {
     echo "Error occurred in script at line: $1"
@@ -33,16 +38,24 @@ else
     echo "No containers to remove"
 fi
 
-# Check if the opensora image exists
-model_image_id=$(sudo docker images -q opensora:latest)
-if [ -z "$model_image_id" ]; then
-    echo "opensora:latest image not found. Building the image..."
-    # Assume you have already cloned Open-Sora repository and patched ckpt_utils.py
-    cd Open-Sora
-    sudo docker build -t opensora . || { echo "Failed to build opensora Docker image"; exit 1; }
-else
-    echo "opensora:latest image found."
+# Clone OpenSora repository
+echo "Cloning OpenSora repository..."
+if [ -d "Open-Sora" ]; then
+    echo "Removing existing Open-Sora directory..."
+    rm -rf Open-Sora
 fi
+git clone $OPEN_SORA_REPO || { echo "Failed to clone OpenSora repository"; exit 1; }
+
+# Replace ckpt_utils.py with the patched version
+echo "Patching ckpt_utils.py..."
+PATCH_URL="https://raw.githubusercontent.com/LambdaLabsML/text2vid-viewer/main/backend/ckpt_utils_patch.py"
+PATCH_FILE="Open-Sora/opensora/utils/ckpt_utils.py"
+# Download the patched file and replace the original ckpt_utils.py
+curl -o $PATCH_FILE $PATCH_URL || { echo "Failed to download the patch for ckpt_utils.py"; exit 1; }
+
+cd Open-Sora
+echo "Building opensora Docker image..."
+sudo docker build -t opensora -f Dockerfile . || { echo "Failed to build opensora Docker image"; exit 1; }
 
 # Build the inference server image with the specific model name
 echo "Building opensora-inference Docker image..."
