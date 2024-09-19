@@ -96,7 +96,7 @@ if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^opensora-inference$"; th
 fi
 
 # Run container opensora-inference with environment variables
-docker run --rm \
+sudo docker run --rm \
   --env-file /home/ubuntu/text2vid-viewer/.env \
   -v /home/ubuntu/data:/data \  # Mount the data directory
   -v ${PROMPT_PATH}:/app/prompts.txt \  # Mount the prompts file
