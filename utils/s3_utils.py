@@ -19,8 +19,8 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
     # Create an S3 client
     s3_client = boto3.client('s3',
         region_name='us-east-1',
-        aws_access_key_id=os.environ["AWS_ACCESS_KEY"],
-        aws_secret_access_key=os.environ["AWS_SECRET_KEY"])
+        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"])
 
     try:
         # Upload the file
@@ -51,8 +51,8 @@ def list_s3_bucket_items(bucket_name):
     # Create an S3 client
     s3_client = boto3.client('s3',
         region_name='us-east-1',
-        aws_access_key_id=os.environ["AWS_ACCESS_KEY"],
-        aws_secret_access_key=os.environ["AWS_SECRET_KEY"])
+        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"])
 
     # List to store all object keys
     object_keys = []
@@ -66,7 +66,7 @@ def list_s3_bucket_items(bucket_name):
             if 'Contents' in page:
                 for obj in page['Contents']:
                     object_keys.append(obj['Key'])
-                    print(obj['Key'])  # Print each object's key
+                    #print(obj['Key'])  # Print each object's key
 
     except Exception as e:
         print(f"An error occurred: {e}")

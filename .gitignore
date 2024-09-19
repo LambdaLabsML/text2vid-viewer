@@ -1,2 +1,5 @@
 backend/inference/.env
 frontend/db.csv
+
+*/__init__.py
+*/__pycache__/

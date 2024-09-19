@@ -1,5 +1,5 @@
 from pathlib import Path
-from utils.refresh_db import update_csv
+from s3_utils import update_csv
 
 
 def main():
@@ -11,5 +11,5 @@ def main():
     update_csv(csv_fpath=str(csv_fpath))
 
 if __name__ == "__main__":
-    
+
     main()
