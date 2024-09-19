@@ -13,13 +13,12 @@ logging.basicConfig(filename='/app/logs/inference.log',
 logger = logging.getLogger(__name__)
 
 
-def get_cmd_list(config_file, save_dir, prompt_path):
+def get_cmd_list(config_file):
     """Prepare the command list for image generation."""
     cmd = [
-        'python', 'scripts/inference.py',
-        config_file,
-        '--save-dir', save_dir,
-        '--prompt-path', prompt_path,
+        'python', 'scripts/inference.py', config_file,
+        '--save-dir', "/data",
+        '--prompt-path', "/data/prompts.txt",
         '--prompt-as-path']
 
     logging.debug(f"Running command: {' '.join(cmd)}")
@@ -81,10 +80,8 @@ def main():
     args = parser.parse_args()
 
     try:
-        save_dir = os.environ.get('SAVE_DIR', '/data')
-
         # Remove existing files with the pattern `*.mp4` in the save directory
-        for file_path in glob.glob(os.path.join(save_dir, '*.mp4')):
+        for file_path in glob.glob(os.path.join("/data", '*.mp4')):
             os.remove(file_path)
             logging.debug(f"Removed file: {file_path}")
 
@@ -94,13 +91,13 @@ def main():
             raise ValueError(f"Config file for model {args.model} does not exist: {config_file}")
 
         # Run inference command with the provided prompt path
-        cmd_list = get_cmd_list(config_file, save_dir, "/app/data/prompts.txt")
+        cmd_list = get_cmd_list(config_file)
         result = subprocess.run(cmd_list, capture_output=True, text=True)
         logging.debug(f"Command output: {result.stdout}")
         logging.error(f"Command error output: {result.stderr}")
 
         if result.returncode == 0:
-            generated_files = glob.glob(os.path.join(save_dir, '*.mp4'))
+            generated_files = glob.glob(os.path.join("/data", '*.mp4'))
             for generated_file_path in generated_files:
                 prompt = os.path.basename(generated_file_path).split('.mp4')[0]
                 bucket_name = "text2videoviewer"
