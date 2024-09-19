@@ -59,7 +59,7 @@ sudo docker build -t opensora -f Dockerfile . || { echo "Failed to build opensor
 
 # Build the inference server image with the specific model name
 echo "Building opensora-inference Docker image..."
-cd ../text2vid-viewer/backend/local
+cd /home/ubuntu/text2vid-viewer/backend/local
 sudo docker build --no-cache -t opensora-inference . || { echo "Failed to build opensora-inference Docker image"; exit 1; }
 
 # Check images are built
