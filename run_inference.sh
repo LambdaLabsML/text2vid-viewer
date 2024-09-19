@@ -23,6 +23,7 @@ if [ ! -f backend/configs/$MODEL.py ]; then
 fi
 
 # Check prompt file exists
+PROMPT_PATH="backend/prompts.txt"
 if [ ! -f $PROMPT_PATH ]; then
     echo "Prompt file not found!"
     exit 1
