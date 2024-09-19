@@ -49,7 +49,7 @@ git clone $IMAGE_EVAL_REPO || { echo "Failed to clone text2vid-viewer repository
 
 # Move .env to the build context directory (assuming text2vid-viewer is the context)
 echo "Moving .env file to the build context..."
-mv /tmp/.env /home/ubuntu/text2vid-viewer/backend/.env || { echo "Failed to move .env file to build context"; exit 1; }
+mv /tmp/.env /home/ubuntu/text2vid-viewer/.env || { echo "Failed to move .env file to build context"; exit 1; }
 
 
 # Check if the specific model image exists
@@ -111,7 +111,7 @@ fi
 # Run container opensora_api with environment variables
 sudo docker run -d \
            -p 5000:5000 \
-           --env-file /home/ubuntu/text2vid-viewer/backend/.env \
+           --env-file /home/ubuntu/text2vid-viewer/.env \
            -v /home/ubuntu/data:/data \
            -v /home/ubuntu/logs:/app/logs \
            --name opensora_api \
