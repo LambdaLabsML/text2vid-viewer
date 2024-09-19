@@ -15,7 +15,7 @@ COPY local/inference.py /app/inference.py
 COPY /configs/ /app/custom_configs/
 
 # Copy the prompt file
-COPY prompts.txt /data/prompts.txt
+COPY prompts.txt /app/prompts.txt
 
 # Run the inference script with model and prompt-path arguments
 ENTRYPOINT ["python", "/app/inference.py"]

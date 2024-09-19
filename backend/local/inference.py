@@ -18,7 +18,7 @@ def get_cmd_list(config_file):
     cmd = [
         'python', 'scripts/inference.py', config_file,
         '--save-dir', "/data",
-        '--prompt-path', "/data/prompts.txt",
+        '--prompt-path', "/app/prompts.txt",
         '--prompt-as-path']
 
     logging.debug(f"Running command: {' '.join(cmd)}")
