@@ -23,7 +23,7 @@ done
 
 # Check model has a valid config file
 if [ ! -f backend/configs/$MODEL.py ]; then
-    echo "Model config file not found!"
+    echo "Model config file not found at backend/configs/${$MODEL}.py"
     exit 1
 fi
 
@@ -32,6 +32,11 @@ if [ ! -f $PROMPT_PATH ]; then
     echo "Prompt file not found!"
     exit 1
 fi
+
+# Run opensora_api container
+/bin/bash backend/local/deploy.sh
+
+
 
 # Run inference
 docker exec -it opensora_api python3 -m opensora.inference.run \

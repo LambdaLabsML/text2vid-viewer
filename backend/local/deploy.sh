@@ -45,9 +45,9 @@ else
 fi
 
 # Build the inference server image with the specific model name
-echo "Building opensora_api Docker image..."
-cd ../text2vid-viewer/backend/inference
-sudo docker build --no-cache -t opensora_api . || { echo "Failed to build opensora_api Docker image"; exit 1; }
+echo "Building opensora-inference Docker image..."
+cd ../text2vid-viewer/backend/local
+sudo docker build --no-cache -t opensora-inference . || { echo "Failed to build opensora-inference Docker image"; exit 1; }
 
 # Check images are built
 echo ""
@@ -56,19 +56,19 @@ sudo docker images
 echo ""
 
 # Run the inference server with the specific model name
-echo "Running opensora_api inference server..."
-if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^opensora_api$"; then
-    sudo docker rm -f opensora_api || { echo "Failed to remove existing opensora_api Docker container"; exit 1; }
+echo "Running opensora-inference container..."
+if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^opensora-inference$"; then
+    sudo docker rm -f opensora-inference || { echo "Failed to remove existing opensora-inference Docker container"; exit 1; }
 fi
 
-# Run container opensora_api with environment variables
-sudo docker run -d \
-           -p 5000:5000 \
-           --env-file .env \
-           -v $DATA_DIR:/data \
-           -v $LOGS_DIR:/app/logs \
-           --name opensora_api \
-           --gpus all \
-           opensora_api:latest
+# Run container opensora-inference with environment variables
+docker run --rm \
+  --env-file .env \
+  -v $(pwd)/data:/data \  # Mount the data directory
+  -v $(pwd)/prompts.txt:/app/prompts.txt \  # Mount the prompts file
+  -v $(pwd)/logs:/app/logs \  # Mount the logs directory
+  opensora-inference \
+  --model your_model_name \
+  --prompt-path /app/prompts.txt
 
 echo "Deployment script completed successfully."

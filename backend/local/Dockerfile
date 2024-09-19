@@ -8,7 +8,7 @@ RUN mkdir -p /app/logs && chmod -R 777 /app/logs
 ENV PYTHONUNBUFFERED=1
 
 # Copy the inference script
-COPY inference_script.py /app/inference_script.py
+COPY inference.py /app/inference.py
 
 # Copy the entire config directory
 COPY configs/ /app/custom_configs/
@@ -17,4 +17,4 @@ COPY configs/ /app/custom_configs/
 ENV SAVE_DIR="/data"
 
 # Run the inference script with model and prompt-path arguments
-ENTRYPOINT ["python", "/app/inference_script.py"]
+ENTRYPOINT ["python", "/app/inference.py"]
