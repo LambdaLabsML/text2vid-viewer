@@ -8,7 +8,6 @@ else
     exit 1
 fi
 
-
 # Variables
 OPEN_SORA_REPO="https://github.com/hpcaitech/Open-Sora.git"
 IMAGE_EVAL_REPO="https://github.com/LambdaLabsML/text2vid-viewer.git"
@@ -50,7 +49,7 @@ git clone $IMAGE_EVAL_REPO || { echo "Failed to clone text2vid-viewer repository
 
 # Move .env to the build context directory (assuming text2vid-viewer is the context)
 echo "Moving .env file to the build context..."
-mv /tmp/.env /home/ubuntu/text2vid-viewer/backend/inference/.env || { echo "Failed to move .env file to build context"; exit 1; }
+mv /tmp/.env /home/ubuntu/text2vid-viewer/backend/.env || { echo "Failed to move .env file to build context"; exit 1; }
 
 
 # Check if the specific model image exists
@@ -82,7 +81,7 @@ else
 
     # Replace ckpt_utils.py with the patched version
     echo "Patching ckpt_utils.py..."
-    PATCH_URL="https://raw.githubusercontent.com/LambdaLabsML/text2vid-viewer/main/backend/inference/ckpt_utils_patch.py"
+    PATCH_URL="https://raw.githubusercontent.com/LambdaLabsML/text2vid-viewer/main/backend/ckpt_utils_patch.py"
     PATCH_FILE="Open-Sora/opensora/utils/ckpt_utils.py"
     # Download the patched file and replace the original ckpt_utils.py
     curl -o $PATCH_FILE $PATCH_URL || { echo "Failed to download the patch for ckpt_utils.py"; exit 1; }
@@ -94,7 +93,7 @@ fi
 
 # Build the inference server image with the specific model name
 echo "Building opensora_api Docker image..."
-cd /home/ubuntu/text2vid-viewer/backend/inference
+cd /home/ubuntu/text2vid-viewer/backend
 sudo docker build --no-cache -t opensora_api . || { echo "Failed to build opensora_api Docker image"; exit 1; }
 
 # Check images are built
@@ -112,12 +111,14 @@ fi
 # Run container opensora_api with environment variables
 sudo docker run -d \
            -p 5000:5000 \
-           --env-file /home/ubuntu/text2vid-viewer/backend/inference/.env \
+           --env-file /home/ubuntu/text2vid-viewer/backend/.env \
            -v /home/ubuntu/data:/data \
            -v /home/ubuntu/logs:/app/logs \
            --name opensora_api \
            --gpus all \
            opensora_api:latest
 
+
+# Run prompts
 
 echo "Deployment script completed successfully."

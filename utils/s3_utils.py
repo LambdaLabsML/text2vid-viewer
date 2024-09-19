@@ -97,7 +97,7 @@ if __name__ == "__main__":
     # bucket_name = "text2videoviewer"
     # video_base_path = "/home/eole/Desktop/lambda-opensora-speedrun"
     # model = "lambda-speedrun"
-    # prompt_fpath = "/home/eole/Workspaces/text2vid-viewer/backend/inference/prompts.txt"
+    # prompt_fpath = "/home/eole/Workspaces/text2vid-viewer/backend/prompts.txt"
 
     # with open(prompt_fpath, "r") as f:
     #     prompts = [l.strip() for l in f.readlines()]

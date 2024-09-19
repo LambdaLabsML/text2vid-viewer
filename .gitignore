@@ -1,4 +1,4 @@
-backend/inference/.env
+.env
 frontend/db.csv
 
 */__init__.py
