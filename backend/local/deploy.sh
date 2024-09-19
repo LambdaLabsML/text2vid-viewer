@@ -60,23 +60,23 @@ else
 fi
 
 # Clone OpenSora repository if not exists
-if [ ! -d "$OPEN_SORA_DIR" ]; then
-    echo "Cloning OpenSora repository..."
-    git clone $OPEN_SORA_REPO || { echo "Failed to clone OpenSora repository"; exit 1; }
-else
-    echo "Open-Sora directory already exists. Skipping clone."
-fi
+# if [ ! -d "$OPEN_SORA_DIR" ]; then
+#     echo "Cloning OpenSora repository..."
+#     git clone $OPEN_SORA_REPO || { echo "Failed to clone OpenSora repository"; exit 1; }
+# else
+#     echo "Open-Sora directory already exists. Skipping clone."
+# fi
 
-# Replace ckpt_utils.py with the patched version
-echo "Patching ckpt_utils.py..."
-PATCH_URL="https://raw.githubusercontent.com/LambdaLabsML/text2vid-viewer/main/backend/ckpt_utils_patch.py"
-PATCH_FILE="$OPEN_SORA_DIR/opensora/utils/ckpt_utils.py"
-# Download the patched file and replace the original ckpt_utils.py
-curl -o $PATCH_FILE $PATCH_URL || { echo "Failed to download the patch for ckpt_utils.py"; exit 1; }
+# # Replace ckpt_utils.py with the patched version
+# echo "Patching ckpt_utils.py..."
+# PATCH_URL="https://raw.githubusercontent.com/LambdaLabsML/text2vid-viewer/main/backend/ckpt_utils_patch.py"
+# PATCH_FILE="$OPEN_SORA_DIR/opensora/utils/ckpt_utils.py"
+# # Download the patched file and replace the original ckpt_utils.py
+# curl -o $PATCH_FILE $PATCH_URL || { echo "Failed to download the patch for ckpt_utils.py"; exit 1; }
 
-cd $OPEN_SORA_DIR
-echo "Building opensora Docker image..."
-sudo docker build -t opensora -f Dockerfile . || { echo "Failed to build opensora Docker image"; exit 1; }
+# cd $OPEN_SORA_DIR
+# echo "Building opensora Docker image..."
+# sudo docker build -t opensora -f Dockerfile . || { echo "Failed to build opensora Docker image"; exit 1; }
 
 # Build the inference server image with the specific model name
 echo "Building opensora-inference Docker image..."
@@ -97,10 +97,10 @@ fi
 
 # Run container opensora-inference with environment variables
 docker run --rm \
-  --env-file .env \
-  -v $(pwd)/data:/data \  # Mount the data directory
+  --env-file /home/ubuntu/text2vid-viewer/.env \
+  -v /home/ubuntu/data:/data \  # Mount the data directory
   -v ${PROMPT_PATH}:/app/prompts.txt \  # Mount the prompts file
-  -v $(pwd)/logs:/app/logs \  # Mount the logs directory
+  -v /home/ubuntu/logs:/app/logs \  # Mount the logs directory
   opensora-inference \
   --model ${MODEL} \
   --prompt-path /app/prompts.txt
