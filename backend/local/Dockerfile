@@ -17,5 +17,8 @@ COPY /configs/ /app/custom_configs/
 # Set the environment variable for save directory
 ENV SAVE_DIR="/data"
 
+# Copy the prompt file
+COPY prompt.txt /app/data/prompt.txt
+
 # Run the inference script with model and prompt-path arguments
 ENTRYPOINT ["python", "/app/inference.py"]

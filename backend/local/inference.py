@@ -94,7 +94,7 @@ def main():
             raise ValueError(f"Config file for model {args.model} does not exist: {config_file}")
 
         # Run inference command with the provided prompt path
-        cmd_list = get_cmd_list(config_file, save_dir, args.prompt_path)
+        cmd_list = get_cmd_list(config_file, save_dir, "/app/data/prompts.txt")
         result = subprocess.run(cmd_list, capture_output=True, text=True)
         logging.debug(f"Command output: {result.stdout}")
         logging.error(f"Command error output: {result.stderr}")

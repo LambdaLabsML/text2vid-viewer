@@ -81,7 +81,7 @@ fi
 # Build the inference server image with the specific model name
 echo "Building opensora-inference Docker image..."
 cd /home/ubuntu/text2vid-viewer/backend
-sudo docker build --no-cache -t opensora-inference -f local/Dockerfile . || { echo "Failed to build opensora-inference Docker image"; exit 1; }
+sudo docker build -t opensora-inference -f local/Dockerfile . || { echo "Failed to build opensora-inference Docker image"; exit 1; }
 
 # Check images are built
 echo ""
@@ -116,10 +116,8 @@ fi
 sudo docker run --rm \
   --env-file /home/ubuntu/text2vid-viewer/.env \
   -v /home/ubuntu/data:/data \
-  -v prompts.txt:/app/prompts.txt \
   -v /home/ubuntu/logs:/app/logs \
   opensora-inference \
-  --model opensora-v1-2 \
-  --prompt-path /app/prompts.txt
+  --model opensora-v1-2
 
 echo "Deployment script completed successfully."

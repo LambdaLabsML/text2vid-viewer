@@ -28,7 +28,7 @@ HF_TOKEN=<your-hf-token>
 ### Run new generations
 
 ```bash
-/bin/bash generate.sh \
+/bin/bash run_inference.sh \
     --model <opensora-v1-2> \
     --prompt-path <prompts.txt>
 ```
