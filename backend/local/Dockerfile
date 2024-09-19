@@ -9,10 +9,10 @@ RUN mkdir -p /app/logs && chmod -R 777 /app/logs
 ENV PYTHONUNBUFFERED=1
 
 # Copy the inference script
-COPY inference.py /app/inference.py
+COPY local/inference.py /app/inference.py
 
 # Copy the entire config directory
-COPY ../configs/ /app/custom_configs/
+COPY /configs/ /app/custom_configs/
 
 # Set the environment variable for save directory
 ENV SAVE_DIR="/data"
