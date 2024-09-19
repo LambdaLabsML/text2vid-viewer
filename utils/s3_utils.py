@@ -4,8 +4,6 @@ from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from dotenv import load_dotenv
 import os
 
-load_dotenv("../backend/inference/.env")
-
 def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
     """
     Uploads a file to an S3 bucket.
@@ -81,7 +79,7 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
     for obj in all_objects:
         model = obj.split("/")[0]
         prompt = obj.split("/")[1].split(".")[0]
-        print(model, prompt)
+        #print(model, prompt)
         records.append({"model": model, "prompt": prompt, "object_name": obj})
     # Save as CSV
     df = pd.DataFrame(records)

@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Check that .env file exists
+if [ ! -f .env ]; then
+    echo ".env file not found in dir root!"
+    exit 1
+fi
+
+# Source the .env file
+export $(grep -v '^#' .env | xargs)
+echo "Sourced .env file"
+
 # Refresh db.csv
 echo "Refreshing db.csv..."
 cd utils
