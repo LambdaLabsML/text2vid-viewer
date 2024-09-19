@@ -1,5 +1,4 @@
-#FROM shivamsphn/opensora:latest
-FROM opensora:latest
+FROM shivamsphn/opensora:latest
 
 # Install necessary libraries
 RUN pip install boto3
