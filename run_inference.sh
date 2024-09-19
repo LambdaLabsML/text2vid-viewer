@@ -9,11 +9,6 @@ while [[ $# -gt 0 ]]; do
             shift
             shift
             ;;
-        --prompt-path)
-            PROMPT_PATH="$2"
-            shift
-            shift
-            ;;
         *)
             echo "Unknown argument: $1"
             exit 1
