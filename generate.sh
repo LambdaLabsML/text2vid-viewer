@@ -33,13 +33,8 @@ if [ ! -f $PROMPT_PATH ]; then
     exit 1
 fi
 
-# Run opensora_api container
+# Run opensora-inference
+echo "Running opensora-inference..."
 /bin/bash backend/local/deploy.sh
 
-
-
-# Run inference
-docker exec -it opensora_api python3 -m opensora.inference.run \
-    --model $MODEL \
-    --prompt-path $PROMPT_PATH
-
+echo "inference completed"
