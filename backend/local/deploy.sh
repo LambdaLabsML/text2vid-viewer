@@ -95,14 +95,31 @@ if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^opensora-inference$"; th
     sudo docker rm -f opensora-inference || { echo "Failed to remove existing opensora-inference Docker container"; exit 1; }
 fi
 
-# Run container opensora-inference with environment variables
-sudo docker run --rm \
+# Construct the docker run command
+DOCKER_RUN_CMD="sudo docker run --rm \
   --env-file /home/ubuntu/text2vid-viewer/.env \
   -v /home/ubuntu/data:/data \  # Mount the data directory
   -v ${PROMPT_PATH}:/app/prompts.txt \  # Mount the prompts file
   -v /home/ubuntu/logs:/app/logs \  # Mount the logs directory
   opensora-inference \
   --model ${MODEL} \
-  --prompt-path /app/prompts.txt
+  --prompt-path /app/prompts.txt"
+
+# Echo the constructed command
+echo "Running the following command:"
+echo "$DOCKER_RUN_CMD"
+
+# Execute the command
+eval "$DOCKER_RUN_CMD"
+
+# # Run container opensora-inference with environment variables
+# sudo docker run --rm \
+#   --env-file /home/ubuntu/text2vid-viewer/.env \
+#   -v /home/ubuntu/data:/data \  # Mount the data directory
+#   -v ${PROMPT_PATH}:/app/prompts.txt \  # Mount the prompts file
+#   -v /home/ubuntu/logs:/app/logs \  # Mount the logs directory
+#   opensora-inference \
+#   --model ${MODEL} \
+#   --prompt-path /app/prompts.txt
 
 echo "Deployment script completed successfully."
