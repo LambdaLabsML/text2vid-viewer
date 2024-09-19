@@ -13,7 +13,7 @@ Prepare `.env` file:
 ```bash
 AWS_ACCESS_KEY_ID=<your-access-key-id>
 AWS_SECRET_ACCESS_KEY=<your-secret-access-key>
-AWS_DEFAULT_REGION=us-east-1
+AWS_REGION=us-east-1
 HF_TOKEN=<your-hf-token>
 ```
 

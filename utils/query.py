@@ -9,11 +9,13 @@ df = pd.read_csv(csv_fpath)
 
 prompts = df["prompt"].unique().tolist()
 
+prompts = ["close up shot of a yellow taxi turning left"]
+
 # Define the API endpoint
 api_url = "http://209.20.156.111:5000/generate"
 
 # Define the model to use
-model = "lambda-speedrun"  # or 'opensora-v1-1', 'opensora-v1-2'
+model = "lambda"  # or 'opensora-v1-1', 'opensora-v1-2'
 
 # Prepare the headers
 headers = {
@@ -28,6 +30,9 @@ payload = {
 
 # Convert payload to JSON string
 payload_json = json.dumps(payload)
+
+print(payload_json)
+print()
 
 # # Make the POST request
 response = requests.post(api_url, headers=headers, data=payload_json)

@@ -113,7 +113,7 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
     # Get AWS credentials from environment variables
     aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
     aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
-    aws_region = os.getenv('AWS_REGION')
+    aws_region = "us-east-1"
 
     # Initialize S3 client
     s3_client = boto3.client(
