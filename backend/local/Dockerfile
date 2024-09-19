@@ -14,9 +14,6 @@ COPY local/inference.py /app/inference.py
 # Copy the entire config directory
 COPY /configs/ /app/custom_configs/
 
-# Set the environment variable for save directory
-ENV SAVE_DIR="/data"
-
 # Copy the prompt file
 COPY prompts.txt /data/prompts.txt
 
