@@ -1,5 +1,26 @@
 #!/bin/bash
 
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --model)
+            MODEL="$2"
+            shift
+            shift
+            ;;
+        --prompt-path)
+            PROMPT_PATH="$2"
+            shift
+            shift
+            ;;
+        *)
+            echo "Unknown argument: $1"
+            exit 1
+            ;;
+    esac
+done
+
 # Load environment variables from the .env file
 if [ -f ".env" ]; then
     export $(cat .env | xargs)
@@ -11,7 +32,7 @@ fi
 # Variables
 OPEN_SORA_REPO="https://github.com/hpcaitech/Open-Sora.git"
 IMAGE_EVAL_REPO="https://github.com/LambdaLabsML/text2vid-viewer.git"
-
+OPEN_SORA_DIR="Open-Sora"
 
 # Function to handle errors
 handle_error() {
@@ -38,22 +59,22 @@ else
     echo "No containers to remove"
 fi
 
-# Clone OpenSora repository
-echo "Cloning OpenSora repository..."
-if [ -d "Open-Sora" ]; then
-    echo "Removing existing Open-Sora directory..."
-    rm -rf Open-Sora
+# Clone OpenSora repository if not exists
+if [ ! -d "$OPEN_SORA_DIR" ]; then
+    echo "Cloning OpenSora repository..."
+    git clone $OPEN_SORA_REPO || { echo "Failed to clone OpenSora repository"; exit 1; }
+else
+    echo "Open-Sora directory already exists. Skipping clone."
 fi
-git clone $OPEN_SORA_REPO || { echo "Failed to clone OpenSora repository"; exit 1; }
 
 # Replace ckpt_utils.py with the patched version
 echo "Patching ckpt_utils.py..."
 PATCH_URL="https://raw.githubusercontent.com/LambdaLabsML/text2vid-viewer/main/backend/ckpt_utils_patch.py"
-PATCH_FILE="Open-Sora/opensora/utils/ckpt_utils.py"
+PATCH_FILE="$OPEN_SORA_DIR/opensora/utils/ckpt_utils.py"
 # Download the patched file and replace the original ckpt_utils.py
 curl -o $PATCH_FILE $PATCH_URL || { echo "Failed to download the patch for ckpt_utils.py"; exit 1; }
 
-cd Open-Sora
+cd $OPEN_SORA_DIR
 echo "Building opensora Docker image..."
 sudo docker build -t opensora -f Dockerfile . || { echo "Failed to build opensora Docker image"; exit 1; }
 
@@ -78,10 +99,10 @@ fi
 docker run --rm \
   --env-file .env \
   -v $(pwd)/data:/data \  # Mount the data directory
-  -v $(pwd)/prompts.txt:/app/prompts.txt \  # Mount the prompts file
+  -v ${PROMPT_PATH}:/app/prompts.txt \  # Mount the prompts file
   -v $(pwd)/logs:/app/logs \  # Mount the logs directory
   opensora-inference \
-  --model your_model_name \
+  --model ${MODEL} \
   --prompt-path /app/prompts.txt
 
 echo "Deployment script completed successfully."

@@ -35,6 +35,6 @@ fi
 
 # Run opensora-inference
 echo "Running opensora-inference..."
-/bin/bash backend/local/deploy.sh
+/bin/bash backend/local/deploy.sh --model $MODEL --prompt-path $PROMPT_PATH
 
 echo "inference completed"
