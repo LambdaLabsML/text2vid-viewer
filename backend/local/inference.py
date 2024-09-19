@@ -76,7 +76,6 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
 def main():
     parser = argparse.ArgumentParser(description="Inference script for OpenSora")
     parser.add_argument('--model', type=str, required=True, help='Name of the model configuration to use')
-    parser.add_argument('--prompt-path', type=str, required=True, help='Path to the prompts file')
     args = parser.parse_args()
 
     try:
