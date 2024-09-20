@@ -62,13 +62,6 @@ else
     echo "Open-Sora directory already exists. Skipping clone."
 fi
 
-# # Replace ckpt_utils.py with the patched version
-# echo "Patching ckpt_utils.py..."
-# PATCH_URL="https://raw.githubusercontent.com/LambdaLabsML/text2vid-viewer/main/backend/ckpt_utils_patch.py"
-# PATCH_FILE="$OPEN_SORA_DIR/opensora/utils/ckpt_utils.py"
-# # Download the patched file and replace the original ckpt_utils.py
-# curl -o $PATCH_FILE $PATCH_URL || { echo "Failed to download the patch for ckpt_utils.py"; exit 1; }
-
 # Build the opensora-inference image
 echo "Building opensora-inference Docker image..."
 cd /home/ubuntu/text2vid-viewer/backend
