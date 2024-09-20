@@ -62,53 +62,26 @@ else
     echo "Open-Sora directory already exists. Skipping clone."
 fi
 
-# Replace ckpt_utils.py with the patched version
-echo "Patching ckpt_utils.py..."
-PATCH_URL="https://raw.githubusercontent.com/LambdaLabsML/text2vid-viewer/main/backend/ckpt_utils_patch.py"
-PATCH_FILE="$OPEN_SORA_DIR/opensora/utils/ckpt_utils.py"
-# Download the patched file and replace the original ckpt_utils.py
-curl -o $PATCH_FILE $PATCH_URL || { echo "Failed to download the patch for ckpt_utils.py"; exit 1; }
+# # Replace ckpt_utils.py with the patched version
+# echo "Patching ckpt_utils.py..."
+# PATCH_URL="https://raw.githubusercontent.com/LambdaLabsML/text2vid-viewer/main/backend/ckpt_utils_patch.py"
+# PATCH_FILE="$OPEN_SORA_DIR/opensora/utils/ckpt_utils.py"
+# # Download the patched file and replace the original ckpt_utils.py
+# curl -o $PATCH_FILE $PATCH_URL || { echo "Failed to download the patch for ckpt_utils.py"; exit 1; }
 
-# cd $OPEN_SORA_DIR
-# echo "Building opensora Docker image..."
-# sudo docker build -t opensora -f Dockerfile . || { echo "Failed to build opensora Docker image"; exit 1; }
-
-# Build the inference server image with the specific model name
+# Build the opensora-inference image
 echo "Building opensora-inference Docker image..."
 cd /home/ubuntu/text2vid-viewer/backend
 sudo docker build --no-cache -t opensora-inference -f local/Dockerfile . || { echo "Failed to build opensora-inference Docker image"; exit 1; }
 
-
-# Check images are built
-echo ""
-echo "Docker images:"
-sudo docker images
-echo ""
-
-# Run the inference server with the specific model name
+# Run container opensora-inference
+# Ensure any container with same name is removed first
 echo "Running opensora-inference container..."
 if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^opensora-inference$"; then
     sudo docker rm -f opensora-inference || { echo "Failed to remove existing opensora-inference Docker container"; exit 1; }
 fi
 
-# # Construct the docker run command
-# DOCKER_RUN_CMD="sudo docker run --rm \
-#   --env-file /home/ubuntu/text2vid-viewer/.env \
-#   -v /home/ubuntu/data:/data \  # Mount the data directory
-#   -v ${PROMPT_PATH}:/app/prompts.txt \  # Mount the prompts file
-#   -v /home/ubuntu/logs:/app/logs \  # Mount the logs directory
-#   opensora-inference \
-#   --model ${MODEL} \
-#   --prompt-path /app/prompts.txt"
-
-# # Echo the constructed command
-# echo "Running the following command:"
-# echo "$DOCKER_RUN_CMD"
-
-# # Execute the command
-# eval "$DOCKER_RUN_CMD"
-
-# # Run container opensora-inference with environment variables
+# Run the inference
 sudo docker run \
     --rm \
     --gpus all \
