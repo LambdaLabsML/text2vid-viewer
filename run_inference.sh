@@ -29,10 +29,12 @@ DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/local/deploy.sh"
 
 cd $ROOT_DIR
 
-# Check model has a valid config file
-if [ ! -f $MODEL_CONFIG ]; then
-    echo "Model config file not found at ${MODEL_CONFIG}"
-    exit 1
+# Check model has a valid config file (unless all models are selected)
+if [ "$MODEL" != "all" ]; then
+    if [ ! -f "$MODEL_CONFIG" ]; then
+        echo "Model config file not found at ${MODEL_CONFIG}"
+        exit 1
+    fi
 fi
 
 # Check prompt file exists
