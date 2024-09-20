@@ -108,11 +108,14 @@ fi
 # eval "$DOCKER_RUN_CMD"
 
 # # Run container opensora-inference with environment variables
-sudo docker run --rm \
-  --env-file /home/ubuntu/text2vid-viewer/.env \
-  -v /home/ubuntu/data:/data \
-  -v /home/ubuntu/logs:/app/logs \
-  opensora-inference \
-  --model opensora-v1-2
+sudo docker run \
+    --rm \
+    --gpus all \
+    --env-file /home/ubuntu/text2vid-viewer/.env \
+    -v /home/ubuntu/data:/data \
+    -v /home/ubuntu/logs:/app/logs \
+    --name opensora_inference \
+    opensora-inference:latest \
+    --model ${MODEL}
 
 echo "Deployment script completed successfully."

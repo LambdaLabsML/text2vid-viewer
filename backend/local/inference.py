@@ -21,7 +21,7 @@ def get_cmd_list(config_file):
         '--prompt-path', "/app/prompts.txt",
         '--prompt-as-path']
 
-    logging.debug(f"Running command: {' '.join(cmd)}")
+    logger.debug(f"Running command: {' '.join(cmd)}")
     return cmd
 
 
@@ -57,19 +57,19 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
 
         # Upload the file
         s3_client.upload_file(file_name, bucket_name, object_name, ExtraArgs=extra_args)
-        logging.debug(f"File {file_name} uploaded to {bucket_name}/{object_name}.")
+        logger.debug(f"File {file_name} uploaded to {bucket_name}/{object_name}.")
         return object_name
     except FileNotFoundError:
-        logging.debug(f"The file {file_name} was not found.")
+        logger.debug(f"The file {file_name} was not found.")
         return None
     except NoCredentialsError:
-        logging.debug("Credentials not available.")
+        logger.debug("Credentials not available.")
         return None
     except PartialCredentialsError:
-        logging.debug("Incomplete credentials provided.")
+        logger.debug("Incomplete credentials provided.")
         return None
     except Exception as e:
-        logging.debug(f"An error occurred: {e}")
+        logger.debug(f"An error occurred: {e}")
         return None
 
 
@@ -82,7 +82,7 @@ def main():
         # Remove existing files with the pattern `*.mp4` in the save directory
         for file_path in glob.glob(os.path.join("/data", '*.mp4')):
             os.remove(file_path)
-            logging.debug(f"Removed file: {file_path}")
+            logger.debug(f"Removed file: {file_path}")
 
         # Determine config file
         config_file = f'/app/custom_configs/{args.model}.py'
@@ -92,8 +92,8 @@ def main():
         # Run inference command with the provided prompt path
         cmd_list = get_cmd_list(config_file)
         result = subprocess.run(cmd_list, capture_output=True, text=True)
-        logging.debug(f"Command output: {result.stdout}")
-        logging.error(f"Command error output: {result.stderr}")
+        logger.debug(f"Command output: {result.stdout}")
+        logger.error(f"Command error output: {result.stderr}")
 
         if result.returncode == 0:
             generated_files = glob.glob(os.path.join("/data", '*.mp4'))
@@ -105,19 +105,24 @@ def main():
                 response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
 
                 if response is not None:
-                    logging.debug(f"File {generated_file_path} uploaded successfully as {response}.")
+                    logger.debug(f"File {generated_file_path} uploaded successfully as {response}.")
                     os.remove(generated_file_path)
-                    logging.debug(f"Removed file after sending: {generated_file_path}")
+                    logger.debug(f"Removed file after sending: {generated_file_path}")
                 else:
-                    logging.error(f"File upload failed for {generated_file_path}.")
+                    logger.error(f"File upload failed for {generated_file_path}.")
         else:
-            logging.error("Image generation failed")
+            logger.error("Image generation failed")
 
     except Exception as e:
-        logging.exception("An unexpected error occurred")
+        logger.exception("An unexpected error occurred")
 
 
 if __name__ == '__main__':
+
+    # Check script/inference.py exists
+    import os
+    if not os.path.exists('scripts/inference.py'):
+        logger.error("The script 'scripts/inference.py' does not exist.")
 
     logger.info("\n\n")
     logger.info("Starting the inference process")

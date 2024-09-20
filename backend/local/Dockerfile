@@ -11,7 +11,7 @@ ENV PYTHONUNBUFFERED=1
 COPY local/inference.py /app/inference.py
 
 # Copy the entire config directory
-COPY /configs/ /app/custom_configs/
+COPY configs/ /app/custom_configs/
 
 # Copy the prompt file
 COPY prompts.txt /app/prompts.txt
