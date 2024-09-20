@@ -17,10 +17,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Load environment variables from the .env file
-if [ -f ".env" ]; then
-    export $(cat .env | xargs)
+ENV_PATH="/home/ubuntu/text2vid-viewer/.env"
+if [ -f $ENV_PATH ]; then
+    export $(cat $ENV_PATH | xargs)
 else
-    echo ".env file not found!"
+    echo "file not found: $ENV_PATH"
     exit 1
 fi
 
@@ -117,5 +118,3 @@ sudo docker run \
     --name opensora_inference \
     opensora-inference:latest \
     --model ${MODEL}
-
-echo "Deployment script completed successfully."
