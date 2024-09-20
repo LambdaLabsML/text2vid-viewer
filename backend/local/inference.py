@@ -118,5 +118,7 @@ def main():
 
 
 if __name__ == '__main__':
+
+    logger.info("\n\n")
     logger.info("Starting the inference process")
     main()

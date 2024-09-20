@@ -9,11 +9,6 @@ while [[ $# -gt 0 ]]; do
             shift
             shift
             ;;
-        --prompt-path)
-            PROMPT_PATH="$2"
-            shift
-            shift
-            ;;
         *)
             echo "Unknown argument: $1"
             exit 1
@@ -61,8 +56,7 @@ fi
 
 # Clone OpenSora repository if not exists
 if [ ! -d "$OPEN_SORA_DIR" ]; then
-    echo "Cloning OpenSora repository..."
-    git clone $OPEN_SORA_REPO || { echo "Failed to clone OpenSora repository"; exit 1; }
+    git clone --quiet $OPEN_SORA_REPO > /dev/null || { echo "Failed to clone OpenSora repository"; exit 1; }
 else
     echo "Open-Sora directory already exists. Skipping clone."
 fi
