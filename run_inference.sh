@@ -19,7 +19,7 @@ done
 ROOT_DIR="/home/ubuntu"
 MODEL_CONFIG="/home/ubuntu/text2video-viewer/backend/configs/$MODEL.py"
 PROMPT_PATH="/home/ubuntu/text2video-viewer/backend/prompts.txt"
-DEPLOY_SCRIPT = "/home/ubuntu/text2video-viewer/backend/local/deploy.sh"
+DEPLOY_SCRIPT="/home/ubuntu/text2video-viewer/backend/local/deploy.sh"
 
 cd $ROOT_DIR
 
