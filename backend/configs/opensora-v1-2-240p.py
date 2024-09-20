@@ -1,4 +1,4 @@
-resolution = "720p"
+resolution = "240p"
 aspect_ratio = "9:16"
 num_frames = "4s"
 fps = 24

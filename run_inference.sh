@@ -1,13 +1,16 @@
 #!/bin/bash
 
+# Set default value for MODEL
+MODEL="all"
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
         --model)
             MODEL="$2"
-            shift
-            shift
+            shift # past argument
+            shift # past value
             ;;
         *)
             echo "Unknown argument: $1"
@@ -16,9 +19,12 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# Print the selected model for confirmation (optional)
+echo "Model set to: $MODEL"
+
 ROOT_DIR="/home/ubuntu"
 MODEL_CONFIG="/home/ubuntu/text2vid-viewer/backend/configs/$MODEL.py"
-PROMPT_PATH="/home/ubuntu/text2vid-viewer/backend/prompts.txt"
+PROMPT_PATH="/home/ubuntu/text2vid-viewer/prompts.txt"
 DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/local/deploy.sh"
 
 cd $ROOT_DIR

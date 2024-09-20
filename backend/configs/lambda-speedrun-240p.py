@@ -1,4 +1,4 @@
-resolution = "720p"
+resolution = "240p"
 aspect_ratio = "9:16"
 num_frames = "4s"
 fps = 24
@@ -13,13 +13,15 @@ dtype = "bf16"
 condition_frame_length = 5
 align = 5
 
+import os
+
 model = dict(
     type="STDiT3-XL/2",
-    from_pretrained="hpcai-tech/OpenSora-STDiT-v3",
+    from_pretrained="lambdalabs/OpenSora-STDiT-v3-Lambda-speedrun",
     qk_norm=True,
     enable_flash_attn=True,
     enable_layernorm_kernel=True,
-    force_huggingface=True,
+    force_huggingface=True
 )
 vae = dict(
     type="OpenSoraVAE_V1_2",

@@ -8,10 +8,10 @@ RUN mkdir -p /app/logs && chmod -R 777 /app/logs
 ENV PYTHONUNBUFFERED=1
 
 # Copy the inference script
-COPY local/inference.py /app/inference.py
+COPY backend/local/inference.py /app/inference.py
 
 # Copy the entire config directory
-COPY configs/ /app/custom_configs/
+COPY backend/configs/ /app/custom_configs/
 
 # Copy the prompt file
 COPY prompts.txt /app/prompts.txt

@@ -1,6 +1,6 @@
 resolution = "480p"
 aspect_ratio = "9:16"
-num_frames = 96
+num_frames = "4s"
 fps = 24
 frame_interval = 1
 save_fps = 24

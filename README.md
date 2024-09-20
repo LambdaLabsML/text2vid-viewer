@@ -2,6 +2,8 @@
 
 Visual comparison of T2V models on a set of prompts.  
 
+1. Setup
+
 Backend serves T2V models and generates video from user submitted prompts.
 Frontend renders model outputs for visual comparisons:
 * Model centric view: preview generations by batch of 6 prompts for a given model.
@@ -9,15 +11,14 @@ Frontend renders model outputs for visual comparisons:
 
 ## Usage guide
 
-1. Start a fresh GPU instance
+### Run inference
 
-2. Clone the repository:
+1. Clone the repository:
 ```bash
 git clone https://github.com/LambdaLabsML/text2vid-viewer.git
 ```
 
-3. Prepare environment variables file under repo root
-`/home/ubuntu/text2vid-viewer/.env`
+2. Prepare env variable file : `/home/ubuntu/text2vid-viewer/.env`
 ```
 AWS_ACCESS_KEY_ID=<your-access-key-id>
 AWS_SECRET_ACCESS_KEY=<your-secret-access-key>
@@ -25,47 +26,35 @@ AWS_REGION=us-east-1
 HF_TOKEN=<your-hf-token>
 ```
 
-### Run new generations
+4. Prepare prompt file: `/home/ubuntu/text2vid-viewer/prompts.txt`
 
+For example:
+```
+echo "A cat playing with a ball" > /home/ubuntu/text2vid-viewer/prompts.txt
+```
+Note: prompt file should have one prompt per line
+
+5. Prepare model config `/home/ubuntu/text2vid-viewer/backend/configs/<base-model>-<resolution>.py`
+
+6. Run inference
 ```bash
-/bin/bash run_inference.sh \
-    --model <opensora-v1-2> \
-    --prompt-path <prompts.txt>
+/bin/bash run_inference.sh --model <opensora-v1-2-720p>
 ```
 
 Note:
 * model should have a matching config file in `backend/configs/`
-* prompt file should have one prompt per line
-* generation takes 3min per prompt and has additional time when loading the model for the first time; log can be seen under the inference/logs folder
+* inference logs are piped to /home/ubuntu/logs/inference.log
+* outputs are directly exported to S3
 
-### Run text2video viewer web application
+### Run web application (frontend)
 
+1. Clone the repository not already done
 ```bash
-/bin/bash run_frontend.sh
+git clone https://github.com/LambdaLabsML/text2vid-viewer.git
 ```
 
-
-
-## Serve model and generate outputs
-
-
-
-
-Generate video from prompts and save to S3:
+2. Run the frontend
 ```bash
-curl -X POST http://209.20.156.111:5000/generate -H "Content-Type: application/json" -d '{
-        "model": "lambda",
-        "prompt": [
-            "A video of a cat playing with a ball",
-            "a beautiful waterfall",
-            "a woman dancing in the rain"
-            ]
-    }'
+python3 text2vid-viewer/run_frontend.py
 ```
-
-## Frontend
-
-Deploy frontend:
-```bash
-python3 -m frontend/http.server
-```
+Note: http://<instance_IP>:5000/ to access the frontend

@@ -85,44 +85,46 @@ def main():
             logger.debug(f"Removed file: {file_path}")
 
         # Determine config file
-        config_file = f'/app/custom_configs/{args.model}.py'
-        if not os.path.exists(config_file):
-            raise ValueError(f"Config file for model {args.model} does not exist: {config_file}")
-
-        # Run inference command with the provided prompt path
-        cmd_list = get_cmd_list(config_file)
-        result = subprocess.run(cmd_list, capture_output=True, text=True)
-        logger.debug(f"Command output: {result.stdout}")
-        logger.error(f"Command error output: {result.stderr}")
-
-        if result.returncode == 0:
-            generated_files = glob.glob(os.path.join("/data", '*.mp4'))
-            for generated_file_path in generated_files:
-                prompt = os.path.basename(generated_file_path).split('.mp4')[0]
-                bucket_name = "text2videoviewer"
-                object_name = f"{args.model}/{prompt}.mp4"
-                metadata = None
-                response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
-
-                if response is not None:
-                    logger.debug(f"File {generated_file_path} uploaded successfully as {response}.")
-                    os.remove(generated_file_path)
-                    logger.debug(f"Removed file after sending: {generated_file_path}")
-                else:
-                    logger.error(f"File upload failed for {generated_file_path}.")
+        config_files = []
+        if args.model == "all":
+            config_files = glob.glob('/app/custom_configs/*.py')
         else:
-            logger.error("Image generation failed")
+            config_file = f'/app/custom_configs/{args.model}.py'
+            if not os.path.exists(config_files[0]):
+                raise ValueError(f"Config file for model {args.model} does not exist: {config_file}")
+            config_files = [config_file]
+
+        # Loop over all config files to run inference for
+
+        for config_file in config_files:
+            cmd_list = get_cmd_list(config_file)
+            result = subprocess.run(cmd_list, capture_output=True, text=True)
+            logger.debug(f"Command output: {result.stdout}")
+            logger.error(f"Command error output: {result.stderr}")
+
+            if result.returncode == 0:
+                generated_files = glob.glob(os.path.join("/data", '*.mp4'))
+                for generated_file_path in generated_files:
+                    prompt = os.path.basename(generated_file_path).split('.mp4')[0]
+                    bucket_name = "text2videoviewer"
+                    object_name = f"{args.model}/{prompt}.mp4"
+                    metadata = None
+                    response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
+
+                    if response is not None:
+                        logger.debug(f"File {generated_file_path} uploaded successfully as {response}.")
+                        os.remove(generated_file_path)
+                        logger.debug(f"Removed file after sending: {generated_file_path}")
+                    else:
+                        logger.error(f"File upload failed for {generated_file_path}.")
+            else:
+                logger.error("Image generation failed")
 
     except Exception as e:
         logger.exception("An unexpected error occurred")
 
 
 if __name__ == '__main__':
-
-    # Check script/inference.py exists
-    import os
-    if not os.path.exists('scripts/inference.py'):
-        logger.error("The script 'scripts/inference.py' does not exist.")
 
     logger.info("\n\n")
     logger.info("Starting the inference process")
