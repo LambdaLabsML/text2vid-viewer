@@ -78,51 +78,52 @@ def main():
     parser.add_argument('--model', type=str, required=True, help='Name of the model configuration to use')
     args = parser.parse_args()
 
-    try:
-        # Remove existing files with the pattern `*.mp4` in the save directory
+    # Determine config file
+    config_files = []
+    if args.model == "all":
+        config_files = glob.glob('/app/custom_configs/*.py')
+    else:
+        print("args.model", args.model)
+        config_file = f'/app/custom_configs/{args.model}.py'
+        if not os.path.exists(config_files[0]):
+            raise ValueError(f"Config file for model {args.model} does not exist: {config_file}")
+        config_files = [config_file]
+
+    # Loop over all config files to run inference for
+    for config_file in config_files:
+
+        # Remove any existing files with the pattern `*.mp4` in the save directory
         for file_path in glob.glob(os.path.join("/data", '*.mp4')):
             os.remove(file_path)
             logger.debug(f"Removed file: {file_path}")
 
-        # Determine config file
-        config_files = []
-        if args.model == "all":
-            config_files = glob.glob('/app/custom_configs/*.py')
-        else:
-            print("args.model", args.model)
-            config_file = f'/app/custom_configs/{args.model}.py'
-            if not os.path.exists(config_files[0]):
-                raise ValueError(f"Config file for model {args.model} does not exist: {config_file}")
-            config_files = [config_file]
 
-        # Loop over all config files to run inference for
+        # Run inference for current model config
+        cmd_list = get_cmd_list(config_file)
+        result = subprocess.run(cmd_list, capture_output=True, text=True)
+        logger.debug(f"Command output: {result.stdout}")
+        logger.error(f"Command error output: {result.stderr}")
 
-        for config_file in config_files:
-            cmd_list = get_cmd_list(config_file)
-            result = subprocess.run(cmd_list, capture_output=True, text=True)
-            logger.debug(f"Command output: {result.stdout}")
-            logger.error(f"Command error output: {result.stderr}")
+        # Skip to next model if error occurred
+        if result.returncode != 0:
+            logger.error("Image generation failed")
+            continue
 
-            if result.returncode == 0:
-                generated_files = glob.glob(os.path.join("/data", '*.mp4'))
-                for generated_file_path in generated_files:
-                    prompt = os.path.basename(generated_file_path).split('.mp4')[0]
-                    bucket_name = "text2videoviewer"
-                    object_name = f"{args.model}/{prompt}.mp4"
-                    metadata = None
-                    response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
+        # Export to S3
+        generated_files = glob.glob(os.path.join("/data", '*.mp4'))
+        for generated_file_path in generated_files:
+            prompt = os.path.basename(generated_file_path).split('.mp4')[0]
+            bucket_name = "text2videoviewer"
+            object_name = f"{args.model}/{prompt}.mp4"
+            metadata = None
+            response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
 
-                    if response is not None:
-                        logger.debug(f"File {generated_file_path} uploaded successfully as {response}.")
-                        os.remove(generated_file_path)
-                        logger.debug(f"Removed file after sending: {generated_file_path}")
-                    else:
-                        logger.error(f"File upload failed for {generated_file_path}.")
+            if response is not None:
+                logger.debug(f"File {generated_file_path} uploaded successfully as {response}.")
+                os.remove(generated_file_path)
+                logger.debug(f"Removed file after sending: {generated_file_path}")
             else:
-                logger.error("Image generation failed")
-
-    except Exception as e:
-        logger.exception("An unexpected error occurred")
+                logger.error(f"File upload failed for {generated_file_path}.")
 
 
 if __name__ == '__main__':
