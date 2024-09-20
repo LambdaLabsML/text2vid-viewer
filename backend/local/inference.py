@@ -89,6 +89,7 @@ def main():
         if args.model == "all":
             config_files = glob.glob('/app/custom_configs/*.py')
         else:
+            print("args.model", args.model)
             config_file = f'/app/custom_configs/{args.model}.py'
             if not os.path.exists(config_files[0]):
                 raise ValueError(f"Config file for model {args.model} does not exist: {config_file}")
