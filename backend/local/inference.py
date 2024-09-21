@@ -104,8 +104,8 @@ def main():
     for config_file in config_files:
 
         # Set model name to current model (otherwise can be saved as 'all')
-        model = os.path.basename(config_file).split('.py')[0]
-
+        model = os.path.basename(config_file.strip()).split('.py')[0]
+        
         # Remove any existing files with the pattern `*.mp4` in the save directory
         for file_path in glob.glob(os.path.join("/data", '*.mp4')):
             os.remove(file_path)
