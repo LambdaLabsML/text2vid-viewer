@@ -10,12 +10,16 @@ fi
 export $(grep -v '^#' .env | xargs)
 echo "Sourced .env file"
 
+# Install dependencies
+python3 -m pip install boto3 python-dotenv || { echo "Failed to install dependencies"; exit 1; }
+echo "Installed dependencies"
+
 # Refresh db.csv
-echo "Refreshing db.csv..."
 cd utils
 python3 refresh_db.py || { echo "Failed to refresh db.csv"; exit 1; }
+echo "Refreshed db.csv"
 
 # Run frontend server
-echo "Running frontend server..."
+echo "Running frontend server"
 cd ../frontend
 python3 -m http.server
