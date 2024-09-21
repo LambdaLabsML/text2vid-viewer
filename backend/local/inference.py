@@ -92,6 +92,9 @@ def main():
     # Loop over all config files to run inference for
     for config_file in config_files:
 
+        # Set model name to current model (otherwise can be saved as 'all')
+        model = os.path.basename(config_file).split('.py')[0]
+
         # Remove any existing files with the pattern `*.mp4` in the save directory
         for file_path in glob.glob(os.path.join("/data", '*.mp4')):
             os.remove(file_path)
@@ -114,7 +117,7 @@ def main():
         for generated_file_path in generated_files:
             prompt = os.path.basename(generated_file_path).split('.mp4')[0]
             bucket_name = "text2videoviewer"
-            object_name = f"{args.model}/{prompt}.mp4"
+            object_name = f"{model}/{prompt}.mp4"
             metadata = None
             response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
 
