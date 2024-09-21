@@ -78,16 +78,27 @@ def main():
     parser.add_argument('--model', type=str, required=True, help='Name of the model configuration to use')
     args = parser.parse_args()
 
+    logger.debug(f"args.model: {args.model}")
+
     # Determine config file
     config_files = []
     if args.model == "all":
         config_files = glob.glob('/app/custom_configs/*.py')
     else:
-        print("args.model", args.model)
         config_file = f'/app/custom_configs/{args.model}.py'
         if not os.path.exists(config_files[0]):
             raise ValueError(f"Config file for model {args.model} does not exist: {config_file}")
         config_files = [config_file]
+
+    # Remove punctuation from prompts (comma, period, exclamation mark)
+    logger.debug(f"Remove punctuation from prompts")
+    with open("/app/prompts.txt", "r") as f:
+        prompts = f.readlines()
+    
+    prompts = [prompt.replace(",", "").replace(".", "").replace("!", "") for prompt in prompts]
+    with open("/app/prompts.txt", "w") as f:
+        for prompt in prompts:
+            f.write(prompt + "\ n")
 
     # Loop over all config files to run inference for
     for config_file in config_files:
