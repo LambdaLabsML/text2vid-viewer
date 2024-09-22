@@ -367,6 +367,14 @@
 
             const filteredVideos = videoData.filter(video => video.model === selectedModel);
             const paginatedVideos = paginate(filteredVideos, modelPage, itemsPerPage);
+
+            // Check if modelPage exceeds max page
+            const maxModelPage = Math.ceil(filteredVideos.length / itemsPerPage);
+            if (modelPage > maxModelPage && maxModelPage > 0) {
+                modelPage = maxModelPage;
+                return updateModelView();
+            }
+
             paginatedVideos.forEach(video => {
                 const gridItem = document.createElement("div");
                 gridItem.className = "grid-item";
@@ -396,7 +404,7 @@
 
             // Disable next/prev buttons if there are no more pages
             document.getElementById('model-prev-btn').disabled = modelPage <= 1;
-            document.getElementById('model-next-btn').disabled = modelPage * itemsPerPage >= filteredVideos.length;
+            document.getElementById('model-next-btn').disabled = modelPage >= Math.ceil(filteredVideos.length / itemsPerPage);
         }
 
         function updatePromptView() {
@@ -417,6 +425,13 @@
 
             const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt && selectedModels.includes(video.model));
             const paginatedVideos = paginate(filteredVideos, promptPage, itemsPerPage);
+
+            // Check if promptPage exceeds max page
+            const maxPromptPage = Math.ceil(filteredVideos.length / itemsPerPage);
+            if (promptPage > maxPromptPage && maxPromptPage > 0) {
+                promptPage = maxPromptPage;
+                return updatePromptView();
+            }
 
             paginatedVideos.forEach(video => {
                 const gridItem = document.createElement("div");
@@ -447,7 +462,7 @@
 
             // Disable next/prev buttons if there are no more pages
             document.getElementById('prompt-prev-btn').disabled = promptPage <= 1;
-            document.getElementById('prompt-next-btn').disabled = promptPage * itemsPerPage >= filteredVideos.length;
+            document.getElementById('prompt-next-btn').disabled = promptPage >= Math.ceil(filteredVideos.length / itemsPerPage);
         }
 
         function handlePromptModelCheckboxChange() {
