@@ -288,7 +288,7 @@
                 .then(data => {
                     parseCSVData(data);
                     populateDropdowns();
-                    updateModelView();
+                    updateModelView(); // Automatically render videos for the selected model when page loads
                 })
                 .catch(error => console.error('Error loading CSV:', error));
         }
@@ -317,14 +317,6 @@
                 modelSelect.appendChild(option);
             });
 
-            // Populate Prompt View prompt dropdown
-            prompts.forEach(prompt => {
-                const option = document.createElement("option");
-                option.value = prompt;
-                option.textContent = prompt;
-                promptSelect.appendChild(option);
-            });
-
             // Create checkboxes for models in Prompt View
             models.forEach(model => {
                 const label = document.createElement("label");
@@ -338,6 +330,14 @@
                 label.appendChild(document.createTextNode(model));
 
                 promptModelSelect.appendChild(label);
+            });
+
+            // Populate prompts dropdown
+            prompts.forEach(prompt => {
+                const option = document.createElement("option");
+                option.value = prompt;
+                option.textContent = prompt;
+                promptSelect.appendChild(option);
             });
         }
 
@@ -368,13 +368,6 @@
             const filteredVideos = videoData.filter(video => video.model === selectedModel);
             const paginatedVideos = paginate(filteredVideos, modelPage, itemsPerPage);
 
-            // Check if modelPage exceeds max page
-            const maxModelPage = Math.ceil(filteredVideos.length / itemsPerPage);
-            if (modelPage > maxModelPage && maxModelPage > 0) {
-                modelPage = maxModelPage;
-                return updateModelView();
-            }
-
             paginatedVideos.forEach(video => {
                 const gridItem = document.createElement("div");
                 gridItem.className = "grid-item";
@@ -388,7 +381,7 @@
                 videoElement.muted = true;
                 videoElement.autoplay = true;
                 videoElement.addEventListener('loadeddata', () => {
-                    videoContainer.style.backgroundColor = 'transparent';
+                    videoContainer.style.backgroundColor = 'transparent'; // Remove placeholder background after video loads
                 });
 
                 const promptLabel = document.createElement("p");
@@ -404,7 +397,7 @@
 
             // Disable next/prev buttons if there are no more pages
             document.getElementById('model-prev-btn').disabled = modelPage <= 1;
-            document.getElementById('model-next-btn').disabled = modelPage >= Math.ceil(filteredVideos.length / itemsPerPage);
+            document.getElementById('model-next-btn').disabled = modelPage * itemsPerPage >= filteredVideos.length;
         }
 
         function updatePromptView() {
@@ -425,14 +418,6 @@
 
             const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt && selectedModels.includes(video.model));
             const paginatedVideos = paginate(filteredVideos, promptPage, itemsPerPage);
-
-            // Check if promptPage exceeds max page
-            const maxPromptPage = Math.ceil(filteredVideos.length / itemsPerPage);
-            if (promptPage > maxPromptPage && maxPromptPage > 0) {
-                promptPage = maxPromptPage;
-                return updatePromptView();
-            }
-
             paginatedVideos.forEach(video => {
                 const gridItem = document.createElement("div");
                 gridItem.className = "grid-item";
@@ -462,7 +447,7 @@
 
             // Disable next/prev buttons if there are no more pages
             document.getElementById('prompt-prev-btn').disabled = promptPage <= 1;
-            document.getElementById('prompt-next-btn').disabled = promptPage >= Math.ceil(filteredVideos.length / itemsPerPage);
+            document.getElementById('prompt-next-btn').disabled = promptPage * itemsPerPage >= filteredVideos.length;
         }
 
         function handlePromptModelCheckboxChange() {
@@ -482,25 +467,11 @@
 
         function nextPage(view) {
             if (view === 'model') {
-                const selectedModel = document.getElementById("model-select").value;
-                const filteredVideos = videoData.filter(video => video.model === selectedModel);
-                const maxPage = Math.ceil(filteredVideos.length / itemsPerPage);
-
-                if (modelPage < maxPage) {
-                    modelPage++;
-                    updateModelView();
-                }
+                modelPage++;
+                updateModelView();
             } else if (view === 'prompt') {
-                const selectedPrompt = document.getElementById("prompt-select").value;
-                const selectedCheckboxes = document.querySelectorAll('input[name="prompt-model-checkbox"]:checked');
-                const selectedModels = Array.from(selectedCheckboxes).map(cb => cb.value);
-                const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt && selectedModels.includes(video.model));
-                const maxPage = Math.ceil(filteredVideos.length / itemsPerPage);
-
-                if (promptPage < maxPage) {
-                    promptPage++;
-                    updatePromptView();
-                }
+                promptPage++;
+                updatePromptView();
             }
         }
 
