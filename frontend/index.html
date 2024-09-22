@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-height, height=device-height, initial-scale=1.0">
     <title>Text2Vid Viewer</title>
     <style>
         /* Dark Mode Styling */
@@ -12,6 +12,8 @@
             color: #FFFFFF;
             margin: 0;
             padding: 0;
+            overflow: hidden; /* Prevent scrolling */
+            height: 100vh; /* Full viewport height */
         }
 
         .tab-buttons {
@@ -44,17 +46,20 @@
 
         .tab {
             display: none;
-            padding: 20px;
+            height: calc(100vh - 50px); /* Adjust based on tab-buttons height */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .active-tab {
-            display: block;
+            display: flex;
         }
 
         .selection-container {
-            max-width: 800px;
-            margin: 20px auto;
             text-align: center;
+            padding: 10px 0;
+            background-color: #121212;
         }
 
         .selection-container label {
@@ -93,12 +98,16 @@
             margin-right: 5px;
         }
 
+        .content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
         .grid {
-            max-width: 1200px;
-            margin: 20px auto;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
+            padding: 10px;
         }
 
         .grid-item {
@@ -132,7 +141,8 @@
 
         .pagination {
             text-align: center;
-            margin: 20px 0;
+            padding: 10px 0;
+            background-color: #121212;
         }
 
         .pagination button {
@@ -173,7 +183,17 @@
         }
 
         /* Responsive Design */
-        @media (max-width: 600px) {
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
             .tab-buttons button {
                 font-size: 14px;
                 padding: 10px;
@@ -221,7 +241,9 @@
             <label for="model-select">Choose a Model:</label>
             <select id="model-select" onchange="updateModelView()"></select>
         </div>
-        <div id="model-grid" class="grid"></div>
+        <div class="content">
+            <div id="model-grid" class="grid"></div>
+        </div>
         <div class="pagination">
             <button id="model-prev-btn" onclick="prevPage('model')">Previous</button>
             <span id="model-page-indicator">Page 1</span>
@@ -238,7 +260,9 @@
             <label>Choose up to 6 Models:</label>
             <div id="prompt-model-select" class="checkbox-group"></div>
         </div>
-        <div id="prompt-grid" class="grid"></div>
+        <div class="content">
+            <div id="prompt-grid" class="grid"></div>
+        </div>
         <div class="pagination">
             <button id="prompt-prev-btn" onclick="prevPage('prompt')">Previous</button>
             <span id="prompt-page-indicator">Page 1</span>
@@ -264,7 +288,7 @@
                 .then(data => {
                     parseCSVData(data);
                     populateDropdowns();
-                    updateModelView(); // Automatically render videos for the selected model when page loads
+                    updateModelView();
                 })
                 .catch(error => console.error('Error loading CSV:', error));
         }
