@@ -66,17 +66,6 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-
-        /* Checkbox styling */
-        #model-select label {
-            display: inline-block;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-
-        #model-select input[type="checkbox"] {
-            margin-right: 5px;
-        }
     </style>
 </head>
 <body>
@@ -87,8 +76,8 @@
 
     <!-- Model View Tab -->
     <div id="model-view" class="tab">
-        <label>Choose up to 6 Models:</label>
-        <div id="model-select"></div>
+        <label for="model-select">Choose a Model:</label>
+        <select id="model-select" onchange="updateModelView()"></select>
         <div id="model-grid" class="grid"></div>
         <div class="pagination">
             <button id="model-prev-btn" onclick="prevPage('model')">Previous</button>
@@ -127,7 +116,7 @@
                 .then(data => {
                     parseCSVData(data);
                     populateDropdowns();
-                    updateModelView(); // Automatically render videos for the selected models when page loads
+                    updateModelView(); // Automatically render videos for the selected model when page loads
                 })
                 .catch(error => console.error('Error loading CSV:', error));
         }
@@ -147,39 +136,19 @@
             const modelSelect = document.getElementById("model-select");
             const promptSelect = document.getElementById("prompt-select");
 
-            // Create checkboxes for models
             models.forEach(model => {
-                const label = document.createElement("label");
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.value = model;
-                checkbox.name = "model-checkbox";
-                checkbox.addEventListener('change', handleModelCheckboxChange);
-
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(model));
-
-                modelSelect.appendChild(label);
+                const option = document.createElement("option");
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
             });
 
-            // Populate prompts dropdown
             prompts.forEach(prompt => {
                 const option = document.createElement("option");
                 option.value = prompt;
                 option.textContent = prompt;
                 promptSelect.appendChild(option);
             });
-        }
-
-        function handleModelCheckboxChange() {
-            const selectedCheckboxes = document.querySelectorAll('input[name="model-checkbox"]:checked');
-            if (selectedCheckboxes.length > 6) {
-                // Deselect the checkbox
-                this.checked = false;
-                alert("You can select up to 6 models.");
-            }
-            modelPage = 1; // Reset to first page when selection changes
-            updateModelView();
         }
 
         function showTab(tabId) {
@@ -192,23 +161,12 @@
         }
 
         function updateModelView() {
-            const selectedCheckboxes = document.querySelectorAll('input[name="model-checkbox"]:checked');
-            const selectedModels = Array.from(selectedCheckboxes).map(cb => cb.value);
-
+            const selectedModel = document.getElementById("model-select").value;
             const modelGrid = document.getElementById("model-grid");
             modelGrid.innerHTML = ""; // Clear previous content
 
-            if (selectedModels.length === 0) {
-                modelGrid.innerHTML = "<p>Please select at least one model.</p>";
-                document.getElementById('model-prev-btn').disabled = true;
-                document.getElementById('model-next-btn').disabled = true;
-                document.getElementById('model-page-indicator').textContent = '';
-                return;
-            }
-
-            const filteredVideos = videoData.filter(video => selectedModels.includes(video.model));
+            const filteredVideos = videoData.filter(video => video.model === selectedModel);
             const paginatedVideos = paginate(filteredVideos, modelPage, itemsPerPage);
-
             paginatedVideos.forEach(video => {
                 const gridItem = document.createElement("div");
                 gridItem.className = "grid-item";
@@ -286,24 +244,11 @@
 
         function nextPage(view) {
             if (view === 'model') {
-                const selectedCheckboxes = document.querySelectorAll('input[name="model-checkbox"]:checked');
-                const selectedModels = Array.from(selectedCheckboxes).map(cb => cb.value);
-                const filteredVideos = videoData.filter(video => selectedModels.includes(video.model));
-                const maxPage = Math.ceil(filteredVideos.length / itemsPerPage);
-
-                if (modelPage < maxPage) {
-                    modelPage++;
-                    updateModelView();
-                }
+                modelPage++;
+                updateModelView();
             } else if (view === 'prompt') {
-                const selectedPrompt = document.getElementById("prompt-select").value;
-                const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt);
-                const maxPage = Math.ceil(filteredVideos.length / itemsPerPage);
-
-                if (promptPage < maxPage) {
-                    promptPage++;
-                    updatePromptView();
-                }
+                promptPage++;
+                updatePromptView();
             }
         }
 
