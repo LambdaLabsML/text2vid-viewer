@@ -5,114 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text2Vid Viewer</title>
     <style>
-        /* Dark Mode Styling */
+        /* Basic styling */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #FFFFFF;
-            margin: 0;
-            padding: 0;
-        }
-
-        .tab-buttons {
-            display: flex;
-            justify-content: center;
-            background-color: #1E1E1E;
-            padding: 10px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .tab-buttons button {
-            background-color: transparent;
-            border: none;
-            color: #FFFFFF;
-            font-size: 16px;
-            margin: 0 15px;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: color 0.3s, border-bottom 0.3s;
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab-buttons button:hover,
-        .tab-buttons button.active {
-            color: #1DB954;
-            border-bottom: 2px solid #1DB954;
+            font-family: Arial, sans-serif;
         }
 
         .tab {
             display: none;
-            padding: 20px;
+        }
+
+        .tab-buttons {
+            margin-bottom: 10px;
+        }
+
+        .tab-buttons button {
+            margin-right: 10px;
+            padding: 10px;
         }
 
         .active-tab {
             display: block;
         }
 
-        .selection-container {
-            max-width: 800px;
-            margin: 20px auto;
-            text-align: center;
-        }
-
-        .selection-container label {
-            font-size: 18px;
-            margin-right: 10px;
-        }
-
-        .selection-container select,
-        .selection-container input[type="checkbox"] {
-            background-color: #1E1E1E;
-            color: #FFFFFF;
-            border: 1px solid #333333;
-            padding: 5px;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .selection-container select {
-            width: 200px;
-        }
-
-        .selection-container .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        .checkbox-group label {
-            margin: 5px 15px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 5px;
-        }
-
         .grid {
-            max-width: 1200px;
-            margin: 20px auto;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
         }
 
         .grid-item {
-            background-color: #1E1E1E;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            text-align: center;
         }
 
         .video-container {
-            position: relative;
             width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            background-color: #2A2A2A;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            position: relative;
+            background-color: #e0e0e0; /* Placeholder background color */
         }
 
         .video-container video {
@@ -123,104 +52,43 @@
             height: 100%;
         }
 
-        .grid-item p {
-            margin: 10px;
-            font-size: 16px;
-            text-align: center;
-            color: #CCCCCC;
-        }
-
         .pagination {
+            margin-top: 20px;
             text-align: center;
-            margin: 20px 0;
         }
 
         .pagination button {
-            background-color: #1DB954;
-            border: none;
-            color: #FFFFFF;
-            padding: 10px 20px;
-            margin: 0 10px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            margin: 0 5px;
+            padding: 10px;
         }
 
-        .pagination button:disabled {
-            background-color: #3E3E3E;
+        .pagination button[disabled] {
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
-        .pagination button:hover:not(:disabled) {
-            background-color: #17A74B;
+        /* Checkbox styling for Prompt View */
+        #prompt-model-select label {
+            display: inline-block;
+            margin-right: 10px;
+            cursor: pointer;
         }
 
-        .pagination span {
-            font-size: 18px;
-            color: #CCCCCC;
-        }
-
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            background-color: #1E1E1E;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: #333333;
-            border-radius: 4px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .tab-buttons button {
-                font-size: 14px;
-                padding: 10px;
-                margin: 0 5px;
-            }
-
-            .selection-container label {
-                font-size: 16px;
-            }
-
-            .selection-container select {
-                width: 100%;
-            }
-
-            .checkbox-group label {
-                font-size: 14px;
-                margin: 5px;
-            }
-
-            .grid-item p {
-                font-size: 14px;
-            }
-
-            .pagination button {
-                padding: 8px 15px;
-                margin: 0 5px;
-                font-size: 14px;
-            }
-
-            .pagination span {
-                font-size: 16px;
-            }
+        #prompt-model-select input[type="checkbox"] {
+            margin-right: 5px;
         }
     </style>
 </head>
 <body>
     <div class="tab-buttons">
-        <button onclick="showTab('model-view')" id="model-tab-btn">Model View</button>
-        <button onclick="showTab('prompt-view')" id="prompt-tab-btn">Prompt View</button>
+        <button onclick="showTab('model-view')">Model View</button>
+        <button onclick="showTab('prompt-view')">Prompt View</button>
     </div>
 
     <!-- Model View Tab -->
     <div id="model-view" class="tab">
-        <div class="selection-container">
-            <label for="model-select">Choose a Model:</label>
-            <select id="model-select" onchange="updateModelView()"></select>
-        </div>
+        <label for="model-select">Choose a Model:</label>
+        <select id="model-select" onchange="updateModelView()"></select>
         <div id="model-grid" class="grid"></div>
         <div class="pagination">
             <button id="model-prev-btn" onclick="prevPage('model')">Previous</button>
@@ -231,13 +99,11 @@
 
     <!-- Prompt View Tab -->
     <div id="prompt-view" class="tab">
-        <div class="selection-container">
-            <label for="prompt-select">Choose a Prompt:</label>
-            <select id="prompt-select" onchange="updatePromptView()"></select>
-            <br>
-            <label>Choose up to 6 Models:</label>
-            <div id="prompt-model-select" class="checkbox-group"></div>
-        </div>
+        <label for="prompt-select">Choose a Prompt:</label>
+        <select id="prompt-select" onchange="updatePromptView()"></select>
+        <br>
+        <label>Choose up to 6 Models:</label>
+        <div id="prompt-model-select"></div>
         <div id="prompt-grid" class="grid"></div>
         <div class="pagination">
             <button id="prompt-prev-btn" onclick="prevPage('prompt')">Previous</button>
@@ -322,18 +188,8 @@
                 tab.classList.remove('active-tab');
             });
             document.getElementById(tabId).classList.add('active-tab');
-
-            // Update tab button styles
-            document.getElementById('model-tab-btn').classList.remove('active');
-            document.getElementById('prompt-tab-btn').classList.remove('active');
-            if (tabId === 'model-view') {
-                document.getElementById('model-tab-btn').classList.add('active');
-                updateModelView();
-            }
-            if (tabId === 'prompt-view') {
-                document.getElementById('prompt-tab-btn').classList.add('active');
-                updatePromptView();
-            }
+            if(tabId === 'model-view') updateModelView();
+            if(tabId === 'prompt-view') updatePromptView();
         }
 
         function updateModelView() {
@@ -356,7 +212,7 @@
                 videoElement.muted = true;
                 videoElement.autoplay = true;
                 videoElement.addEventListener('loadeddata', () => {
-                    videoContainer.style.backgroundColor = 'transparent';
+                    videoContainer.style.backgroundColor = 'transparent'; // Remove placeholder background after video loads
                 });
 
                 const promptLabel = document.createElement("p");
