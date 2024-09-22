@@ -2,130 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text2Vid Viewer</title>
     <style>
-        /* Reset and basic styling */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html, body {
-            height: 100%;
-            overflow: hidden;
-            background-color: #121212;
-            color: #ffffff;
+        /* Basic styling */
+        body {
             font-family: Arial, sans-serif;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .tab-buttons {
-            display: flex;
-            justify-content: center;
-            background-color: #1f1f1f;
-            flex: 0 0 auto;
-        }
-
-        .tab-buttons button {
-            flex: 1;
-            padding: 15px 0;
-            background-color: #1f1f1f;
-            border: none;
-            color: #ffffff;
-            cursor: pointer;
-            font-size: 16px;
-            outline: none;
-            transition: background-color 0.3s;
-        }
-
-        .tab-buttons button:hover,
-        .tab-buttons button.active {
-            background-color: #333333;
         }
 
         .tab {
             display: none;
-            flex: 1 1 auto;
-            overflow: hidden;
+        }
+
+        .tab-buttons {
+            margin-bottom: 10px;
+        }
+
+        .tab-buttons button {
+            margin-right: 10px;
             padding: 10px;
         }
 
         .active-tab {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        .controls label {
-            margin-right: 10px;
-        }
-
-        .controls select {
-            background-color: #1f1f1f;
-            color: #ffffff;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            outline: none;
-            margin-right: 20px;
-        }
-
-        #prompt-model-select {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        #prompt-model-select label {
-            margin-right: 10px;
-            cursor: pointer;
-        }
-
-        #prompt-model-select input[type="checkbox"] {
-            margin-right: 5px;
+            display: block;
         }
 
         .grid {
             display: grid;
-            flex: 1 1 auto;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            overflow-y: auto;
-            padding-bottom: 10px;
         }
 
         .grid-item {
             text-align: center;
-            background-color: #1f1f1f;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .grid-item p {
-            margin-top: 10px;
-            font-size: 14px;
         }
 
         .video-container {
             width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
             position: relative;
-            background-color: #2c2c2c;
-            border-radius: 8px;
-            overflow: hidden;
+            background-color: #e0e0e0; /* Placeholder background color */
         }
 
         .video-container video {
@@ -137,28 +53,13 @@
         }
 
         .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 0 0 auto;
-            margin-top: 10px;
+            margin-top: 20px;
+            text-align: center;
         }
 
         .pagination button {
             margin: 0 5px;
-            padding: 8px 16px;
-            background-color: #1f1f1f;
-            border: none;
-            color: #ffffff;
-            cursor: pointer;
-            font-size: 14px;
-            outline: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .pagination button:hover {
-            background-color: #333333;
+            padding: 10px;
         }
 
         .pagination button[disabled] {
@@ -166,48 +67,48 @@
             cursor: not-allowed;
         }
 
-        .pagination span {
-            font-size: 14px;
+        /* Checkbox styling for Prompt View */
+        #prompt-model-select label {
+            display: inline-block;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        #prompt-model-select input[type="checkbox"] {
+            margin-right: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="tab-buttons">
-            <button id="model-view-btn" onclick="showTab('model-view')" class="active">Model View</button>
-            <button id="prompt-view-btn" onclick="showTab('prompt-view')">Prompt View</button>
-        </div>
+    <div class="tab-buttons">
+        <button onclick="showTab('model-view')">Model View</button>
+        <button onclick="showTab('prompt-view')">Prompt View</button>
+    </div>
 
-        <!-- Model View Tab -->
-        <div id="model-view" class="tab active-tab">
-            <div class="controls">
-                <label for="model-select">Choose a Model:</label>
-                <select id="model-select" onchange="updateModelView()"></select>
-            </div>
-            <div id="model-grid" class="grid"></div>
-            <div class="pagination">
-                <button id="model-prev-btn" onclick="prevPage('model')">Previous</button>
-                <span id="model-page-indicator">Page 1</span>
-                <button id="model-next-btn" onclick="nextPage('model')">Next</button>
-            </div>
+    <!-- Model View Tab -->
+    <div id="model-view" class="tab">
+        <label for="model-select">Choose a Model:</label>
+        <select id="model-select" onchange="updateModelView()"></select>
+        <div id="model-grid" class="grid"></div>
+        <div class="pagination">
+            <button id="model-prev-btn" onclick="prevPage('model')">Previous</button>
+            <span id="model-page-indicator">Page 1</span>
+            <button id="model-next-btn" onclick="nextPage('model')">Next</button>
         </div>
+    </div>
 
-        <!-- Prompt View Tab -->
-        <div id="prompt-view" class="tab">
-            <div class="controls">
-                <label for="prompt-select">Choose a Prompt:</label>
-                <select id="prompt-select" onchange="updatePromptView()"></select>
-            </div>
-            <div class="controls">
-                <label>Choose up to 6 Models:</label>
-                <div id="prompt-model-select"></div>
-            </div>
-            <div id="prompt-grid" class="grid"></div>
-            <div class="pagination">
-                <button id="prompt-prev-btn" onclick="prevPage('prompt')">Previous</button>
-                <span id="prompt-page-indicator">Page 1</span>
-                <button id="prompt-next-btn" onclick="nextPage('prompt')">Next</button>
-            </div>
+    <!-- Prompt View Tab -->
+    <div id="prompt-view" class="tab">
+        <label for="prompt-select">Choose a Prompt:</label>
+        <select id="prompt-select" onchange="updatePromptView()"></select>
+        <br>
+        <label>Choose up to 6 Models:</label>
+        <div id="prompt-model-select"></div>
+        <div id="prompt-grid" class="grid"></div>
+        <div class="pagination">
+            <button id="prompt-prev-btn" onclick="prevPage('prompt')">Previous</button>
+            <span id="prompt-page-indicator">Page 1</span>
+            <button id="prompt-next-btn" onclick="nextPage('prompt')">Next</button>
         </div>
     </div>
 
@@ -287,20 +188,8 @@
                 tab.classList.remove('active-tab');
             });
             document.getElementById(tabId).classList.add('active-tab');
-
-            document.querySelectorAll('.tab-buttons button').forEach(button => {
-                button.classList.remove('active');
-            });
-            if (tabId === 'model-view') {
-                document.getElementById('model-view-btn').classList.add('active');
-                modelPage = 1; // Reset page number when switching tabs
-                updateModelView();
-            }
-            if (tabId === 'prompt-view') {
-                document.getElementById('prompt-view-btn').classList.add('active');
-                promptPage = 1; // Reset page number when switching tabs
-                updatePromptView();
-            }
+            if(tabId === 'model-view') updateModelView();
+            if(tabId === 'prompt-view') updatePromptView();
         }
 
         function updateModelView() {
