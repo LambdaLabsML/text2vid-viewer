@@ -317,6 +317,14 @@
                 modelSelect.appendChild(option);
             });
 
+            // Populate Prompt View prompt dropdown
+            prompts.forEach(prompt => {
+                const option = document.createElement("option");
+                option.value = prompt;
+                option.textContent = prompt;
+                promptSelect.appendChild(option);
+            });
+
             // Create checkboxes for models in Prompt View
             models.forEach(model => {
                 const label = document.createElement("label");
@@ -330,14 +338,6 @@
                 label.appendChild(document.createTextNode(model));
 
                 promptModelSelect.appendChild(label);
-            });
-
-            // Populate prompts dropdown
-            prompts.forEach(prompt => {
-                const option = document.createElement("option");
-                option.value = prompt;
-                option.textContent = prompt;
-                promptSelect.appendChild(option);
             });
         }
 
@@ -417,6 +417,7 @@
 
             const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt && selectedModels.includes(video.model));
             const paginatedVideos = paginate(filteredVideos, promptPage, itemsPerPage);
+
             paginatedVideos.forEach(video => {
                 const gridItem = document.createElement("div");
                 gridItem.className = "grid-item";
@@ -466,8 +467,14 @@
 
         function nextPage(view) {
             if (view === 'model') {
-                modelPage++;
-                updateModelView();
+                const selectedModel = document.getElementById("model-select").value;
+                const filteredVideos = videoData.filter(video => video.model === selectedModel);
+                const maxPage = Math.ceil(filteredVideos.length / itemsPerPage);
+
+                if (modelPage < maxPage) {
+                    modelPage++;
+                    updateModelView();
+                }
             } else if (view === 'prompt') {
                 const selectedPrompt = document.getElementById("prompt-select").value;
                 const selectedCheckboxes = document.querySelectorAll('input[name="prompt-model-checkbox"]:checked');
