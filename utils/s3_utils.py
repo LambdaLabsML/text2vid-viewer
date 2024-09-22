@@ -89,6 +89,9 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
 
 if __name__ == "__main__":
 
+    from dotenv import load_dotenv
+    load_dotenv("/home/eole/Workspaces/text2vid-viewer/.env")
+    rename_objects()
     
 
     #---------------------------
@@ -129,7 +132,7 @@ if __name__ == "__main__":
 
     # -------------------------------
     
-    update_csv(csv_fpath="/home/eole/Workspaces/text2vid-viewer/frontend/db.csv")
+    #update_csv(csv_fpath="/home/eole/Workspaces/text2vid-viewer/frontend/db.csv")
 
     # models = [
     #     "sora1.2-stdit-720p",
