@@ -57,4 +57,4 @@ git clone https://github.com/LambdaLabsML/text2vid-viewer.git
 ```bash
 python3 text2vid-viewer/run_frontend.sh
 ```
-Note: http://<instance_IP>:5000/ to access the frontend
+Note: http://<instance_IP>:8000/ to access the frontend
