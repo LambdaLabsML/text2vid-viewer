@@ -98,7 +98,7 @@ def main():
     prompts = [prompt.replace(",", "").replace(".", "").replace("!", "") for prompt in prompts]
     with open("/app/prompts.txt", "w") as f:
         for prompt in prompts:
-            f.write(prompt + "\ n")
+            f.write(prompt + "\n")
 
     # Loop over all config files to run inference for
     for config_file in config_files:
