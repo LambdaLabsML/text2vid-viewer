@@ -1,20 +1,37 @@
 # Use the official NVIDIA CUDA image with Ubuntu 20.04
 FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu20.04
 
-# Install necessary packages
+# Install Python 3.10
 RUN apt-get update && apt-get install -y \
+    software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y python3.10 python3.10-dev python3.10-distutils python3.10-venv && \
+    ln -sf /usr/bin/python3.10 /usr/bin/python3 && \
+    ln -sf /usr/bin/python3 /usr/bin/python
+
+# Install pip for Python 3.10
+RUN wget https://bootstrap.pypa.io/get-pip.py && \
+    python get-pip.py && \
+    rm get-pip.py
+
+# Install necessary packages
+RUN apt-get install -y \
     git \
-    python3 \
-    python3-pip \
-    wget
+    wget \
+    ninja-build
 
-# Set Python3 as default python
-RUN ln -s /usr/bin/python3 /usr/bin/python
-
-# Install PyTorch with CUDA 11.7 support
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
+# Install PyTorch with CUDA 11.7 support for Python 3.10
+RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cu117
 
 # Install other required Python packages
+RUN pip install packaging
+RUN pip install flash-attn --no-build-isolation
+RUN pip install -v --disable-pip-version-check --no-cache-dir --no-build-isolation \
+    --config-settings "--build-option=--cpp_ext" \
+    --config-settings "--build-option=--cuda_ext" \
+    git+https://github.com/NVIDIA/apex.git
+RUN pip install -U xformers --index-url https://download.pytorch.org/whl/cu121
 RUN pip install numpy tqdm Pillow boto3
 
 # Set the working directory
