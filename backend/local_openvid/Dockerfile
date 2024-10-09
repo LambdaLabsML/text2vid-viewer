@@ -59,6 +59,8 @@ WORKDIR /app
 # Clone the OpenVid-1M repository
 RUN git clone https://github.com/NJU-PCALab/OpenVid-1M.git /app/OpenVid-1M
 
+RUN pip install -r /app/OpenVid-1M/requirements.txt
+
 # Download the model weights
 RUN wget -P /app/OpenVid-1M https://huggingface.co/nkp37/OpenVid-1M/resolve/main/model_weights/STDiT-16×512×512.pt
 
@@ -80,3 +82,4 @@ WORKDIR /app
 
 # Run the inference script
 ENTRYPOINT ["python", "/app/inference.py"]
+# torchrun --standalone --nproc_per_node 1 scripts/inference.py --config configs/stdit/inference/16x1024x1024.py --ckpt-path STDiT-16x1024x1024.pt
