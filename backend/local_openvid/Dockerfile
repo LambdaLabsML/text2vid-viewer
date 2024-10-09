@@ -60,7 +60,7 @@ WORKDIR /app
 RUN git clone https://github.com/NJU-PCALab/OpenVid-1M.git /app/OpenVid-1M
 
 # Download the model weights
-RUN wget -P /app/OpenVid-1M https://your-model-weights-url/STDiT-16x1024x1024.pt
+RUN wget -P /app/OpenVid-1M https://huggingface.co/nkp37/OpenVid-1M/resolve/main/model_weights/STDiT-16×512×512.pt
 
 # Create the logs directory
 RUN mkdir -p /app/logs && chmod -R 777 /app/logs
