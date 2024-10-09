@@ -35,7 +35,7 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && \
     rm get-pip.py
 
 # Install PyTorch with CUDA 11.7 support for Python 3.10
-RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cu117
+RUN pip install torch torchvision
 
 # Install other required Python packages
 RUN pip install packaging
@@ -48,7 +48,7 @@ RUN git clone https://github.com/NVIDIA/apex.git /tmp/apex && \
     cd / && rm -rf /tmp/apex
 
 # Install xformers
-RUN pip install -U xformers --index-url https://download.pytorch.org/whl/cu117
+RUN pip install -U xformers --index-url https://download.pytorch.org/whl/cu121
 
 # Install additional Python packages
 RUN pip install numpy tqdm Pillow boto3
