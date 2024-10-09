@@ -23,29 +23,35 @@ done
 echo "Model set to: $MODEL"
 
 ROOT_DIR="/home/ubuntu"
-MODEL_CONFIG="/home/ubuntu/text2vid-viewer/backend/configs/$MODEL.py"
 PROMPT_PATH="/home/ubuntu/text2vid-viewer/prompts.txt"
-DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/local/deploy.sh"
 
 cd $ROOT_DIR
 
-# Check model has a valid config file (unless all models are selected)
-if [ "$MODEL" != "all" ]; then
-    if [ ! -f "$MODEL_CONFIG" ]; then
-        echo "Model config file not found at ${MODEL_CONFIG}"
-        exit 1
-    fi
-fi
-
 # Check prompt file exists
-if [ ! -f $PROMPT_PATH ]; then
-    echo "Prompt file not found!"
+if [ ! -f "$PROMPT_PATH" ]; then
+    echo "Prompt file not found at ${PROMPT_PATH}"
     exit 1
 fi
 
-# Run opensora-inference
-echo "Running opensora-inference..."
-cd /home/ubuntu
-/bin/bash ${DEPLOY_SCRIPT} --model $MODEL
+# Determine which deploy script to use based on the model
+if [ "$MODEL" == "openvid" ]; then
+    DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/local_openvid/deploy.sh"
+    echo "Using deploy script for openvid model: $DEPLOY_SCRIPT"
+else
+    DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/local/deploy.sh"
+    echo "Using deploy script for model: $MODEL"
+    # Check model has a valid config file (unless all models are selected)
+    MODEL_CONFIG="/home/ubuntu/text2vid-viewer/backend/configs/$MODEL.py"
+    if [ "$MODEL" != "all" ]; then
+        if [ ! -f "$MODEL_CONFIG" ]; then
+            echo "Model config file not found at ${MODEL_CONFIG}"
+            exit 1
+        fi
+    fi
+fi
 
-echo "inference completed"
+# Run the deploy script with the specified model
+echo "Running inference..."
+/bin/bash "${DEPLOY_SCRIPT}" --model "$MODEL"
+
+echo "Inference completed"

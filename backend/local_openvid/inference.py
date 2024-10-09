@@ -12,7 +12,6 @@ logging.basicConfig(filename='/app/logs/inference.log',
                     format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger = logging.getLogger(__name__)
 
-
 def get_cmd_list():
     """Prepare the command list for video generation."""
     cmd = [
@@ -27,7 +26,6 @@ def get_cmd_list():
     logger.debug(f"Running command: {' '.join(cmd)}")
     return cmd
 
-
 def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
     """
     Uploads a file to an S3 bucket.
@@ -37,22 +35,20 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
     :param object_name: S3 object name.
     :return: The S3 object name if the file was uploaded successfully, else None.
     """
-
-    # Create an S3 client
-    # Get AWS credentials from environment variables
-    aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
-    aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
-    aws_region = os.getenv('AWS_REGION', 'us-east-1')
-
-    # Initialize S3 client
-    s3_client = boto3.client(
-        's3',
-        region_name=aws_region,
-        aws_access_key_id=aws_access_key_id,
-        aws_secret_access_key=aws_secret_access_key
-    )
-
     try:
+        # Get AWS credentials from environment variables
+        aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+        aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+        aws_region = os.getenv('AWS_REGION', 'us-east-1')
+
+        # Initialize S3 client
+        s3_client = boto3.client(
+            's3',
+            region_name=aws_region,
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key
+        )
+
         # Prepare ExtraArgs
         extra_args = {}
         if metadata is not None:
@@ -63,22 +59,20 @@ def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
         logger.debug(f"File {file_name} uploaded to {bucket_name}/{object_name}.")
         return object_name
     except FileNotFoundError:
-        logger.debug(f"The file {file_name} was not found.")
+        logger.error(f"The file {file_name} was not found.")
         return None
     except NoCredentialsError:
-        logger.debug("Credentials not available.")
+        logger.error("AWS credentials not available.")
         return None
     except PartialCredentialsError:
-        logger.debug("Incomplete credentials provided.")
+        logger.error("Incomplete AWS credentials provided.")
         return None
     except Exception as e:
-        logger.debug(f"An error occurred: {e}")
+        logger.error(f"An error occurred while uploading to S3: {e}")
         return None
-
 
 def main():
     parser = argparse.ArgumentParser(description="Inference script for OpenVid-1M")
-    parser.add_argument('--model', type=str, required=False, help='(Unused) Name of the model configuration to use')
     args = parser.parse_args()
 
     # Remove punctuation from prompts
@@ -122,7 +116,6 @@ def main():
             logger.debug(f"Removed file after sending: {generated_file_path}")
         else:
             logger.error(f"File upload failed for {generated_file_path}.")
-
 
 if __name__ == '__main__':
     logger.info("\n\n")

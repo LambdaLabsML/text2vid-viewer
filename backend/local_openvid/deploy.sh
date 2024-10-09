@@ -18,8 +18,8 @@ done
 
 # Load environment variables from the .env file
 ENV_PATH="/home/ubuntu/text2vid-viewer/.env"
-if [ -f $ENV_PATH ]; then
-    export $(cat $ENV_PATH | xargs)
+if [ -f "$ENV_PATH" ]; then
+    export $(grep -v '^#' "$ENV_PATH" | xargs)
 else
     echo "File not found: $ENV_PATH"
     exit 1
@@ -27,7 +27,7 @@ fi
 
 # Variables
 OPENVID_REPO="https://github.com/NJU-PCALab/OpenVid-1M.git"
-OPENVID_DIR="OpenVid-1M"
+OPENVID_DIR="/home/ubuntu/text2vid-viewer/backend/local_openvid/OpenVid-1M"
 
 # Function to handle errors
 handle_error() {
@@ -40,10 +40,9 @@ trap 'handle_error $LINENO' ERR
 
 # Ensure required directories exist
 echo "Setting up /data and /logs directories..."
-DATA_DIR="/data"
-LOGS_DIR="/logs"
-sudo mkdir -p $DATA_DIR $LOGS_DIR
-sudo chown $USER:$USER $DATA_DIR $LOGS_DIR
+DATA_DIR="/home/ubuntu/data"
+LOGS_DIR="/home/ubuntu/logs"
+mkdir -p "$DATA_DIR" "$LOGS_DIR"
 
 # Remove all containers
 containers=$(sudo docker ps -qa)
@@ -54,17 +53,10 @@ else
     echo "No containers to remove"
 fi
 
-# Clone OpenVid-1M repository if not exists
-if [ ! -d "$OPENVID_DIR" ]; then
-    git clone --quiet $OPENVID_REPO > /dev/null || { echo "Failed to clone OpenVid-1M repository"; exit 1; }
-else
-    echo "OpenVid-1M directory already exists. Skipping clone."
-fi
-
 # Build the openvid-inference image
 echo "Building openvid-inference Docker image..."
 cd /home/ubuntu/text2vid-viewer
-sudo docker build --no-cache -t openvid-inference -f backend/local/Dockerfile . || { echo "Failed to build openvid-inference Docker image"; exit 1; }
+sudo docker build --no-cache -t openvid-inference -f backend/local_openvid/Dockerfile . || { echo "Failed to build openvid-inference Docker image"; exit 1; }
 
 # Run container openvid-inference
 # Ensure any container with same name is removed first
@@ -81,5 +73,4 @@ sudo docker run \
     -v /home/ubuntu/data:/data \
     -v /home/ubuntu/logs:/app/logs \
     --name openvid_inference \
-    openvid-inference:latest \
-    --model ${MODEL}
+    openvid-inference:latest
