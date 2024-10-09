@@ -41,10 +41,10 @@ RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/c
 RUN pip install packaging
 RUN pip install flash-attn --no-build-isolation
 
-# Install apex
+# Install apex with no build isolation
 RUN git clone https://github.com/NVIDIA/apex.git /tmp/apex && \
     cd /tmp/apex && \
-    pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" . && \
+    pip install -v --disable-pip-version-check --no-cache-dir --no-build-isolation --global-option="--cpp_ext" --global-option="--cuda_ext" . && \
     cd / && rm -rf /tmp/apex
 
 # Install xformers
