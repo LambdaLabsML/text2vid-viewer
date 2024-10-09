@@ -21,7 +21,9 @@ RUN apt-get update && \
         python3.10-venv \
         git \
         wget \
-        ninja-build && \
+        ninja-build \
+        build-essential \
+        libpython3.10-dev && \
     ln -sf /usr/bin/python3.10 /usr/bin/python3 && \
     ln -sf /usr/bin/python3 /usr/bin/python && \
     apt-get clean && \
@@ -38,11 +40,17 @@ RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/c
 # Install other required Python packages
 RUN pip install packaging
 RUN pip install flash-attn --no-build-isolation
-RUN pip install -v --disable-pip-version-check --no-cache-dir --no-build-isolation \
-    --config-settings "--build-option=--cpp_ext" \
-    --config-settings "--build-option=--cuda_ext" \
-    git+https://github.com/NVIDIA/apex.git
-RUN pip install -U xformers --index-url https://download.pytorch.org/whl/cu121
+
+# Install apex
+RUN git clone https://github.com/NVIDIA/apex.git /tmp/apex && \
+    cd /tmp/apex && \
+    pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" . && \
+    cd / && rm -rf /tmp/apex
+
+# Install xformers
+RUN pip install -U xformers --index-url https://download.pytorch.org/whl/cu117
+
+# Install additional Python packages
 RUN pip install numpy tqdm Pillow boto3
 
 # Set the working directory
