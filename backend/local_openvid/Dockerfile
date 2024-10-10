@@ -81,5 +81,6 @@ VOLUME ["/data"]
 WORKDIR /app
 
 # Run the inference script
-ENTRYPOINT ["python", "/app/inference.py"]
+#ENTRYPOINT ["python", "/app/inference.py"]
+ENTRYPOINT ["torchrun", "--standalone", "--nproc_per_node=1", "/app/OpenVid-1M/scripts/inference.py", "--config", "configs/stdit/inference/16x1024x1024.py", "--ckpt-path", "STDiT-16x1024x1024.pt", "--prompt-path", "/app/prompts.txt", "--save-dir", "/data"]
 # torchrun --standalone --nproc_per_node 1 scripts/inference.py --config configs/stdit/inference/16x1024x1024.py --ckpt-path STDiT-16x1024x1024.pt
