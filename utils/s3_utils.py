@@ -4,7 +4,7 @@ from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from dotenv import load_dotenv
 import os
 
-def upload_file_to_s3(file_name, bucket_name, object_name, metadata):
+def upload_file_to_s3(file_name, bucket_name, object_name, metadata={}):
     """
     Uploads a file to an S3 bucket.
 
