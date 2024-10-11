@@ -6,10 +6,6 @@ pip install -r requirements.txt
 # Patch the inference script
 cp /home/ubuntu/text2vid-viewer/backend/local_cog/inference.py /home/ubuntu/CogVideo/inference/inference.py
 
-# Create log and data dir
-mkdir -p /home/ubuntu/logs /home/ubuntu/data
-sudo chown ubuntu:ubuntu /home/ubuntu/data
-
 # Run inference
 python /home/ubuntu/CogVideo/inference/inference.py \
     --prompt_path /home/ubuntu/text2vid-viewer/prompts.txt \
