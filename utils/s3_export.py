@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 if __name__ == "__main__":
 
     from dotenv import load_dotenv
-    load_dotenv("/home/eole/Workspaces/text2vid-viewer/.env")
+    load_dotenv("/home/ubuntu/text2vid-viewer/.env")
 
     # Set log filename to /app/logs/inference.log if exists else /home/ubuntu/logs/inference.log
     log_filename = '/app/logs/inference.log' if os.path.exists('/app/logs') else '/home/ubuntu/logs/inference.log'

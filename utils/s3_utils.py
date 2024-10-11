@@ -90,8 +90,7 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
 if __name__ == "__main__":
 
     from dotenv import load_dotenv
-    load_dotenv("/home/eole/Workspaces/text2vid-viewer/.env")
-    rename_objects()
+    load_dotenv(".env")
     
 
     #---------------------------
