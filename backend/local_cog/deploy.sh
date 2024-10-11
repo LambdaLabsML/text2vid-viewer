@@ -8,6 +8,7 @@ cp /home/ubuntu/text2vid-viewer/backend/local_cog/inference.py /home/ubuntu/CogV
 
 # Create log and data dir
 mkdir -p /home/ubuntu/logs /home/ubuntu/data
+sudo chown ubuntu:ubuntu /home/ubuntu/data
 
 # Run inference
 python /home/ubuntu/CogVideo/inference/inference.py \
