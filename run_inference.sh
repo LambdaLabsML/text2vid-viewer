@@ -33,6 +33,21 @@ if [ ! -f "$PROMPT_PATH" ]; then
     exit 1
 fi
 
+
+# Load environment variables from the .env file
+ENV_PATH="/home/ubuntu/text2vid-viewer/.env"
+if [ -f $ENV_PATH ]; then
+    export $(cat $ENV_PATH | xargs)
+else
+    echo "file not found: $ENV_PATH"
+    exit 1
+fi
+
+
+# Install backend dependencies (that are common across models)
+pip install boto3 python-dotenv || { echo "Failed to install dependencies"; exit 1; }
+
+
 # Create log and data directories owned by ubuntu
 mkdir -p /home/ubuntu/logs /home/ubuntu/data
 
@@ -59,5 +74,9 @@ fi
 # Run the deploy script with the specified model
 echo "Running inference..."
 /bin/bash "${DEPLOY_SCRIPT}" --model "$MODEL"
+
+# Export generated videos to S3
+echo "Exporting videos to S3..."
+python /home/ubuntu/text2vid-viewer/utils/s3_export.py --model "$MODEL"
 
 echo "Inference completed"
