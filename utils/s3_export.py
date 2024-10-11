@@ -23,7 +23,7 @@ if __name__ == "__main__":
     model = args.model
 
     # Export to S3
-    generated_files = glob.glob(os.path.join("/data", '*.mp4'))
+    generated_files = glob.glob(os.path.join("/home/ubuntu/data", '*.mp4'))
     for generated_file_path in generated_files:
         prompt = os.path.basename(generated_file_path).split('.mp4')[0]
         bucket_name = "text2videoviewer"
