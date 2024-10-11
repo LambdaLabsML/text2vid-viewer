@@ -35,17 +35,6 @@ else
     echo "No containers to remove"
 fi
 
-# Clone OpenVid repository if not exists
-if [ ! -d "$OPENVID_DIR" ]; then
-    echo "Cloning OpenVid-1M repository..."
-    git clone --quiet $OPENVID_REPO $OPENVID_DIR > /dev/null || { echo "Failed to clone OpenVid-1M repository"; exit 1; }
-else
-    echo "OpenVid-1M directory already exists. Skipping clone."
-fi
-
-# Patch inference script
-echo "Patching inference script..."
-cp /home/ubuntu/text2vid-viewer/backend/models/openvid/inference.py $OPENVID_DIR/scripts/inference.py || { echo "Failed to patch inference script"; exit 1; }
 
 # Build the openvid-inference image
 echo "Building openvid-inference Docker image..."
@@ -79,4 +68,5 @@ sudo docker run \
     torchrun --standalone --nproc_per_node=1 \
     /OpenVid-1M/scripts/inference.py \
     --config /OpenVid-1M/configs/stdit/inference/16x512x512.py \
-    --ckpt-path /workspace/checkpoint/STDiT-16x512x512.pt
+    --ckpt-path /workspace/checkpoint/STDiT-16x512x512.pt \
+    --prompt_path /prompts.txt

@@ -36,6 +36,12 @@ RUN git clone https://github.com/NJU-PCALab/OpenVid-1M.git && \
 # Set the PYTHONPATH to include the OpenVid repo
 ENV PYTHONPATH="${PYTHONPATH}:/OpenVid-1M"
 
+# Copy the inference script
+COPY backend/models/openvid/inference.py /OpenVid-1M/scripts/inference.py
+
+# Copy the prompt file
+COPY prompts.txt /prompts.txt
+
 # Set the entry point to activate the conda environment before executing any command
 ENTRYPOINT [ "conda", "run", "-n", "openvid", "/bin/bash", "-c" ]
 
