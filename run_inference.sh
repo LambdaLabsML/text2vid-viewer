@@ -38,16 +38,16 @@ mkdir -p /home/ubuntu/logs /home/ubuntu/data
 
 # Determine which deploy script to use based on the model
 if [ "$MODEL" == "openvid" ]; then
-    DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/local_openvid/deploy.sh"
+    DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/models/openvid/deploy.sh"
     echo "Using deploy script for openvid model: $DEPLOY_SCRIPT"
 elif [ "$MODEL" == "cog" ]; then
-    DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/local_cog/deploy.sh"
+    DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/models/cog/deploy.sh"
     echo "Using deploy script for cog model: $DEPLOY_SCRIPT"
 else
-    DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/local/deploy.sh"
+    DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/models/opensora/deploy.sh"
     echo "Using deploy script for model: $MODEL"
     # Check if model has a valid config file (unless all models are selected)
-    MODEL_CONFIG="/home/ubuntu/text2vid-viewer/backend/configs/$MODEL.py"
+    MODEL_CONFIG="/home/ubuntu/text2vid-viewer/backend/models/opensora/configs/$MODEL.py"
     if [ "$MODEL" != "all" ]; then
         if [ ! -f "$MODEL_CONFIG" ]; then
             echo "Model config file not found at ${MODEL_CONFIG}"

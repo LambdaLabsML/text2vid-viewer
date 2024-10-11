@@ -65,7 +65,7 @@ fi
 # Build the opensora-inference image
 echo "Building opensora-inference Docker image..."
 cd /home/ubuntu/text2vid-viewer
-sudo docker build --no-cache -t opensora-inference -f backend/local/Dockerfile . || { echo "Failed to build opensora-inference Docker image"; exit 1; }
+sudo docker build --no-cache -t opensora-inference -f backend/models/opensora/Dockerfile . || { echo "Failed to build opensora-inference Docker image"; exit 1; }
 
 # Run container opensora-inference
 # Ensure any container with same name is removed first

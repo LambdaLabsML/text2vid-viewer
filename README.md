@@ -34,7 +34,7 @@ echo "A cat playing with a ball" > /home/ubuntu/text2vid-viewer/prompts.txt
 ```
 Note: prompt file should have one prompt per line
 
-5. Prepare model config `/home/ubuntu/text2vid-viewer/backend/configs/<base-model>-<resolution>.py`
+5. Prepare model config `/home/ubuntu/text2vid-viewer/backend/models/opensora/configs/<base-model>-<resolution>.py`
 
 6. Run inference
 ```bash
@@ -42,7 +42,7 @@ Note: prompt file should have one prompt per line
 ```
 
 Note:
-* model should have a matching config file in `backend/configs/`
+* model should have a matching config file in `backend/models/opensora/configs/`
 * inference logs are piped to /home/ubuntu/logs/inference.log
 * outputs are directly exported to S3
 

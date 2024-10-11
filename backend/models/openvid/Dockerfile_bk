@@ -69,7 +69,7 @@ RUN mkdir -p /app/logs && chmod -R 777 /app/logs
 ENV PYTHONUNBUFFERED=1
 
 # Copy the inference script
-COPY backend/local_openvid/inference.py /app/inference.py
+COPY backend/models/openvid/inference.py /app/inference.py
 
 # Copy the prompt file
 COPY prompts.txt /app/prompts.txt

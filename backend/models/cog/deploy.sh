@@ -4,7 +4,7 @@ cd CogVideo
 pip install -r requirements.txt
 
 # Patch the inference script
-cp /home/ubuntu/text2vid-viewer/backend/local_cog/inference.py /home/ubuntu/CogVideo/inference/inference.py
+cp /home/ubuntu/text2vid-viewer/models/cog/inference.py /home/ubuntu/CogVideo/inference/inference.py
 
 # Run inference
 python /home/ubuntu/CogVideo/inference/inference.py \

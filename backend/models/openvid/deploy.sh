@@ -27,7 +27,7 @@ fi
 
 # Variables
 OPENVID_REPO="https://github.com/NJU-PCALab/OpenVid-1M.git"
-OPENVID_DIR="/home/ubuntu/text2vid-viewer/backend/local_openvid/OpenVid-1M"
+OPENVID_DIR="/home/ubuntu/text2vid-viewer/backend/models/openvid/OpenVid-1M"
 
 # Function to handle errors
 handle_error() {
@@ -56,7 +56,7 @@ fi
 # Build the openvid-inference image
 echo "Building openvid-inference Docker image..."
 cd /home/ubuntu/text2vid-viewer
-sudo docker build --no-cache -t openvid-inference -f backend/local_openvid/Dockerfile . || { echo "Failed to build openvid-inference Docker image"; exit 1; }
+sudo docker build --no-cache -t openvid-inference -f backend/models/openvid/Dockerfile . || { echo "Failed to build openvid-inference Docker image"; exit 1; }
 
 # Run container openvid-inference
 # Ensure any container with same name is removed first
