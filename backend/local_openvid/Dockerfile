@@ -1,86 +1,43 @@
-# Use the official NVIDIA CUDA image with Ubuntu 20.04
-FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu20.04
+# Base image with CUDA 12.1
+FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu20.04
 
-# Set environment variables to suppress interactive prompts
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Etc/UTC
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install necessary packages and Python 3.10
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        software-properties-common \
-        tzdata && \
-    ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
-    dpkg-reconfigure --frontend noninteractive tzdata && \
-    add-apt-repository -y ppa:deadsnakes/ppa && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-        python3.10 \
-        python3.10-dev \
-        python3.10-distutils \
-        python3.10-venv \
-        git \
-        wget \
-        ninja-build \
-        build-essential \
-        libpython3.10-dev && \
-    ln -sf /usr/bin/python3.10 /usr/bin/python3 && \
-    ln -sf /usr/bin/python3 /usr/bin/python && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install Miniconda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+    bash /tmp/miniconda.sh -b -p /opt/conda && \
+    rm /tmp/miniconda.sh
 
-# Install pip for Python 3.10
-RUN wget https://bootstrap.pypa.io/get-pip.py && \
-    python get-pip.py && \
-    rm get-pip.py
+# Add conda to PATH
+ENV PATH="/opt/conda/bin:$PATH"
 
-# Install PyTorch with CUDA 11.7 support for Python 3.10
-RUN pip install torch torchvision
+# Create the Conda environment with Python 3.10
+RUN conda create -n openvid python=3.10 -y && conda clean -a
 
-# Install other required Python packages
-RUN pip install packaging
-RUN pip install flash-attn --no-build-isolation
+# Activate the conda environment and install Python dependencies
+SHELL ["conda", "run", "-n", "openvid", "/bin/bash", "-c"]
+RUN pip install --upgrade pip && \
+    pip install torch torchvision && \
+    pip install packaging ninja && \
+    pip install flash-attn --no-build-isolation && \
+    pip install -v --disable-pip-version-check --no-cache-dir --no-build-isolation --config-settings "--build-option=--cpp_ext" --config-settings "--build-option=--cuda_ext" git+https://github.com/NVIDIA/apex.git && \
+    pip install -U xformers --index-url https://download.pytorch.org/whl/cu121 && \
+    pip install ipdb
 
-# Install apex with no build isolation
-RUN git clone https://github.com/NVIDIA/apex.git /tmp/apex && \
-    cd /tmp/apex && \
-    pip install -v --disable-pip-version-check --no-cache-dir --no-build-isolation --global-option="--cpp_ext" --global-option="--cuda_ext" . && \
-    cd / && rm -rf /tmp/apex
+# Clone the OpenVid-1M repository and install its requirements
+RUN git clone https://github.com/NJU-PCALab/OpenVid-1M.git && \
+    cd OpenVid-1M && \
+    pip install -r requirements.txt
 
-# Install xformers
-RUN pip install -U xformers --index-url https://download.pytorch.org/whl/cu121
+# Set the PYTHONPATH to include the OpenVid repo
+ENV PYTHONPATH="${PYTHONPATH}:/OpenVid-1M"
 
-# Install additional Python packages
-RUN pip install numpy tqdm Pillow boto3
+# Set the entry point to activate the conda environment before executing any command
+ENTRYPOINT [ "conda", "run", "-n", "openvid", "/bin/bash", "-c" ]
 
-# Set the working directory
-WORKDIR /app
-
-# Clone the OpenVid-1M repository
-RUN git clone https://github.com/NJU-PCALab/OpenVid-1M.git /app/OpenVid-1M
-
-RUN pip install -r /app/OpenVid-1M/requirements.txt
-
-# Download the model weights
-RUN wget -P /app/OpenVid-1M https://huggingface.co/nkp37/OpenVid-1M/resolve/main/model_weights/STDiT-16×512×512.pt
-
-# Create the logs directory
-RUN mkdir -p /app/logs && chmod -R 777 /app/logs
-ENV PYTHONUNBUFFERED=1
-
-# Copy the inference script
-COPY backend/local_openvid/inference.py /app/inference.py
-
-# Copy the prompt file
-COPY prompts.txt /app/prompts.txt
-
-# Expose the data directory as a volume
-VOLUME ["/data"]
-
-# Set the working directory
-WORKDIR /app
-
-# Run the inference script
-#ENTRYPOINT ["python", "/app/inference.py"]
-ENTRYPOINT ["torchrun", "--standalone", "--nproc_per_node=1", "/app/OpenVid-1M/scripts/inference.py", "--config", "configs/stdit/inference/16x1024x1024.py", "--ckpt-path", "STDiT-16x1024x1024.pt", "--prompt-path", "/app/prompts.txt", "--save-dir", "/data"]
-# torchrun --standalone --nproc_per_node 1 scripts/inference.py --config configs/stdit/inference/16x1024x1024.py --ckpt-path STDiT-16x1024x1024.pt
+# Command to keep the container alive, modify as needed
+CMD ["bash"]
