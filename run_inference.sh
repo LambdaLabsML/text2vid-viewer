@@ -78,6 +78,6 @@ echo "Running inference..."
 
 # Export generated videos to S3
 echo "Exporting videos to S3..."
-python /home/ubuntu/text2vid-viewer/utils/s3_export.py --model "$MODEL"
+python /home/ubuntu/text2vid-viewer/backend/utils/s3_export.py --model "$MODEL"
 
 echo "Inference completed"
