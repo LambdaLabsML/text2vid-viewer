@@ -23,7 +23,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Send generated videos to S3")
     parser.add_argument("--model", type=str, required=True, help="Name of the model configuration to use")
     args = parser.parse_args()
-
     model = args.model
 
     # Export to S3
@@ -32,8 +31,7 @@ if __name__ == "__main__":
         prompt = os.path.basename(generated_file_path).split('.mp4')[0]
         bucket_name = "text2videoviewer"
         object_name = f"{model}/{prompt}.mp4"
-        metadata = None
-        response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
+        response = upload_file_to_s3(generated_file_path, bucket_name, object_name)
 
         if response is not None:
             logger.debug(f"File {generated_file_path} uploaded successfully as {response}.")
