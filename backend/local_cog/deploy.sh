@@ -1,3 +1,4 @@
+cd /home/ubuntu
 git clone https://github.com/THUDM/CogVideo.git
 cd CogVideo
 pip install -r requirements.txt
@@ -9,7 +10,7 @@ cp /home/ubuntu/text2vid-viewer/backend/local_cog/inference.py /home/ubuntu/CogV
 mkdir -p /home/ubuntu/logs /home/ubuntu/data
 
 # Run inference
-python inference.py \
+python /home/ubuntu/CogVideo/inference/inference.py \
     --prompt_path /home/ubuntu/text2vid-viewer/prompts.txt \
     --save_dir /home/ubuntu/data \
     --model_path THUDM/CogVideoX-5b \
