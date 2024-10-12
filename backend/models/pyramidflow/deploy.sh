@@ -28,5 +28,5 @@ pip install -r requirements.txt
 pip install pandas
 
 
-python /home/ubuntu/text2vid-viewer/backend/models/pyramidflow/inference.py \
+python /home/ubuntu/Pyramid-Flow/inference.py \
     --prompt_path /home/ubuntu/text2vid-viewer/prompts.txt
