@@ -16,5 +16,4 @@ pip install -r requirements.txt
 
 
 python /home/ubuntu/text2vid-viewer/backend/models/pyramidflow/inference.py \
-    --prompt_path /home/ubuntu/text2vid-viewer/prompts.txt \
-    --save_dir /home/ubuntu/data
+    --prompt_path /home/ubuntu/text2vid-viewer/prompts.txt
