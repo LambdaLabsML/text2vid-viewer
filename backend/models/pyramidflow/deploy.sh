@@ -13,6 +13,13 @@ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /t
 export PATH="$HOME/miniconda3/bin:$PATH"
 conda init
 source ~/.bashrc
+
+# Add a delay to ensure the environment is set properly
+sleep 2  # Sleep for 2 seconds to allow the environment to refresh
+
+# You can also add this line to ensure a new shell session
+exec "$SHELL"
+
 conda create -n pyramid python=3.8.10 -y
 conda activate pyramid
 pip install -r requirements.txt
