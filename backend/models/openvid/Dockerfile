@@ -26,7 +26,8 @@ RUN pip install --upgrade pip && \
     pip install flash-attn --no-build-isolation && \
     pip install -v --disable-pip-version-check --no-cache-dir --no-build-isolation --config-settings "--build-option=--cpp_ext" --config-settings "--build-option=--cuda_ext" git+https://github.com/NVIDIA/apex.git && \
     pip install -U xformers --index-url https://download.pytorch.org/whl/cu121 && \
-    pip install ipdb
+    pip install ipdb  && \
+    pip install pandas
 
 # Clone the OpenVid-1M repository and install its requirements
 RUN git clone https://github.com/NJU-PCALab/OpenVid-1M.git && \
