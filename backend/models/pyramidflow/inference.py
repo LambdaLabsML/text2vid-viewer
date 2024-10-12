@@ -51,7 +51,7 @@ def run_inference(prompts):
                 save_memory=True,           # If you have enough GPU memory, set it to `False` to improve vae decoding speed
             )
 
-        export_to_video(frames, f"./{prompt}.mp4", fps=24)
+        export_to_video(frames, f"/home/ubuntu/data/{prompt}.mp4", fps=24)
 
         
 
