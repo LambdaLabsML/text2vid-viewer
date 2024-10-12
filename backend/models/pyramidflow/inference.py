@@ -3,6 +3,12 @@ from PIL import Image
 from pyramid_dit import PyramidDiTForVideoGeneration
 from diffusers.utils import load_image, export_to_video
 
+def load_prompts(prompt_path, start_idx, end_idx):
+    with open(prompt_path, "r") as f:
+        prompts = [line.strip() for line in f.readlines()]
+    if start_idx is not None and end_idx is not None:
+        return prompts[start_idx:end_idx]
+    return prompts
 
 def dl_model():
     from huggingface_hub import snapshot_download
@@ -10,7 +16,7 @@ def dl_model():
     snapshot_download("rain1011/pyramid-flow-sd3", local_dir=model_path, local_dir_use_symlinks=False, repo_type='model')
 
 
-def run_inference():
+def run_inference(prompts):
     torch.cuda.set_device(0)
     model_dtype, torch_dtype = 'bf16', torch.bfloat16   # Use bf16 (not support fp16 yet)
 
@@ -27,25 +33,36 @@ def run_inference():
     model.vae.enable_tiling()
 
 
-    prompt = "A movie trailer featuring the adventures of the 30 year old space man wearing a red wool knitted motorcycle helmet, blue sky, salt desert, cinematic style, shot on 35mm film, vivid colors"
+    for prompt in prompts:
 
-    with torch.no_grad(), torch.cuda.amp.autocast(enabled=True, dtype=torch_dtype):
-        frames = model.generate(
-            prompt=prompt,
-            num_inference_steps=[20, 20, 20],
-            video_num_inference_steps=[10, 10, 10],
-            height=768,     
-            width=1280,
-            temp=16,                    # temp=16: 5s, temp=31: 10s
-            guidance_scale=9.0,         # The guidance for the first frame, set it to 7 for 384p variant
-            video_guidance_scale=5.0,   # The guidance for the other video latent
-            output_type="pil",
-            save_memory=True,           # If you have enough GPU memory, set it to `False` to improve vae decoding speed
-        )
+        print("Prompt:", prompt)
 
-    export_to_video(frames, "./text_to_video_sample.mp4", fps=24)
+        with torch.no_grad(), torch.cuda.amp.autocast(enabled=True, dtype=torch_dtype):
+            frames = model.generate(
+                prompt=prompt,
+                num_inference_steps=[20, 20, 20],
+                video_num_inference_steps=[10, 10, 10],
+                height=768,     
+                width=1280,
+                temp=16,                    # temp=16: 5s, temp=31: 10s
+                guidance_scale=9.0,         # The guidance for the first frame, set it to 7 for 384p variant
+                video_guidance_scale=5.0,   # The guidance for the other video latent
+                output_type="pil",
+                save_memory=True,           # If you have enough GPU memory, set it to `False` to improve vae decoding speed
+            )
+
+        export_to_video(frames, f"./{prompt}.mp4", fps=24)
+
+        
 
 if __name__ == "__main__":
 
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--prompt_path", type=str, default=None)
+    prompt_path = parser.parse_args().prompt_path
+
+    prompts = load_prompts(prompt_path)
+
     dl_model()
-    run_inference()
+    run_inference(prompts)
