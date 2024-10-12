@@ -96,8 +96,9 @@ def main():
 
         #if coordinator.is_master():
         for idx, sample in enumerate(samples):
-            print("Prompt:", batch_prompts[idx])
-            save_path = os.path.join(save_dir, "sample_"+str(sample_idx))
+            prompt = batch_prompts[idx]
+            print("Prompt:", prompt)
+            save_path = os.path.join(save_dir, f"{prompt}.mp4")
             save_sample(sample, fps=cfg.fps, save_path=save_path)
             sample_idx += 1
 
