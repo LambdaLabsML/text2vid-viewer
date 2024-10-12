@@ -15,11 +15,10 @@ python3 -m pip install boto3 python-dotenv || { echo "Failed to install dependen
 echo "Installed dependencies"
 
 # Refresh db.csv
-cd backend/utils
-python3 refresh_db.py || { echo "Failed to refresh db.csv"; exit 1; }
+python3 backend/utils/refresh_db.py || { echo "Failed to refresh db.csv"; exit 1; }
 echo "Refreshed db.csv"
 
 # Run frontend server
 echo "Running frontend server"
-cd ../../frontend
+cd frontend
 python3 -m http.server
