@@ -3,6 +3,9 @@
 git clone https://github.com/jy0205/Pyramid-Flow
 cd Pyramid-Flow
 
+# path inference script
+cp /home/ubuntu/text2vid-viewer/backend/models/pyramidflow/inference.py /home/ubuntu/Pyramid-Flow/inference.py
+
 # create env using conda
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
     bash /tmp/miniconda.sh -b -p $HOME/miniconda3 && \

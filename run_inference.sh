@@ -59,6 +59,9 @@ if [ "$MODEL" == "openvid" ]; then
 elif [ "$MODEL" == "cog" ]; then
     DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/models/cog/deploy.sh"
     echo "Using deploy script for cog model: $DEPLOY_SCRIPT"
+elif [ "$MODEL" == "pyramidflow" ]; then
+    DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/models/pyramidflow/deploy.sh"
+    echo "Using deploy script for cog model: $DEPLOY_SCRIPT"
 else
     DEPLOY_SCRIPT="/home/ubuntu/text2vid-viewer/backend/models/opensora/deploy.sh"
     echo "Using deploy script for model: $MODEL"
