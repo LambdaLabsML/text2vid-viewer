@@ -3,7 +3,7 @@ from PIL import Image
 from pyramid_dit import PyramidDiTForVideoGeneration
 from diffusers.utils import load_image, export_to_video
 
-def load_prompts(prompt_path, start_idx, end_idx):
+def load_prompts(prompt_path, start_idx=None, end_idx=None):
     with open(prompt_path, "r") as f:
         prompts = [line.strip() for line in f.readlines()]
     if start_idx is not None and end_idx is not None:
