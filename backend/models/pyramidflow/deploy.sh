@@ -16,6 +16,7 @@ source ~/.bashrc
 conda create -n pyramid python=3.8.10 -y
 conda activate pyramid
 pip install -r requirements.txt
+pip install pandas
 
 
 python /home/ubuntu/text2vid-viewer/backend/models/pyramidflow/inference.py \
