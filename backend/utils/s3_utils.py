@@ -152,6 +152,61 @@ def rename_s3_objects(bucket_name):
 
 
 
+def list_model_prompts_in_s3(bucket_name, model_name):
+    """
+    List all prompts for a specific model in the S3 bucket.
+
+    :param bucket_name: Name of the S3 bucket.
+    :param model_name: Name of the model to filter objects by.
+    :return: A list of prompts for the model.
+    """
+    s3_client = boto3.client('s3',
+        region_name='us-east-1',
+        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"])
+
+    # List to store the prompts
+    prompts = []
+
+    # List all objects in the bucket
+    paginator = s3_client.get_paginator('list_objects_v2')
+    pages = paginator.paginate(Bucket=bucket_name, Prefix=model_name)
+
+    for page in pages:
+        if 'Contents' in page:
+            for obj in page['Contents']:
+                prompt = obj['Key'].split("/")[1].split(".")[0]
+                prompt = prompt.strip().strip('"').strip("'").strip('\n')
+                prompts.append(prompt)
+
+    return prompts
+
+def compare_prompts(bucket_name, model_a, model_b):
+    """
+    Compares the prompts in two models and returns the differences.
+    
+    :param bucket_name: S3 bucket name.
+    :param model_a: Name of the first model.
+    :param model_b: Name of the second model.
+    :return: Two lists of prompts. One not in Model A and one not in Model B.
+    """
+    # Get prompts from both models
+    prompts_a = set(list_model_prompts_in_s3(bucket_name, model_a))
+    prompts_b = set(list_model_prompts_in_s3(bucket_name, model_b))
+
+    # Find prompts that are not in each model
+    prompts_not_in_a = list(prompts_b - prompts_a)
+    prompts_not_in_b = list(prompts_a - prompts_b)
+
+    print("Prompt in", model_a, "but not in", model_b, ":", prompts_not_in_b)
+    for p in prompts_not_in_b:
+        print(p)
+
+    print("Prompt in", model_b, "but not in", model_a, ":", prompts_not_in_a)
+    for p in prompts_not_in_a:
+        print(p)
+
+
 
 if __name__ == "__main__":
 
@@ -159,8 +214,8 @@ if __name__ == "__main__":
     load_dotenv(".env")
 
     bucket_name = "text2videoviewer"
-    rename_s3_objects(bucket_name)
-    
+    #rename_s3_objects(bucket_name)
+    compare_prompts(bucket_name, "cog", "pyramidflow")
 
     #---------------------------
         
