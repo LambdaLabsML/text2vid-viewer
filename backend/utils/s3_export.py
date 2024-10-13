@@ -29,6 +29,7 @@ if __name__ == "__main__":
     generated_files = glob.glob(os.path.join("/home/ubuntu/data", '*.mp4'))
     for generated_file_path in generated_files:
         prompt = os.path.basename(generated_file_path).split('.mp4')[0]
+        prompt = prompt.strip().strip('\"').strip('\'').strip('\n') # clean up leading and training space or quotation marks, new line characters
         bucket_name = "text2videoviewer"
         object_name = f"{model}/{prompt}.mp4"
         response = upload_file_to_s3(generated_file_path, bucket_name, object_name)
