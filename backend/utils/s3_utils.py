@@ -80,6 +80,7 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
         model = obj.split("/")[0]
         prompt = obj.split("/")[1].split(".")[0]
         prompt = prompt.strip().strip('"').strip("'").strip('\n')
+        prompt = prompt.replace(",", "")
         records.append({"model": model, "prompt": prompt, "object_name": obj})
     # Save as CSV
     df = pd.DataFrame(records)
@@ -98,6 +99,8 @@ def clean_prompt(prompt):
     """
     if prompt.startswith('\ n'):
         prompt = prompt[4:]
+    # remove comma anywhere in prompt
+    prompt = prompt.replace(",", "")
     return prompt.strip().strip('"').strip("'")
 
 def rename_s3_objects(bucket_name):
@@ -198,11 +201,13 @@ def compare_prompts(bucket_name, model_a, model_b):
     prompts_not_in_a = list(prompts_b - prompts_a)
     prompts_not_in_b = list(prompts_a - prompts_b)
 
-    print("Prompt in", model_a, "but not in", model_b, ":", prompts_not_in_b)
+    print("Prompt in", model_a, "but not in", model_b, ":\n")
     for p in prompts_not_in_b:
         print(p)
 
-    print("Prompt in", model_b, "but not in", model_a, ":", prompts_not_in_a)
+    print("\n")
+    print("Prompt in", model_b, "but not in", model_a, ":\n")
+    print()
     for p in prompts_not_in_a:
         print(p)
 
