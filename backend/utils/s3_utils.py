@@ -79,7 +79,7 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
     for obj in all_objects:
         model = obj.split("/")[0]
         prompt = obj.split("/")[1].split(".")[0]
-        #print(model, prompt)
+        prompt = prompt.strip().strip('"').strip("'").strip('\n')
         records.append({"model": model, "prompt": prompt, "object_name": obj})
     # Save as CSV
     df = pd.DataFrame(records)
@@ -96,7 +96,7 @@ def clean_prompt(prompt):
     :param prompt: The prompt string.
     :return: The cleaned prompt string.
     """
-    if prompt.startswith('/\ n'):
+    if prompt.startswith('\ n'):
         prompt = prompt[4:]
     return prompt.strip().strip('"').strip("'")
 
