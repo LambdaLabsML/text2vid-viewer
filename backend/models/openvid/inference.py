@@ -37,7 +37,7 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dtype = to_torch_dtype(cfg.dtype)
     set_random_seed(seed=cfg.seed)
-    prompts = load_prompts(cfg.prompt_path, cfg.start_idx, cfg.end_idx)
+    prompts = load_prompts('/prompts.txt')
 
     # ======================================================
     # 3. build model & load weights
@@ -79,7 +79,9 @@ def main():
     # 4. inference
     # ======================================================
     sample_idx = cfg.start_idx
-    save_dir = cfg.save_dir
+    #save_dir = cfg.save_dir
+    save_dir = "/app/data"
+
     os.makedirs(save_dir, exist_ok=True)
     for i in range(0, len(prompts), cfg.batch_size):
         batch_prompts = prompts[i : i + cfg.batch_size]
@@ -104,4 +106,9 @@ def main():
 
 
 if __name__ == "__main__":
+
+    import argparse
+    parser = argparse.ArgumentParser(description="Inference")
+    parser.add_argument("--prompt", type=str, required=True, help="Path to the config file")
+
     main()
