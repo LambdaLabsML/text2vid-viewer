@@ -78,7 +78,6 @@ sudo docker run \
     --name openvid_inference \
     openvid-inference:latest \
     --config /OpenVid-1M/configs/stdit/inference/16x512x512.py \
-    --ckpt-path /workspace/checkpoint/STDiT-16x512x512.pt \
-    --prompt_path /prompts.txt
+    --ckpt-path /workspace/checkpoint/STDiT-16x512x512.pt
 
 echo "Inference completed successfully."
