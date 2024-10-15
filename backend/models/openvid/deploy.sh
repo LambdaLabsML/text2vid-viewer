@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e  # Exit immediately if a command exits with a non-zero status
 
 # Load environment variables from the .env file
 ENV_PATH="/home/ubuntu/text2vid-viewer/.env"

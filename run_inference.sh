@@ -81,6 +81,7 @@ echo "Running inference..."
 
 # Export generated videos to S3
 echo "Exporting videos to S3..."
+python -m pip install pandas
 python /home/ubuntu/text2vid-viewer/backend/utils/s3_export.py --model "$MODEL"
 
 echo "Inference completed"
