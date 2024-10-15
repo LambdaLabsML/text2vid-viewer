@@ -42,7 +42,7 @@ fi
 # Build the openvid-inference image
 echo "Building openvid-inference Docker image..."
 cd "$PROJECT_DIR"
-sudo docker build --no-cache -t openvid-inference -f backend/models/openvid/Dockerfile . || { echo "Error: Docker image build failed"; exit 1; }
+sudo docker build -t openvid-inference -f backend/models/openvid/Dockerfile . || { echo "Error: Docker image build failed"; exit 1; }
 
 # Download checkpoints
 echo "Downloading model weights..."
