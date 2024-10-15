@@ -26,6 +26,10 @@ handle_error() {
 # Trap errors
 trap 'handle_error $LINENO' ERR
 
+DATA_DIR=/home/ubuntu/data
+LOGS_DIR=/home/ubuntu/logs
+sudo chown $USER:$USER $DATA_DIR $LOGS_DIR
+
 # Remove all containers
 containers=$(sudo docker ps -qa)
 if [ -n "$containers" ]; then
