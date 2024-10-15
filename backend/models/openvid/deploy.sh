@@ -59,17 +59,26 @@ fi
 
 # Run the inference
 echo "Starting inference..."
-sudo sudo docker run \
+# sudo sudo docker run \
+#     --rm \
+#     --gpus all \
+#     --env-file "$ENV_PATH" \
+#     -v "$CHECKPOINT_DIR:/workspace/checkpoint" \
+#     --name openvid_inference \
+#     openvid-inference:latest \
+#     python /OpenVid-1M/scripts/inference.py \
+#     --config /OpenVid-1M/configs/stdit/inference/16x512x512.py \
+#     --ckpt-path /workspace/checkpoint/STDiT-16x512x512.pt \
+#     --prompt_path /prompts.txt
+sudo docker run \
     --rm \
     --gpus all \
     --env-file "$ENV_PATH" \
     -v "$CHECKPOINT_DIR:/workspace/checkpoint" \
     --name openvid_inference \
     openvid-inference:latest \
-    python /OpenVid-1M/scripts/inference.py \
     --config /OpenVid-1M/configs/stdit/inference/16x512x512.py \
     --ckpt-path /workspace/checkpoint/STDiT-16x512x512.pt \
     --prompt_path /prompts.txt
-
 
 echo "Inference completed successfully."

@@ -46,8 +46,12 @@ COPY backend/models/openvid/inference.py /OpenVid-1M/scripts/inference.py
 # Copy the prompt file
 COPY prompts.txt /prompts.txt
 
-# Set the entry point to activate the conda environment
-ENTRYPOINT [ "conda", "run", "-n", "openvid", "/bin/bash", "-c" ]
+# # Set the entry point to activate the conda environment
+# ENTRYPOINT [ "conda", "run", "-n", "openvid", "/bin/bash", "-c" ]
 
-# Default command to keep the container alive or run inference
-CMD ["bash"]
+# # Default command to keep the container alive or run inference
+# CMD ["bash"]
+
+
+# Set the entry point to activate the conda environment and run inference.py
+ENTRYPOINT [ "conda", "run", "-n", "openvid", "python", "/OpenVid-1M/scripts/inference.py" ]
