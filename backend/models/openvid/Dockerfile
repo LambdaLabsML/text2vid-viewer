@@ -23,7 +23,8 @@ RUN conda create -n openvid python=3.10 -y && \
 # Activate the conda environment and install Python dependencies
 SHELL ["conda", "run", "-n", "openvid", "/bin/bash", "-c"]
 RUN python -m pip install --no-cache-dir --upgrade pip && \
-    python -m pip install --no-cache-dir torch torchvision packaging ninja --index-url https://download.pytorch.org/whl/cu121 && \
+    python -m pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cu121 && \
+    python -m pip install --no-cache-dir packaging ninja && \
     python -m pip install --no-cache-dir flash-attn --no-build-isolation && \
     python -m pip install --no-cache-dir -v --disable-pip-version-check --no-build-isolation \
     --config-settings "--build-option=--cpp_ext" \

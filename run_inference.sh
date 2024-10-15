@@ -50,7 +50,7 @@ pip install boto3 python-dotenv || { echo "Failed to install dependencies"; exit
 
 # Create log and data directories owned by ubuntu
 mkdir -p /home/ubuntu/logs /home/ubuntu/data
-chown -R ubuntu:ubuntu /home/ubuntu/logs /home/ubuntu/data
+#chown -R ubuntu:ubuntu /home/ubuntu/logs /home/ubuntu/data
 
 # Determine which deploy script to use based on the model
 if [ "$MODEL" == "openvid" ]; then
