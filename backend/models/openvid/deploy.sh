@@ -47,8 +47,12 @@ sudo docker build -t openvid-inference -f backend/models/openvid/Dockerfile . ||
 # Download checkpoints
 echo "Downloading model weights..."
 mkdir -p "$CHECKPOINT_DIR"
-cd "$CHECKPOINT_DIR"
-wget -O "$(basename $CHECKPOINT_URL)" "$CHECKPOINT_URL" || { echo "Error: Failed to download model weights"; exit 1; }
+# cd "$CHECKPOINT_DIR"
+# wget -O "$(basename $CHECKPOINT_URL)" "$CHECKPOINT_URL" || { echo "Error: Failed to download model weights"; exit 1; }
+
+python -m pip install -U "huggingface_hub[cli]"
+huggingface-cli download nkp37/OpenVid-1M --include "model_weights/STDiT-16×1024×1024.pt" --local-dir "$CHECKPOINT_DIR"
+
 
 # Run container openvid-inference
 # Ensure any container with same name is removed first
