@@ -27,14 +27,14 @@ RUN conda create -n openvid python=${PYTHON_VERSION} -y && \
 # Activate the conda environment and install Python dependencies
 SHELL ["conda", "run", "-n", "openvid", "/bin/bash", "-c"]
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir torch torchvision packaging ninja && \
+    pip install --no-cache-dir torch torchvision packaging ninja --index-url https://download.pytorch.org/whl/cu121 && \
     pip install --no-cache-dir flash-attn --no-build-isolation && \
     pip install --no-cache-dir -v --disable-pip-version-check --no-build-isolation \
     --config-settings "--build-option=--cpp_ext" \
     --config-settings "--build-option=--cuda_ext" \
     git+https://github.com/NVIDIA/apex.git && \
     pip install --no-cache-dir -U xformers --index-url https://download.pytorch.org/whl/cu121 && \
-    pip install --no-cache-dir ipdb pandas
+    pip install --no-cache-dir ipdb pandas --root-user-action=ignore
 
 # Clone the OpenVid-1M repository and install its requirements
 RUN git clone https://github.com/NJU-PCALab/OpenVid-1M.git /OpenVid-1M && \

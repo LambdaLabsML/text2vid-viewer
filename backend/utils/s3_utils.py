@@ -97,7 +97,7 @@ def clean_prompt(prompt):
     :param prompt: The prompt string.
     :return: The cleaned prompt string.
     """
-    if prompt.startswith('\ n'):
+    if prompt.startswith(r'\ n'):
         prompt = prompt[3:]
     # remove comma anywhere in prompt
     prompt = prompt.replace(",", "")
