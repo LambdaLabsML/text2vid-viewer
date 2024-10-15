@@ -12,7 +12,7 @@ from openvid.acceleration.parallel_states import set_sequence_parallel_group
 from colossalai.cluster import DistCoordinator
 
 
-def load_prompts(prompt_path, start_idx, end_idx):
+def load_prompts(prompt_path, start_idx=None, end_idx=None):
     with open(prompt_path, "r") as f:
         prompts = [line.strip() for line in f.readlines()]
     if start_idx is not None and end_idx is not None:
