@@ -1,8 +1,12 @@
-# Base image with CUDA 12.1
-FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu20.04
+# Use ARG to allow CUDA version flexibility
+ARG CUDA_VERSION=12.1.1
+ARG PYTHON_VERSION=3.10
+
+# Base image with CUDA
+FROM nvidia/cuda:${CUDA_VERSION}-cudnn8-devel-ubuntu20.04
 
 # Install necessary dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     git \
     && rm -rf /var/lib/apt/lists/*
@@ -10,29 +14,31 @@ RUN apt-get update && apt-get install -y \
 # Install Miniconda
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
     bash /tmp/miniconda.sh -b -p /opt/conda && \
-    rm /tmp/miniconda.sh
+    rm /tmp/miniconda.sh && \
+    /opt/conda/bin/conda clean -a
 
 # Add conda to PATH
 ENV PATH="/opt/conda/bin:$PATH"
 
-# Create the Conda environment with Python 3.10
-RUN conda create -n openvid python=3.10 -y && conda clean -a
+# Create the Conda environment with specified Python version
+RUN conda create -n openvid python=${PYTHON_VERSION} -y && \
+    conda clean -a
 
 # Activate the conda environment and install Python dependencies
 SHELL ["conda", "run", "-n", "openvid", "/bin/bash", "-c"]
-RUN pip install --upgrade pip && \
-    pip install torch torchvision && \
-    pip install packaging ninja && \
-    pip install flash-attn --no-build-isolation && \
-    pip install -v --disable-pip-version-check --no-cache-dir --no-build-isolation --config-settings "--build-option=--cpp_ext" --config-settings "--build-option=--cuda_ext" git+https://github.com/NVIDIA/apex.git && \
-    pip install -U xformers --index-url https://download.pytorch.org/whl/cu121 && \
-    pip install ipdb  && \
-    pip install pandas
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir torch torchvision packaging ninja && \
+    pip install --no-cache-dir flash-attn --no-build-isolation && \
+    pip install --no-cache-dir -v --disable-pip-version-check --no-build-isolation \
+    --config-settings "--build-option=--cpp_ext" \
+    --config-settings "--build-option=--cuda_ext" \
+    git+https://github.com/NVIDIA/apex.git && \
+    pip install --no-cache-dir -U xformers --index-url https://download.pytorch.org/whl/cu121 && \
+    pip install --no-cache-dir ipdb pandas
 
 # Clone the OpenVid-1M repository and install its requirements
-RUN git clone https://github.com/NJU-PCALab/OpenVid-1M.git && \
-    cd OpenVid-1M && \
-    pip install -r requirements.txt
+RUN git clone https://github.com/NJU-PCALab/OpenVid-1M.git /OpenVid-1M && \
+    pip install -r /OpenVid-1M/requirements.txt
 
 # Set the PYTHONPATH to include the OpenVid repo
 ENV PYTHONPATH="${PYTHONPATH}:/OpenVid-1M"
@@ -43,8 +49,8 @@ COPY backend/models/openvid/inference.py /OpenVid-1M/scripts/inference.py
 # Copy the prompt file
 COPY prompts.txt /prompts.txt
 
-# Set the entry point to activate the conda environment before executing any command
+# Set the entry point to activate the conda environment
 ENTRYPOINT [ "conda", "run", "-n", "openvid", "/bin/bash", "-c" ]
 
-# Command to keep the container alive, modify as needed
+# Default command to keep the container alive or run inference
 CMD ["bash"]

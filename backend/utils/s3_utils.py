@@ -98,9 +98,10 @@ def clean_prompt(prompt):
     :return: The cleaned prompt string.
     """
     if prompt.startswith('\ n'):
-        prompt = prompt[4:]
+        prompt = prompt[3:]
     # remove comma anywhere in prompt
     prompt = prompt.replace(",", "")
+    prompt = prompt.replace("'", "")
     return prompt.strip().strip('"').strip("'")
 
 def rename_s3_objects(bucket_name):
@@ -130,26 +131,32 @@ def rename_s3_objects(bucket_name):
         
         # Assuming object keys follow the format <bucket-name>/<model-name>/prompt
         parts = old_key.split('/')
-        if len(parts) < 3:
+        if len(parts) < 2:
             print(f"Skipping object with key: {old_key}. Invalid format.")
             continue
         
         # Clean the prompt part of the key
-        model_name = parts[1]
-        prompt = parts[2]
+        model_name = parts[0]
+        prompt = parts[1]
         cleaned_prompt = clean_prompt(prompt)
         
         if cleaned_prompt != prompt:
             # Create the new object key
-            new_key = f"{parts[0]}/{model_name}/{cleaned_prompt}"
+            new_key = f"{model_name}/{cleaned_prompt}"
             
             # Copy the object to the new key
-            s3_client.copy_object(Bucket=bucket_name, CopySource={'Bucket': bucket_name, 'Key': old_key}, Key=new_key)
+            #s3_client.copy_object(Bucket=bucket_name, CopySource={'Bucket': bucket_name, 'Key': old_key}, Key=new_key)
             
-            # Delete the old object
-            #s3_client.delete_object(Bucket=bucket_name, Key=old_key)
+            # Check if new key exists
+            response = s3_client.list_objects_v2(Bucket=bucket_name)
+            if new_key in [obj['Key'] for obj in response['Contents']]:
+                s3_client.delete_object(Bucket=bucket_name, Key=old_key)
+
+            else:
+                print(f"Need to rename {old_key} to {new_key}.")
+                response = input(f"ok? (y/n): ", default='y')
             
-            print(f"Renamed {old_key} to {new_key}.")
+            #print(f"Renamed {old_key} to {new_key}.")
         else:
             print(f"No renaming needed for {old_key}.")
 
@@ -219,8 +226,8 @@ if __name__ == "__main__":
     load_dotenv(".env")
 
     bucket_name = "text2videoviewer"
-    #rename_s3_objects(bucket_name)
-    compare_prompts(bucket_name, "cog", "pyramidflow")
+    rename_s3_objects(bucket_name)
+    #compare_prompts(bucket_name, "cog", "opensora-v1-2-240p")
 
     #---------------------------
         
