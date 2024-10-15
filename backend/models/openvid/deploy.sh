@@ -14,7 +14,7 @@ fi
 OPENVID_REPO="https://github.com/NJU-PCALab/OpenVid-1M.git"
 PROJECT_DIR="/home/ubuntu/text2vid-viewer"
 OPENVID_DIR="$PROJECT_DIR/backend/models/openvid/OpenVid-1M"
-CHECKPOINT_URL="https://huggingface.co/nkp37/OpenVid-1M/resolve/main/model_weights/STDiT-16x512x512.pt"
+CHECKPOINT_URL="https://huggingface.co/datasets/nkp37/OpenVid-1M/resolve/main/model_weights/STDiT-16×1024×1024.pt"
 CHECKPOINT_DIR="$PROJECT_DIR/backend/models/openvid/checkpoints"
 
 # Function to handle errors
@@ -77,7 +77,7 @@ sudo docker run \
     -v "$CHECKPOINT_DIR:/workspace/checkpoint" \
     --name openvid_inference \
     openvid-inference:latest \
-    --config /OpenVid-1M/configs/stdit/inference/16x512x512.py \
-    --ckpt-path /workspace/checkpoint/STDiT-16x512x512.pt
+    --config /OpenVid-1M/configs/stdit/inference/16x1024x1024.py \
+    --ckpt-path /workspace/checkpoint/STDiT-16×1024×1024.pt
 
 echo "Inference completed successfully."
