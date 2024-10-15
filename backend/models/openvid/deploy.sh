@@ -48,7 +48,7 @@ sudo docker build -t openvid-inference -f backend/models/openvid/Dockerfile . ||
 echo "Downloading model weights..."
 mkdir -p "$CHECKPOINT_DIR"
 cd "$CHECKPOINT_DIR"
-curl -L -O "$CHECKPOINT_URL" || { echo "Error: Failed to download model weights"; exit 1; }
+wget -O "$(basename $CHECKPOINT_URL)" "$CHECKPOINT_URL" || { echo "Error: Failed to download model weights"; exit 1; }
 
 # Run container openvid-inference
 # Ensure any container with same name is removed first
@@ -59,17 +59,6 @@ fi
 
 # Run the inference
 echo "Starting inference..."
-# sudo sudo docker run \
-#     --rm \
-#     --gpus all \
-#     --env-file "$ENV_PATH" \
-#     -v "$CHECKPOINT_DIR:/workspace/checkpoint" \
-#     --name openvid_inference \
-#     openvid-inference:latest \
-#     python /OpenVid-1M/scripts/inference.py \
-#     --config /OpenVid-1M/configs/stdit/inference/16x512x512.py \
-#     --ckpt-path /workspace/checkpoint/STDiT-16x512x512.pt \
-#     --prompt_path /prompts.txt
 sudo docker run \
     --rm \
     --gpus all \
