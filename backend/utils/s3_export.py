@@ -10,14 +10,14 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv("/home/ubuntu/text2vid-viewer/.env")
 
-    # Set log filename to /app/logs/inference.log if exists else /home/ubuntu/logs/inference.log
-    log_filename = '/app/logs/inference.log' if os.path.exists('/app/logs') else '/home/ubuntu/logs/inference.log'
+#     # Set log filename to /app/logs/inference.log if exists else /home/ubuntu/logs/inference.log
+#     log_filename = '/app/logs/inference.log' if os.path.exists('/app/logs') else '/home/ubuntu/logs/inference.log'
 
-   # Configure logging to file
-    logging.basicConfig(filename=log_filename,
-                        level=logging.DEBUG,
-                        format='%(asctime)s %(levelname)s %(name)s %(message)s')
-    logger = logging.getLogger(__name__) 
+#    # Configure logging to file
+#     logging.basicConfig(filename=log_filename,
+#                         level=logging.DEBUG,
+#                         format='%(asctime)s %(levelname)s %(name)s %(message)s')
+#     logger = logging.getLogger(__name__) 
      
     # Parse `model` argument
     parser = argparse.ArgumentParser(description="Send generated videos to S3")
