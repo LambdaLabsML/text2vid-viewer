@@ -69,7 +69,7 @@
             border-radius: 8px; /* Optional: adds a rounded border */
         }
 
-        .description, .tab-description {
+        .description {
             padding: 10px 20px;
             background-color: #1f1f1f;
             color: #ffffff;
@@ -99,6 +99,41 @@
             color: #ffffff;
         }
 
+        .tab-description {
+            background-color: #1f1f1f;
+            color: #ffffff;
+            padding: 10px 20px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-description p {
+            margin: 0;
+            margin-right: 20px;
+        }
+
+        .tab-description .controls {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-description .controls label {
+            margin-right: 10px;
+        }
+
+        .tab-description .controls select {
+            background-color: #1f1f1f;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            padding: 8px;
+            border-radius: 4px;
+            outline: none;
+            margin-right: 20px;
+        }
+
         .tab {
             display: none;
             flex: 1 1 auto;
@@ -109,29 +144,6 @@
         .active-tab {
             display: flex;
             flex-direction: column;
-        }
-
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: flex-start; /* Align to the left */
-            margin-bottom: 10px;
-            padding: 10px 20px; /* Match padding with description */
-        }
-
-        .controls label {
-            margin-right: 10px;
-        }
-
-        .controls select {
-            background-color: #1f1f1f;
-            color: #ffffff;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            outline: none;
-            margin-right: 20px;
         }
 
         .grid {
@@ -231,15 +243,12 @@
         </div>
         <div id="tab-description" class="tab-description">
             <!-- Content will be inserted here dynamically -->
-        </div>
-
-        <!-- Controls Section -->
-        <div id="controls" class="controls">
-            <div id="model-controls" style="display: none;">
+            <p id="description-text"></p>
+            <div id="model-controls" class="controls" style="display: none;">
                 <label for="model-select">Choose a Model:</label>
                 <select id="model-select" onchange="updateModelView()"></select>
             </div>
-            <div id="prompt-controls" style="display: none;">
+            <div id="prompt-controls" class="controls" style="display: none;">
                 <label for="prompt-select">Choose a Prompt:</label>
                 <select id="prompt-select" onchange="updatePromptView()"></select>
             </div>
@@ -347,6 +356,7 @@
                 button.classList.remove('active');
             });
             const tabDescription = document.getElementById('tab-description');
+            const descriptionText = document.getElementById('description-text');
             const modelControls = document.getElementById('model-controls');
             const promptControls = document.getElementById('prompt-controls');
 
@@ -354,14 +364,14 @@
                 document.getElementById('model-view-btn').classList.add('active');
                 modelPage = 1; // Reset page number when switching tabs
                 updateModelView();
-                tabDescription.innerHTML = '<p><b>The model preview mode shows outputs for a variety of prompts for the selected model:</b></p>';
+                descriptionText.innerHTML = '<b>The model preview mode shows outputs for a variety of prompts for the selected model:</b>';
                 modelControls.style.display = 'flex';
                 promptControls.style.display = 'none';
             }
             if (tabId === 'prompt-view') {
                 document.getElementById('prompt-view-btn').classList.add('active');
                 updatePromptView();
-                tabDescription.innerHTML = '<p><b>Side-by-side output comparison of the top models for the selected prompt:</b></p>';
+                descriptionText.innerHTML = '<b>Side-by-side output comparison of the top models for the selected prompt:</b>';
                 modelControls.style.display = 'none';
                 promptControls.style.display = 'flex';
             }
