@@ -72,6 +72,11 @@ def list_s3_bucket_items(bucket_name):
 
     return object_keys
 
+import re
+def make_safe_filename(s: str) -> str:
+    """Creates a filesystem-safe filename from a string, allowing spaces."""
+    # Allow letters, numbers, underscores, hyphens, dots, and spaces
+    return re.sub(r'[^A-Za-z0-9_\-\. ]+', '', s)
 
 def update_csv(csv_fpath, bucket_name="text2videoviewer"):
     all_objects = list_s3_bucket_items(bucket_name)
@@ -86,7 +91,9 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
 
         # Remove the file extension to get the prompt
         prompt = filename.rsplit(".", 1)[0]
-        prompt = prompt.strip().strip('"').strip("'").strip('\n').strip()
+        prompt = make_safe_filename(prompt)
+        #prompt = prompt.strip().strip('"').strip("'").strip('\n').strip()
+        #prompt = prompt.replace("é", "e")
 
         # No longer removing commas from prompts
         records.append({"model": model, "prompt": prompt, "object_name": obj})
