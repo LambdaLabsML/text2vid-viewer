@@ -25,26 +25,6 @@
             height: 100%;
         }
 
-        .page-title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            padding: 20px 0;
-            background-color: #1f1f1f;
-            font-size: 24px;
-            flex: 0 0 auto;
-        }
-
-        .page-title img.logo {
-            width: 50px;
-            height: auto;
-            margin-right: 15px;
-            background-color: #ffffff; /* White background for logo */
-            padding: 5px;
-            border-radius: 8px; /* Optional: adds a rounded border */
-        }
-
         .tab-buttons {
             display: flex;
             justify-content: center;
@@ -67,6 +47,26 @@
         .tab-buttons button:hover,
         .tab-buttons button.active {
             background-color: #5b249b; /* Slightly darker for hover/active state */
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            padding: 20px 0;
+            background-color: #1f1f1f;
+            font-size: 24px;
+            flex: 0 0 auto;
+        }
+
+        .page-title img.logo {
+            width: 50px;
+            height: auto;
+            margin-right: 15px;
+            background-color: #ffffff; /* White background for logo */
+            padding: 5px;
+            border-radius: 8px; /* Optional: adds a rounded border */
         }
 
         .tab {
@@ -180,13 +180,13 @@
 </head>
 <body>
     <div class="container">
-        <div class="page-title">
-            <img src="lambda.png" alt="Lambda Labs Logo" class="logo">
-            <span>T2V-Viewer by Lambda Labs</span>
-        </div>
         <div class="tab-buttons">
             <button id="model-view-btn" onclick="showTab('model-view')" class="active">Model preview</button>
             <button id="prompt-view-btn" onclick="showTab('prompt-view')">Side-by-side comparison</button>
+        </div>
+        <div class="page-title">
+            <img src="lambda.png" alt="Lambda Labs Logo" class="logo">
+            <span>T2V-Viewer by Lambda Labs</span>
         </div>
 
         <!-- Model View Tab -->
