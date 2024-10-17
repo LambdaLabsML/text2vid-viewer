@@ -52,9 +52,9 @@
         .page-title {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Left align */
             color: #ffffff;
-            padding: 20px 0;
+            padding: 20px;
             background-color: #1f1f1f;
             font-size: 24px;
             flex: 0 0 auto;
@@ -67,6 +67,26 @@
             background-color: #ffffff; /* White background for logo */
             padding: 5px;
             border-radius: 8px; /* Optional: adds a rounded border */
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            background-color: #1f1f1f;
+            padding: 10px 20px;
+            color: #ffffff;
+            font-size: 16px;
+            flex: 0 0 auto;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
         }
 
         .tab {
@@ -187,6 +207,9 @@
         <div class="page-title">
             <img src="lambda.png" alt="Lambda Labs Logo" class="logo">
             <span>T2V-Viewer by Lambda Labs</span>
+        </div>
+        <div class="nav-links">
+            <a href="#">Blog</a> | <a href="#">GitHub</a> | <a href="#">About</a>
         </div>
 
         <!-- Model View Tab -->
