@@ -83,21 +83,6 @@
             margin-right: 20px;
         }
 
-        #prompt-model-select {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        #prompt-model-select label {
-            margin-right: 10px;
-            cursor: pointer;
-        }
-
-        #prompt-model-select input[type="checkbox"] {
-            margin-right: 5px;
-        }
-
         .grid {
             display: grid;
             flex: 1 1 auto;
@@ -200,10 +185,6 @@
                 <label for="prompt-select">Choose a Prompt:</label>
                 <select id="prompt-select" onchange="updatePromptView()"></select>
             </div>
-            <div class="controls">
-                <label>Choose up to 6 Models:</label>
-                <div id="prompt-model-select"></div>
-            </div>
             <div id="prompt-grid" class="grid"></div>
             <div class="pagination">
                 <button id="prompt-prev-btn" onclick="prevPage('prompt')">Previous</button>
@@ -265,7 +246,6 @@
             const prompts = [...new Set(videoData.map(video => video.prompt))];
             const modelSelect = document.getElementById("model-select");
             const promptSelect = document.getElementById("prompt-select");
-            const promptModelSelect = document.getElementById("prompt-model-select");
 
             // Populate Model View dropdown
             models.forEach(model => {
@@ -273,21 +253,6 @@
                 option.value = model;
                 option.textContent = model;
                 modelSelect.appendChild(option);
-            });
-
-            // Create checkboxes for models in Prompt View
-            models.forEach(model => {
-                const label = document.createElement("label");
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.value = model;
-                checkbox.name = "prompt-model-checkbox";
-                checkbox.addEventListener('change', handlePromptModelCheckboxChange);
-
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(model));
-
-                promptModelSelect.appendChild(label);
             });
 
             // Populate prompts dropdown
@@ -361,21 +326,10 @@
 
         function updatePromptView() {
             const selectedPrompt = document.getElementById("prompt-select").value;
-            const selectedCheckboxes = document.querySelectorAll('input[name="prompt-model-checkbox"]:checked');
-            const selectedModels = Array.from(selectedCheckboxes).map(cb => cb.value);
-
             const promptGrid = document.getElementById("prompt-grid");
             promptGrid.innerHTML = ""; // Clear previous content
 
-            if (selectedModels.length === 0) {
-                promptGrid.innerHTML = "<p>Please select at least one model.</p>";
-                document.getElementById('prompt-prev-btn').disabled = true;
-                document.getElementById('prompt-next-btn').disabled = true;
-                document.getElementById('prompt-page-indicator').textContent = '';
-                return;
-            }
-
-            const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt && selectedModels.includes(video.model));
+            const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt);
             const paginatedVideos = paginate(filteredVideos, promptPage, itemsPerPage);
             paginatedVideos.forEach(video => {
                 const gridItem = document.createElement("div");
@@ -409,17 +363,6 @@
             document.getElementById('prompt-next-btn').disabled = promptPage * itemsPerPage >= filteredVideos.length;
         }
 
-        function handlePromptModelCheckboxChange() {
-            const selectedCheckboxes = document.querySelectorAll('input[name="prompt-model-checkbox"]:checked');
-            if (selectedCheckboxes.length > 6) {
-                // Deselect the checkbox
-                this.checked = false;
-                alert("You can select up to 6 models.");
-            }
-            promptPage = 1; // Reset to first page when selection changes
-            updatePromptView();
-        }
-
         function paginate(array, pageNumber, pageSize) {
             return array.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
         }
@@ -430,9 +373,7 @@
                 updateModelView();
             } else if (view === 'prompt') {
                 const selectedPrompt = document.getElementById("prompt-select").value;
-                const selectedCheckboxes = document.querySelectorAll('input[name="prompt-model-checkbox"]:checked');
-                const selectedModels = Array.from(selectedCheckboxes).map(cb => cb.value);
-                const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt && selectedModels.includes(video.model));
+                const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt);
                 const maxPage = Math.ceil(filteredVideos.length / itemsPerPage);
 
                 if (promptPage < maxPage) {
