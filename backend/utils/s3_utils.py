@@ -92,8 +92,6 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
         # Remove the file extension to get the prompt
         prompt = filename.rsplit(".", 1)[0]
         prompt = make_safe_filename(prompt)
-        #prompt = prompt.strip().strip('"').strip("'").strip('\n').strip()
-        #prompt = prompt.replace("é", "e")
 
         # No longer removing commas from prompts
         records.append({"model": model, "prompt": prompt, "object_name": obj})
