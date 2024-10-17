@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text2Vid Viewer</title>
     <style>
         /* Reset and basic styling */
@@ -14,67 +13,55 @@
 
         html, body {
             height: 100%;
+            overflow: hidden;
             background-color: #121212;
             color: #ffffff;
             font-family: Arial, sans-serif;
         }
 
-        /* Container */
         .container {
             display: flex;
             flex-direction: column;
             height: 100%;
-            padding-top: 130px; /* Push content down from fixed header */
         }
 
-        /* Fixed header at the top */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #1f1f1f;
-            padding: 10px 20px;
-            z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .header-content {
+        .page-title {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            padding: 20px 0;
+            background-color: #1f1f1f;
+            font-size: 24px;
+            flex: 0 0 auto;
         }
 
-        .header-content img.logo {
+        .page-title img.logo {
             width: 50px;
             height: auto;
-            background-color: #ffffff;
+            margin-right: 15px;
+            background-color: #ffffff; /* White background for logo */
             padding: 5px;
-            border-radius: 8px;
+            border-radius: 8px; /* Optional: adds a rounded border */
         }
 
-        .header-content .title {
-            font-size: 24px;
-            margin-left: 10px;
-        }
-
-        /* Tabs at the top of the page */
         .tab-buttons {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            background-color: #1f1f1f;
+            flex: 0 0 auto;
         }
 
         .tab-buttons button {
             flex: 1;
             padding: 15px 0;
-            background-color: #7030C4;
+            background-color: #7030C4; /* #7030C4 for the tab buttons */
             border: none;
             color: #ffffff;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s;
             outline: none;
+            transition: background-color 0.3s;
         }
 
         .tab-buttons button:hover,
@@ -82,25 +69,6 @@
             background-color: #5b249b; /* Slightly darker for hover/active state */
         }
 
-        /* Links to About, GitHub, Blog */
-        .page-links {
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .page-links a {
-            color: #ffffff;
-            margin: 0 10px;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s;
-        }
-
-        .page-links a:hover {
-            color: #bbbbbb;
-        }
-
-        /* Tab content */
         .tab {
             display: none;
             flex: 1 1 auto;
@@ -135,9 +103,9 @@
             margin-right: 20px;
         }
 
-        /* Video grid */
         .grid {
             display: grid;
+            flex: 1 1 auto;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             overflow-y: auto;
@@ -173,24 +141,24 @@
             height: 100%;
         }
 
-        /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
             align-items: center;
+            flex: 0 0 auto;
             margin-top: 10px;
         }
 
         .pagination button {
             margin: 0 5px;
             padding: 8px 16px;
-            background-color: #7030C4;
+            background-color: #7030C4; /* #7030C4 for pagination buttons */
             border: none;
             color: #ffffff;
             cursor: pointer;
             font-size: 14px;
-            border-radius: 4px;
             outline: none;
+            border-radius: 4px;
             transition: background-color 0.3s;
         }
 
@@ -198,31 +166,29 @@
             background-color: #5b249b; /* Darker hover state */
         }
 
+        .pagination button[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .pagination span {
             font-size: 14px;
         }
     </style>
+    <!-- Include Papa Parse library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div>
-                <img src="lambda.png" alt="Lambda Labs Logo" class="logo">
-                <span class="title">T2V-Viewer by Lambda Labs</span>
-            </div>
-            <div class="page-links">
-                <a href="#">About</a>
-                <a href="#">GitHub</a>
-                <a href="#">Blog</a>
-            </div>
+    <div class="container">
+        <div class="page-title">
+            <img src="lambda.png" alt="Lambda Labs Logo" class="logo">
+            <span>T2V-Viewer by Lambda Labs</span>
         </div>
         <div class="tab-buttons">
             <button id="model-view-btn" onclick="showTab('model-view')" class="active">Model preview</button>
             <button id="prompt-view-btn" onclick="showTab('prompt-view')">Side-by-side comparison</button>
         </div>
-    </div>
 
-    <div class="container">
         <!-- Model View Tab -->
         <div id="model-view" class="tab active-tab">
             <div class="controls">
