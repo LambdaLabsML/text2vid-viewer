@@ -181,15 +181,11 @@
 
         <!-- Prompt View Tab -->
         <div id="prompt-view" class="tab">
-            <div class="controls">
-                <label for="prompt-select">Choose a Prompt:</label>
-                <select id="prompt-select" onchange="updatePromptView()"></select>
-            </div>
             <div id="prompt-grid" class="grid"></div>
             <div class="pagination">
-                <button id="prompt-prev-btn" onclick="prevPage('prompt')">Previous</button>
-                <span id="prompt-page-indicator">Page 1</span>
-                <button id="prompt-next-btn" onclick="nextPage('prompt')">Next</button>
+                <button id="prompt-prev-btn" onclick="prevPrompt()">Previous Prompt</button>
+                <span id="prompt-page-indicator">Prompt 1</span>
+                <button id="prompt-next-btn" onclick="nextPrompt()">Next Prompt</button>
             </div>
         </div>
     </div>
@@ -198,8 +194,9 @@
         const bucketName = "text2videoviewer";
         let videoData = [];
         let modelPage = 1;
-        let promptPage = 1;
         const itemsPerPage = 6;
+        let prompts = [];
+        let currentPromptIndex = 0;
 
         document.addEventListener("DOMContentLoaded", () => {
             loadCSVData('db.csv');
@@ -243,9 +240,8 @@
 
         function populateDropdowns() {
             const models = [...new Set(videoData.map(video => video.model))];
-            const prompts = [...new Set(videoData.map(video => video.prompt))];
+            prompts = [...new Set(videoData.map(video => video.prompt))];
             const modelSelect = document.getElementById("model-select");
-            const promptSelect = document.getElementById("prompt-select");
 
             // Populate Model View dropdown
             models.forEach(model => {
@@ -253,14 +249,6 @@
                 option.value = model;
                 option.textContent = model;
                 modelSelect.appendChild(option);
-            });
-
-            // Populate prompts dropdown
-            prompts.forEach(prompt => {
-                const option = document.createElement("option");
-                option.value = prompt;
-                option.textContent = prompt;
-                promptSelect.appendChild(option);
             });
         }
 
@@ -280,7 +268,7 @@
             }
             if (tabId === 'prompt-view') {
                 document.getElementById('prompt-view-btn').classList.add('active');
-                promptPage = 1; // Reset page number when switching tabs
+                currentPromptIndex = 0; // Reset prompt index when switching tabs
                 updatePromptView();
             }
         }
@@ -325,13 +313,12 @@
         }
 
         function updatePromptView() {
-            const selectedPrompt = document.getElementById("prompt-select").value;
+            const selectedPrompt = prompts[currentPromptIndex];
             const promptGrid = document.getElementById("prompt-grid");
             promptGrid.innerHTML = ""; // Clear previous content
 
             const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt);
-            const paginatedVideos = paginate(filteredVideos, promptPage, itemsPerPage);
-            paginatedVideos.forEach(video => {
+            filteredVideos.forEach(video => {
                 const gridItem = document.createElement("div");
                 gridItem.className = "grid-item";
 
@@ -356,11 +343,24 @@
                 promptGrid.appendChild(gridItem);
             });
 
-            document.getElementById('prompt-page-indicator').textContent = `Page ${promptPage}`;
+            document.getElementById('prompt-page-indicator').textContent = `Prompt ${currentPromptIndex + 1} of ${prompts.length}: ${selectedPrompt}`;
 
-            // Disable next/prev buttons if there are no more pages
-            document.getElementById('prompt-prev-btn').disabled = promptPage <= 1;
-            document.getElementById('prompt-next-btn').disabled = promptPage * itemsPerPage >= filteredVideos.length;
+            document.getElementById('prompt-prev-btn').disabled = currentPromptIndex <= 0;
+            document.getElementById('prompt-next-btn').disabled = currentPromptIndex >= prompts.length - 1;
+        }
+
+        function nextPrompt() {
+            if (currentPromptIndex < prompts.length - 1) {
+                currentPromptIndex++;
+                updatePromptView();
+            }
+        }
+
+        function prevPrompt() {
+            if (currentPromptIndex > 0) {
+                currentPromptIndex--;
+                updatePromptView();
+            }
         }
 
         function paginate(array, pageNumber, pageSize) {
@@ -371,15 +371,6 @@
             if (view === 'model') {
                 modelPage++;
                 updateModelView();
-            } else if (view === 'prompt') {
-                const selectedPrompt = document.getElementById("prompt-select").value;
-                const filteredVideos = videoData.filter(video => video.prompt === selectedPrompt);
-                const maxPage = Math.ceil(filteredVideos.length / itemsPerPage);
-
-                if (promptPage < maxPage) {
-                    promptPage++;
-                    updatePromptView();
-                }
             }
         }
 
@@ -387,9 +378,6 @@
             if (view === 'model' && modelPage > 1) {
                 modelPage--;
                 updateModelView();
-            } else if (view === 'prompt' && promptPage > 1) {
-                promptPage--;
-                updatePromptView();
             }
         }
     </script>
