@@ -44,7 +44,7 @@ HF_TOKEN=<your-hf-token>
 /bin/bash run_frontend.sh
 ```
 
-Then, open your browser at http://<instance_IP>:8000/
+Then, open your browser at http://<instance_IP>:8080/
 
 
 

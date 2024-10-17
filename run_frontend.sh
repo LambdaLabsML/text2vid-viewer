@@ -12,7 +12,7 @@ echo "Sourced .env file"
 
 # Install dependencies
 python3 -m pip install --upgrade pip flatbuffers
-python3 -m pip install boto3 python-dotenv || { echo "Failed to install dependencies"; exit 1; }
+python3 -m pip install boto3 python-dotenv pandas || { echo "Failed to install dependencies"; exit 1; }
 echo "Installed dependencies"
 
 # Refresh db.csv
@@ -22,4 +22,4 @@ echo "Refreshed db.csv"
 # Run frontend server
 echo "Running frontend server"
 cd frontend
-python3 -m http.server
+python3 -m http.server 8080
