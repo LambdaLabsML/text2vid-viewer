@@ -93,6 +93,14 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
 
     # Save as CSV with proper quoting
     df = pd.DataFrame(records)
+
+    # Filter to SOTA models only
+    sota_models = ["cog", "pyramidflow", "opensora-v1-2-720p"]
+    df = df[df["model"].isin(sota_models)]
+
+    # Update name "opensora-v1-2-720p" to "opensora-v1.2"
+    df["model"] = df["model"].replace({"opensora-v1-2-720p": "opensora-v1.2"})
+
     df.to_csv(csv_fpath, index=False, quoting=csv.QUOTE_ALL, encoding='utf-8')
 
 
