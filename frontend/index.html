@@ -69,6 +69,13 @@
             border-radius: 8px; /* Optional: adds a rounded border */
         }
 
+        .description, .tab-description {
+            padding: 10px 20px;
+            background-color: #1f1f1f;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
         .nav-links {
             display: flex;
             align-items: center;
@@ -90,15 +97,6 @@
         .nav-links span {
             margin: 0 10px;
             color: #ffffff;
-        }
-
-        .description {
-            padding: 20px;
-            background-color: #1f1f1f;
-            color: #ffffff;
-            font-size: 16px;
-            line-height: 1.5;
-            flex: 0 0 auto;
         }
 
         .tab {
@@ -220,6 +218,9 @@
             <img src="lambda.png" alt="Lambda Labs Logo" class="logo">
             <span>T2V-Viewer by Lambda Labs</span>
         </div>
+        <div class="description">
+            T2V-View is a visual solution to evaluate the performance of state-of-the-art open text-to-video (T2V) models. Neither the prompts nor the generations were cherry-picked so as to give an unbiased representation of the models performance.
+        </div>
         <div class="nav-links">
             <a href="https://lambdalabs.com/blog">Blog</a>
             <span> |</span>
@@ -227,9 +228,8 @@
             <span> |</span>
             <a href="#">About</a>
         </div>
-
-        <div id="description" class="description">
-            <!-- Content will be dynamically updated -->
+        <div id="tab-description" class="tab-description">
+            <!-- Content will be inserted here dynamically -->
         </div>
 
         <!-- Model View Tab -->
@@ -341,25 +341,17 @@
             document.querySelectorAll('.tab-buttons button').forEach(button => {
                 button.classList.remove('active');
             });
+            const tabDescription = document.getElementById('tab-description');
             if (tabId === 'model-view') {
                 document.getElementById('model-view-btn').classList.add('active');
                 modelPage = 1; // Reset page number when switching tabs
                 updateModelView();
-                // Update description content
-                document.getElementById('description').innerHTML = `
-                    <p>T2V-View is a solution to visually evaluate the performance of state-of-the-art open text-to-video (T2V) models.</p>
-                    <p>The model preview mode shows outputs for a variety of prompts for the selected model.</p>
-                    <p>Neither the prompts nor the videos were cherry picked so as to give an unbiased representation of the model performance.</p>
-                `;
+                tabDescription.innerHTML = '<p><b><i>The model preview mode shows outputs for a variety of prompts for the selected model.</i></b></p>';
             }
             if (tabId === 'prompt-view') {
                 document.getElementById('prompt-view-btn').classList.add('active');
                 updatePromptView();
-                // Update description content
-                document.getElementById('description').innerHTML = `
-                    <p>T2V-View is a solution to visually evaluate the performance of state-of-the-art open text-to-video (T2V) models.</p>
-                    <p>Side-by-side comparison of the output of state-of-the-art open source models for a given prompt.</p>
-                `;
+                tabDescription.innerHTML = '<p><b><i>Side-by-side comparison of the output of state-of-the-art open source models for a given prompt.</i></b></p>';
             }
         }
 
