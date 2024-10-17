@@ -36,7 +36,7 @@
             flex: 0 0 auto;
         }
 
-        .page-title .logo {
+        .page-title img.logo {
             width: 50px;
             height: auto;
             margin-right: 15px;
@@ -98,28 +98,6 @@
             border-radius: 4px;
             outline: none;
             margin-right: 20px;
-        }
-
-        .controls button {
-            margin: 0 5px;
-            padding: 8px 16px;
-            background-color: #1f1f1f;
-            border: none;
-            color: #ffffff;
-            cursor: pointer;
-            font-size: 14px;
-            outline: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .controls button:hover {
-            background-color: #333333;
-        }
-
-        .controls button[disabled] {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .grid {
@@ -201,7 +179,7 @@
     <div class="container">
         <div class="page-title">
             <img src="lambda.png" alt="Lambda Labs Logo" class="logo">
-            <h1>T2V-Viewer by Lambda Labs</h1>
+            <span>T2V-Viewer by Lambda Labs</span>
         </div>
         <div class="tab-buttons">
             <button id="model-view-btn" onclick="showTab('model-view')" class="active">Model preview</button>
@@ -227,10 +205,13 @@
             <div class="controls">
                 <label for="prompt-select">Choose a Prompt:</label>
                 <select id="prompt-select" onchange="updatePromptView()"></select>
-                <button id="prompt-prev-btn" onclick="prevPrompt()">Previous Prompt</button>
-                <button id="prompt-next-btn" onclick="nextPrompt()">Next Prompt</button>
             </div>
             <div id="prompt-grid" class="grid"></div>
+            <div class="pagination">
+                <button id="prompt-prev-btn" onclick="prevPrompt()">Previous Prompt</button>
+                <span id="prompt-page-indicator">Prompt 1</span>
+                <button id="prompt-next-btn" onclick="nextPrompt()">Next Prompt</button>
+            </div>
         </div>
     </div>
 
@@ -396,6 +377,8 @@
                 gridItem.appendChild(modelLabel);
                 promptGrid.appendChild(gridItem);
             });
+
+            document.getElementById('prompt-page-indicator').textContent = `Prompt ${currentPromptIndex + 1} of ${prompts.length}`;
 
             // Disable prev/next buttons if at the start/end
             document.getElementById('prompt-prev-btn').disabled = currentPromptIndex <= 0;
