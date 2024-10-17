@@ -92,6 +92,14 @@
             color: #ffffff;
         }
 
+        .description {
+            padding: 20px;
+            background-color: #1f1f1f;
+            color: #ffffff;
+            font-size: 16px;
+            line-height: 1.5;
+            flex: 0 0 auto;
+        }
 
         .tab {
             display: none;
@@ -220,6 +228,10 @@
             <a href="#">About</a>
         </div>
 
+        <div id="description" class="description">
+            <!-- Content will be dynamically updated -->
+        </div>
+
         <!-- Model View Tab -->
         <div id="model-view" class="tab active-tab">
             <div class="controls">
@@ -333,10 +345,21 @@
                 document.getElementById('model-view-btn').classList.add('active');
                 modelPage = 1; // Reset page number when switching tabs
                 updateModelView();
+                // Update description content
+                document.getElementById('description').innerHTML = `
+                    <p>T2V-View is a solution to visually evaluate the performance of state-of-the-art open text-to-video (T2V) models.</p>
+                    <p>The model preview mode shows outputs for a variety of prompts for the selected model.</p>
+                    <p>Neither the prompts nor the videos were cherry picked so as to give an unbiased representation of the model performance.</p>
+                `;
             }
             if (tabId === 'prompt-view') {
                 document.getElementById('prompt-view-btn').classList.add('active');
                 updatePromptView();
+                // Update description content
+                document.getElementById('description').innerHTML = `
+                    <p>T2V-View is a solution to visually evaluate the performance of state-of-the-art open text-to-video (T2V) models.</p>
+                    <p>Side-by-side comparison of the output of state-of-the-art open source models for a given prompt.</p>
+                `;
             }
         }
 
