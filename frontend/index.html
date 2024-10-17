@@ -115,8 +115,9 @@
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Align to the left */
             margin-bottom: 10px;
+            padding: 10px 20px; /* Match padding with description */
         }
 
         .controls label {
@@ -232,12 +233,20 @@
             <!-- Content will be inserted here dynamically -->
         </div>
 
-        <!-- Model View Tab -->
-        <div id="model-view" class="tab active-tab">
-            <div class="controls">
+        <!-- Controls Section -->
+        <div id="controls" class="controls">
+            <div id="model-controls" style="display: none;">
                 <label for="model-select">Choose a Model:</label>
                 <select id="model-select" onchange="updateModelView()"></select>
             </div>
+            <div id="prompt-controls" style="display: none;">
+                <label for="prompt-select">Choose a Prompt:</label>
+                <select id="prompt-select" onchange="updatePromptView()"></select>
+            </div>
+        </div>
+
+        <!-- Model View Tab -->
+        <div id="model-view" class="tab active-tab">
             <div id="model-grid" class="grid"></div>
             <div class="pagination">
                 <button id="model-prev-btn" onclick="prevPage('model')">Previous</button>
@@ -248,10 +257,6 @@
 
         <!-- Prompt View Tab -->
         <div id="prompt-view" class="tab">
-            <div class="controls">
-                <label for="prompt-select">Choose a Prompt:</label>
-                <select id="prompt-select" onchange="updatePromptView()"></select>
-            </div>
             <div id="prompt-grid" class="grid"></div>
             <div class="pagination">
                 <button id="prompt-prev-btn" onclick="prevPrompt()">Previous Prompt</button>
@@ -342,16 +347,23 @@
                 button.classList.remove('active');
             });
             const tabDescription = document.getElementById('tab-description');
+            const modelControls = document.getElementById('model-controls');
+            const promptControls = document.getElementById('prompt-controls');
+
             if (tabId === 'model-view') {
                 document.getElementById('model-view-btn').classList.add('active');
                 modelPage = 1; // Reset page number when switching tabs
                 updateModelView();
-                tabDescription.innerHTML = '<p><b>The model preview mode shows outputs for a variety of prompts for the selected model.</b></p>';
+                tabDescription.innerHTML = '<p><b>The model preview mode shows outputs for a variety of prompts for the selected model:</b></p>';
+                modelControls.style.display = 'flex';
+                promptControls.style.display = 'none';
             }
             if (tabId === 'prompt-view') {
                 document.getElementById('prompt-view-btn').classList.add('active');
                 updatePromptView();
-                tabDescription.innerHTML = '<p><b>Side-by-side comparison of the output of state-of-the-art open source models for a given prompt.</b></p>';
+                tabDescription.innerHTML = '<p><b>Side-by-side output comparison of the top models for the selected prompt:</b></p>';
+                modelControls.style.display = 'none';
+                promptControls.style.display = 'flex';
             }
         }
 
