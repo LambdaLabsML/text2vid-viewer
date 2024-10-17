@@ -235,11 +235,26 @@
         }
 
         function parseCSVData(csv) {
-            const lines = csv.split("\n").filter(line => line.trim() !== "");
-            videoData = lines.slice(1).map(line => {
-                const [model, prompt] = line.split(",");
-                const location = `https://${bucketName}.s3.amazonaws.com/${model.trim()}/${prompt.trim()}.mp4`;
-                return { model: model.trim(), prompt: prompt.trim(), location };
+            Papa.parse(csv, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    videoData = results.data.map(row => {
+                        try {
+                            const model = row.model.trim();
+                            const prompt = row.prompt.trim();
+                            const object_name = row.object_name.trim();
+                            const location = `https://${bucketName}.s3.amazonaws.com/${object_name}`;
+                            return { model, prompt, location };
+                        } catch (error) {
+                            console.error('Error processing row:', row, error);
+                            return null;
+                        }
+                    }).filter(item => item !== null);
+                },
+                error: function(error) {
+                    console.error('Error parsing CSV:', error);
+                }
             });
         }
 
