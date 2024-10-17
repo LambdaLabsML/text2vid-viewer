@@ -11,6 +11,7 @@ export $(grep -v '^#' .env | xargs)
 echo "Sourced .env file"
 
 # Install dependencies
+python3 -m pip install --upgrade pip
 python3 -m pip install boto3 python-dotenv || { echo "Failed to install dependencies"; exit 1; }
 echo "Installed dependencies"
 
