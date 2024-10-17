@@ -6,6 +6,10 @@ Generative text-to-video models are challenging to evaluate automatically but it
 
 `T2V-viewer` was built to offer an easy way to compare model side-by-side and quickly evaluate where lies the strength and weaknesses.
 
+Two modes can be used for model evaluation:
+* Model centric view: preview generations by batch of 6 prompts for a given model.
+* Prompt centric view: preview generation by batch of 6 models for a given prompt
+
 
 **Models supported**
 
@@ -50,8 +54,7 @@ Then, open your browser at http://<instance_IP>:8000/
 
 Backend serves T2V models and generates video from user submitted prompts.
 Frontend renders model outputs for visual comparisons:
-* Model centric view: preview generations by batch of 6 prompts for a given model.
-* Prompt centric view: preview generation by batch of 6 models for a given prompt
+
 
 ## Usage guide
 

@@ -1,4 +1,5 @@
 import pandas as pd
+import csv
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from dotenv import load_dotenv
@@ -73,18 +74,26 @@ def list_s3_bucket_items(bucket_name):
 
 
 def update_csv(csv_fpath, bucket_name="text2videoviewer"):
-
     all_objects = list_s3_bucket_items(bucket_name)
     records = []
     for obj in all_objects:
-        model = obj.split("/")[0]
-        prompt = obj.split("/")[1].split(".")[0]
-        prompt = prompt.strip().strip('"').strip("'").strip('\n')
-        prompt = prompt.replace(",", "")
+        # Split the object name into model and the rest
+        parts = obj.split("/", 1)
+        if len(parts) != 2:
+            continue  # Skip if the object name doesn't match expected pattern
+        model = parts[0]
+        filename = parts[1]
+
+        # Remove the file extension to get the prompt
+        prompt = filename.rsplit(".", 1)[0]
+        prompt = prompt.strip().strip('"').strip("'").strip('\n').strip()
+
+        # No longer removing commas from prompts
         records.append({"model": model, "prompt": prompt, "object_name": obj})
-    # Save as CSV
+
+    # Save as CSV with proper quoting
     df = pd.DataFrame(records)
-    df.to_csv(csv_fpath, index=False)
+    df.to_csv(csv_fpath, index=False, quoting=csv.QUOTE_ALL, encoding='utf-8')
 
 
 import boto3
