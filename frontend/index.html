@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Text2Vid Viewer</title>
+    <title>T2V-View</title>
     <style>
         /* Reset and basic styling */
         * {
@@ -216,10 +216,10 @@
         </div>
         <div class="page-title">
             <img src="lambda.png" alt="Lambda Labs Logo" class="logo">
-            <span>T2V-Viewer: a visual performance evaluation of top text-to-video models</span>
+            <span>T2V-View: visual evaluation for top text-to-video models</span>
         </div>
         <div class="description">
-            Neither the prompts nor the generations were cherry-picked so as to give an unbiased representation of the models performance.
+            <i>Neither the prompts nor the generations were cherry-picked so as to give an unbiased representation of the models performance.</i>
         </div>
         <div class="nav-links">
             <a href="https://lambdalabs.com/blog">Blog</a>
@@ -346,12 +346,12 @@
                 document.getElementById('model-view-btn').classList.add('active');
                 modelPage = 1; // Reset page number when switching tabs
                 updateModelView();
-                tabDescription.innerHTML = '<p><b><i>The model preview mode shows outputs for a variety of prompts for the selected model.</i></b></p>';
+                tabDescription.innerHTML = '<p><b>The model preview mode shows outputs for a variety of prompts for the selected model.</b></p>';
             }
             if (tabId === 'prompt-view') {
                 document.getElementById('prompt-view-btn').classList.add('active');
                 updatePromptView();
-                tabDescription.innerHTML = '<p><b><i>Side-by-side comparison of the output of state-of-the-art open source models for a given prompt.</i></b></p>';
+                tabDescription.innerHTML = '<p><b>Side-by-side comparison of the output of state-of-the-art open source models for a given prompt.</b></p>';
             }
         }
 
