@@ -170,6 +170,8 @@
             font-size: 14px;
         }
     </style>
+    <!-- Include Papa Parse library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -244,7 +246,7 @@
                             const model = row.model.trim();
                             const prompt = row.prompt.trim();
                             const object_name = row.object_name.trim();
-                            const location = `https://${bucketName}.s3.amazonaws.com/${object_name}`;
+                            const location = `https://${bucketName}.s3.amazonaws.com/${encodeURIComponent(object_name)}`;
                             return { model, prompt, location };
                         } catch (error) {
                             console.error('Error processing row:', row, error);
