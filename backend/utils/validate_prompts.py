@@ -22,7 +22,13 @@ def process_prompts(file_path):
 
                 for row in reader:
                     prompt = row['prompt'].replace("/", "").strip()
-                    base_prompt = row['base_prompt'].replace("/", "").strip() if row['base_prompt'] else ""
+                    
+                    # Explicitly checking for None or empty string
+                    base_prompt = row['base_prompt']
+                    if base_prompt is None or base_prompt.strip() == "":
+                        base_prompt = ""  # Force empty string if the value is None or an empty string
+                    else:
+                        base_prompt = base_prompt.replace("/", "").strip()
 
                     # Raise an error if prompt is empty
                     if not prompt:
