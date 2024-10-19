@@ -115,20 +115,20 @@ def main():
             continue
 
         # Export to S3
-        generated_files = glob.glob(os.path.join("/data", '*.mp4'))
-        for generated_file_path in generated_files:
-            prompt = os.path.basename(generated_file_path).split('.mp4')[0]
-            bucket_name = "text2videoviewer"
-            object_name = f"{model}/{prompt}.mp4"
-            metadata = None
-            response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
+        # generated_files = glob.glob(os.path.join("/data", '*.mp4'))
+        # for generated_file_path in generated_files:
+        #     prompt = os.path.basename(generated_file_path).split('.mp4')[0]
+        #     bucket_name = "text2videoviewer"
+        #     object_name = f"{model}/{prompt}.mp4"
+        #     metadata = None
+        #     response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
 
-            if response is not None:
-                logger.debug(f"File {generated_file_path} uploaded successfully as {response}.")
-                os.remove(generated_file_path)
-                logger.debug(f"Removed file after sending: {generated_file_path}")
-            else:
-                logger.error(f"File upload failed for {generated_file_path}.")
+        #     if response is not None:
+        #         logger.debug(f"File {generated_file_path} uploaded successfully as {response}.")
+        #         os.remove(generated_file_path)
+        #         logger.debug(f"Removed file after sending: {generated_file_path}")
+        #     else:
+        #         logger.error(f"File upload failed for {generated_file_path}.")
 
 
 if __name__ == '__main__':
