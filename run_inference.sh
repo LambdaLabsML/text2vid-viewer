@@ -38,7 +38,7 @@ echo "Model set to: $MODEL"
 cd "$ROOT_DIR"
 
 # Throw error if prompts.csv and prompts.txt do not exist
-if [ ! -f "$PROMPT_CSV_PATH" && ! -f "$PROMPT_TXT_PATH" ]; then 
+if [ ! -f "$PROMPT_CSV_PATH" ] && [ ! -f "$PROMPT_TXT_PATH" ]; then 
     echo "Prompt file not found at ${PROMPT_CSV_PATH} or ${PROMPT_TXT_PATH}"
     exit 1
 fi
