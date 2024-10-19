@@ -90,15 +90,7 @@ def main():
             raise ValueError(f"Config file for model {args.model} does not exist: {config_file}")
         config_files = [config_file]
 
-    # Remove punctuation from prompts (comma, period, exclamation mark)
-    logger.debug(f"Remove punctuation from prompts")
-    with open("/app/prompts.txt", "r") as f:
-        prompts = f.readlines()
-    
-    prompts = [prompt.replace(",", "").replace(".", "").replace("!", "") for prompt in prompts]
-    with open("/app/prompts.txt", "w") as f:
-        for prompt in prompts:
-            f.write(prompt + "\n")
+
 
     # Loop over all config files to run inference for
     for config_file in config_files:
@@ -110,7 +102,6 @@ def main():
         for file_path in glob.glob(os.path.join("/data", '*.mp4')):
             os.remove(file_path)
             logger.debug(f"Removed file: {file_path}")
-
 
         # Run inference for current model config
         cmd_list = get_cmd_list(config_file)

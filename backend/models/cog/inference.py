@@ -183,8 +183,7 @@ if __name__ == "__main__":
         if len(prompts) == 1 and args.output_path:
             output_path = args.output_path
         else:
-            safe_prompt = make_safe_filename(prompt)
-            output_path = os.path.join(args.save_dir, f"{safe_prompt}.mp4")
+            output_path = os.path.join(args.save_dir, f"{prompt}.mp4")
 
         generate_video(
             prompt=prompt,

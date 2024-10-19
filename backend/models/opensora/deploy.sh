@@ -39,13 +39,6 @@ handle_error() {
 # Trap errors
 trap 'handle_error $LINENO' ERR
 
-# # Ensure required directories exist
-# echo "Setting up /data and /logs directories..."
-# DATA_DIR="/data"
-# LOGS_DIR="/logs"
-# sudo mkdir -p $DATA_DIR $LOGS_DIR
-# sudo chown $USER:$USER $DATA_DIR $LOGS_DIR
-
 # Remove all containers
 containers=$(sudo docker ps -qa)
 if [ -n "$containers" ]; then

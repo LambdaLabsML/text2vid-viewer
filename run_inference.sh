@@ -75,6 +75,9 @@ else
     fi
 fi
 
+# Make sure prompts are valid
+python /home/ubuntu/text2vid-viewer/backend/utils/validate_prompts.py --prompt_path "$PROMPT_PATH" || { echo "Invalid prompts"; exit 1; }
+
 # Run the deploy script with the specified model
 echo "Running inference..."
 /bin/bash "${DEPLOY_SCRIPT}" --model "$MODEL"
