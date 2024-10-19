@@ -24,20 +24,20 @@ if __name__ == "__main__":
     if prompt_csv and os.path.exists(prompt_csv):
         import pandas as pd
         df = pd.read_csv(prompt_csv)
-        prompt_base_mapping = dict(zip(df['prompt'], df['prompt_base']))
+        prompt_base_mapping = dict(zip(df['prompt'], df['base_prompt']))
 
     # Export to S3
     generated_files = glob.glob(os.path.join("/home/ubuntu/data", '*.mp4'))
     for generated_file_path in generated_files:
         prompt = os.path.basename(generated_file_path).split('.mp4')[0]
-        prompt_base = prompt_base_mapping.get(prompt, None)
+        base_prompt = prompt_base_mapping.get(prompt, None)
         bucket_name = "text2videoviewer"
         object_name = f"{model}/{prompt}.mp4"
 
         metadata = {
             "model": model,
             "prompt": prompt,
-            "prompt_base" : prompt_base
+            "base_prompt" : base_prompt
         }
 
         response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)

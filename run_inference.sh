@@ -1,8 +1,8 @@
 #!/bin/bash
 
 MODEL="all" # Set default value for MODEL
-ENV_PATH="/home/ubuntu/text2vid-viewer/.env"
 ROOT_DIR="/home/ubuntu"
+ENV_PATH="/home/ubuntu/text2vid-viewer/.env"
 PROMPT_TXT_PATH="/home/ubuntu/text2vid-viewer/prompts.txt"
 PROMPT_CSV_PATH="/home/ubuntu/text2vid-viewer/prompts.csv"
 
