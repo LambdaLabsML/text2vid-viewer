@@ -23,12 +23,19 @@ def process_prompts(file_path):
                 for row in reader:
                     prompt = row['prompt'].replace("/", "").strip()
                     
-                    # Explicitly checking for None or empty string
-                    base_prompt = row['base_prompt']
+                    # Debug: Print original base_prompt
+                    print(f"Original base_prompt: '{row['base_prompt']}'")
+                    
+                    # Explicitly check for None or empty after stripping
+                    base_prompt = row.get('base_prompt', '')
                     if base_prompt is None or base_prompt.strip() == "":
-                        base_prompt = ""  # Force empty string if the value is None or an empty string
+                        base_prompt = ""  # Force empty string
                     else:
                         base_prompt = base_prompt.replace("/", "").strip()
+                    
+                    # Debug: Print processed base_prompt
+                    print(f"Processed base_prompt: '{base_prompt}'")
+    
 
                     # Raise an error if prompt is empty
                     if not prompt:
@@ -42,7 +49,7 @@ def process_prompts(file_path):
                         sys.exit(1)
 
                     # Ensure base_prompt is written as an empty string if it's empty
-                    cleaned_rows.append({'prompt': prompt, 'base_prompt': base_prompt or ""})
+                    cleaned_rows.append({'prompt': prompt, 'base_prompt': base_prompt})
                     prompts_only.append(prompt)
 
             # Save the cleaned CSV file with original columns
