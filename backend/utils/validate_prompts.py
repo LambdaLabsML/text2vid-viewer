@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
     import argparse
     parser = argparse.ArgumentParser(description="Process prompts from a text file")
-    parser.add_argument("--prompt_path", type=str, default="/home/ubuntu/t2v-view/prompts.txt", help="Path to the prompt text file")
+    parser.add_argument("--prompt_path", type=str, default="/home/ubuntu/t2v-view/prompts.csv", help="Path to the prompt text file")
     prompt_path = parser.parse_args().prompt_path
 
     process_prompts(prompt_path)
