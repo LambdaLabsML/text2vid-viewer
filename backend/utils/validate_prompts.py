@@ -1,8 +1,6 @@
 import sys
-
 import csv
 import os
-import sys
 
 def process_prompts(file_path):
     try:
@@ -24,7 +22,12 @@ def process_prompts(file_path):
 
                 for row in reader:
                     prompt = row['prompt'].replace("/", "")
-                    base_prompt = row['base_prompt'].replace("/", "")
+                    base_prompt = row['base_prompt'].replace("/", "") if row['base_prompt'] else ""
+
+                    # Raise an error if prompt is empty
+                    if not prompt.strip():
+                        print(f"Error: 'prompt' column cannot be empty for row: {row}")
+                        sys.exit(1)
 
                     # Check if any prompt exceeds 650 characters
                     if len(prompt) > 650 or len(base_prompt) > 650:
