@@ -23,6 +23,7 @@ if __name__ == "__main__":
         raise FileNotFoundError(f"Prompt CSV file not found: {prompt_csv}")
     
     df = pd.read_csv(prompt_csv)  # Read CSV with header
+    df['base_prompt'] = df['base_prompt'].fillna('')  # Fill NaN values in 'base_prompt' with empty string
     # Assuming CSV contains 'prompt' and 'base_prompt' columns
     prompts = df['prompt'].tolist()  # Get the 'prompt' column
     base_prompts = df['base_prompt'].tolist()  # Get the 'base_prompt' column
