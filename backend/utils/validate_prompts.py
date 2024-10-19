@@ -21,11 +21,11 @@ def process_prompts(file_path):
                 prompts_only = []
 
                 for row in reader:
-                    prompt = row['prompt'].replace("/", "")
-                    base_prompt = row['base_prompt'].replace("/", "") if row['base_prompt'] else ""
+                    prompt = row['prompt'].replace("/", "").strip()
+                    base_prompt = row['base_prompt'].replace("/", "").strip() if row['base_prompt'] else ""
 
                     # Raise an error if prompt is empty
-                    if not prompt.strip():
+                    if not prompt:
                         print(f"Error: 'prompt' column cannot be empty for row: {row}")
                         sys.exit(1)
 
@@ -35,7 +35,8 @@ def process_prompts(file_path):
                         print(f"Error: The following prompt exceeds 650 characters:\n{offending_prompt}")
                         sys.exit(1)
 
-                    cleaned_rows.append({'prompt': prompt, 'base_prompt': base_prompt})
+                    # Ensure base_prompt is written as an empty string if it's empty
+                    cleaned_rows.append({'prompt': prompt, 'base_prompt': base_prompt or ""})
                     prompts_only.append(prompt)
 
             # Save the cleaned CSV file with original columns
