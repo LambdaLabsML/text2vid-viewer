@@ -72,14 +72,9 @@ if __name__ == "__main__":
         print(f"base_prompt: {base_prompt}")
         print(f"bucket_name: {bucket_name}")
         print(f"object_name: {object_name}")
-        #print(f"metadata: {metadata}")
         print()
 
 
         response = upload_file_to_s3(generated_file_path, bucket_name, object_name, metadata)
-        if response is not None:
-            print(f"File {generated_file_path} uploaded successfully as {response}.")
-            os.remove(generated_file_path)
-            print(f"Removed file after sending: {generated_file_path}")
-        else:
+        if response is None:
             print(f"File upload failed for {generated_file_path}.")
