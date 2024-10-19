@@ -26,10 +26,10 @@ def process_prompts(file_path):
                     prompt = row['prompt'].replace("/", "")
                     base_prompt = row['base_prompt'].replace("/", "")
 
-                    # Check if any prompt exceeds 500 characters
-                    if len(prompt) > 500 or len(base_prompt) > 500:
-                        offending_prompt = prompt if len(prompt) > 500 else base_prompt
-                        print(f"Error: The following prompt exceeds 500 characters:\n{offending_prompt}")
+                    # Check if any prompt exceeds 650 characters
+                    if len(prompt) > 650 or len(base_prompt) > 650:
+                        offending_prompt = prompt if len(prompt) > 650 else base_prompt
+                        print(f"Error: The following prompt exceeds 650 characters:\n{offending_prompt}")
                         sys.exit(1)
 
                     cleaned_rows.append({'prompt': prompt, 'base_prompt': base_prompt})
