@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Set default value for MODEL
-MODEL="all"
+MODEL="all" # Set default value for MODEL
+ENV_PATH="/home/ubuntu/text2vid-viewer/.env"
+ROOT_DIR="/home/ubuntu"
+PROMPT_TXT_PATH="/home/ubuntu/text2vid-viewer/prompts.txt"
+PROMPT_CSV_PATH="/home/ubuntu/text2vid-viewer/prompts.csv"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -19,23 +22,9 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Print the selected model for confirmation (optional)
-echo "Model set to: $MODEL"
-
-ROOT_DIR="/home/ubuntu"
-PROMPT_PATH="/home/ubuntu/text2vid-viewer/prompts.txt"
-
-cd "$ROOT_DIR"
-
-# Check if prompt file exists
-if [ ! -f "$PROMPT_PATH" ]; then
-    echo "Prompt file not found at ${PROMPT_PATH}"
-    exit 1
-fi
 
 
 # Load environment variables from the .env file
-ENV_PATH="/home/ubuntu/text2vid-viewer/.env"
 if [ -f $ENV_PATH ]; then
     export $(cat $ENV_PATH | xargs)
 else
@@ -43,14 +32,34 @@ else
     exit 1
 fi
 
+# Print the selected model for confirmation (optional)
+echo "Model set to: $MODEL"
+
+cd "$ROOT_DIR"
+
+# Throw error if prompts.csv and prompts.txt do not exist
+if [ ! -f "$PROMPT_CSV_PATH" && ! -f "$PROMPT_TXT_PATH" ]; then 
+    echo "Prompt file not found at ${PROMPT_CSV_PATH} or ${PROMPT_TXT_PATH}"
+    exit 1
+fi
+
+# Define PROMPT_PATH as PROMPT_CSV_PATH if exists, else PROMPT_TXT_PATH
+PROMPT_PATH="$PROMPT_CSV_PATH"
+if [ ! -f "$PROMPT_CSV_PATH" ]; then
+    PROMPT_PATH="$PROMPT_TXT_PATH"
+fi
+
+# Make prompts.csv filename safe (if exists)
+# Convert prompts.csv to prompts.txt (if exists)
+# Make prompts.txt filename safe
+echo "Preprocessing prompts..."
+python /home/ubuntu/text2vid-viewer/backend/utils/validate_prompts.py --prompt_path "$PROMPT_PATH" || { echo "Invalid prompts"; exit 1; }
 
 # Install backend dependencies (that are common across models)
-pip install boto3 python-dotenv || { echo "Failed to install dependencies"; exit 1; }
-
+pip install boto3 python-dotenv pandas || { echo "Failed to install dependencies"; exit 1; }
 
 # Create log and data directories owned by ubuntu
 mkdir -p /home/ubuntu/logs /home/ubuntu/data
-#chown -R ubuntu:ubuntu /home/ubuntu/logs /home/ubuntu/data
 
 # Determine which deploy script to use based on the model
 if [ "$MODEL" == "openvid" ]; then
@@ -75,8 +84,6 @@ else
     fi
 fi
 
-# Make sure prompts are valid
-python /home/ubuntu/text2vid-viewer/backend/utils/validate_prompts.py --prompt_path "$PROMPT_PATH" || { echo "Invalid prompts"; exit 1; }
 
 # Run the deploy script with the specified model
 echo "Running inference..."
@@ -84,7 +91,6 @@ echo "Running inference..."
 
 # Export generated videos to S3
 echo "Exporting videos to S3..."
-python -m pip install pandas
-python /home/ubuntu/text2vid-viewer/backend/utils/s3_export.py --model "$MODEL"
+python /home/ubuntu/text2vid-viewer/backend/utils/s3_export.py --model "$MODEL" --prompt_csv "$PROMPT_CSV_PATH" || { echo "Failed to export videos to S3"; exit 1; }
 
 echo "Inference completed"
