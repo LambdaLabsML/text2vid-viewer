@@ -41,8 +41,8 @@ def process_prompts(file_path):
                 writer.writeheader()
                 writer.writerows(cleaned_rows)
 
-            # Save the new file prompt_txt with only the first column (prompts)
-            prompt_txt_path = os.path.join(os.path.dirname(file_path), 'prompt_txt')
+            # Save the new file prompts.txt with only the first column (prompts)
+            prompt_txt_path = os.path.join(os.path.dirname(file_path), 'prompts.txt')
             with open(prompt_txt_path, 'w') as file:
                 for prompt in prompts_only:
                     file.write(prompt + '\n')
