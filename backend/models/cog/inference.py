@@ -179,11 +179,11 @@ if __name__ == "__main__":
     pipe.vae.enable_tiling()
 
     # Loop over prompts and generate videos
-    for prompt in prompts:
+    for prompt_i, prompt in enumerate(prompts):
         if len(prompts) == 1 and args.output_path:
             output_path = args.output_path
         else:
-            output_path = os.path.join(args.save_dir, f"{prompt}.mp4")
+            output_path = os.path.join(args.save_dir, f"sample_{prompt_i}.mp4")
 
         generate_video(
             prompt=prompt,

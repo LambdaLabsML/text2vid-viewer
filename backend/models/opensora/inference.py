@@ -18,8 +18,7 @@ def get_cmd_list(config_file):
     cmd = [
         'python', 'scripts/inference.py', config_file,
         '--save-dir', "/data",
-        '--prompt-path', "/app/prompts.txt",
-        '--prompt-as-path']
+        '--prompt-path', "/app/prompts.txt"]
 
     logger.debug(f"Running command: {' '.join(cmd)}")
     return cmd
@@ -95,8 +94,8 @@ def main():
     # Loop over all config files to run inference for
     for config_file in config_files:
 
-        # Set model name to current model (otherwise can be saved as 'all')
-        model = os.path.basename(config_file.strip()).split('.py')[0]
+        # # Set model name to current model (otherwise can be saved as 'all')
+        # model = os.path.basename(config_file.strip()).split('.py')[0]
         
         # Remove any existing files with the pattern `*.mp4` in the save directory
         for file_path in glob.glob(os.path.join("/data", '*.mp4')):
