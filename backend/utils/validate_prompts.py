@@ -1,70 +1,52 @@
 import sys
-import csv
 import os
+import pandas as pd
 
 def process_prompts(file_path):
     
-    with open(file_path, 'r') as file:
-        reader = csv.DictReader(file)
-        
-        # Check headers
-        if reader.fieldnames != ['prompt', 'base_prompt']:
-            print(f"Error: CSV file must have headers 'prompt' and 'base_prompt'.")
-            sys.exit(1)
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(file_path)
 
-        cleaned_rows = []
-        prompts_only = []
+    # Check for required headers
+    if 'prompt' not in df.columns or 'base_prompt' not in df.columns:
+        print(f"Error: CSV file must have 'prompt' and 'base_prompt' columns.")
+        sys.exit(1)
 
-        for row in reader:
-            prompt = row['prompt'].replace("/", "").strip()
-            
-            # Debug: Print original base_prompt
-            print(f"Original base_prompt: '{row['base_prompt']}'")
-            
-            # Explicitly check for None or empty after stripping
-            base_prompt = row.get('base_prompt', '')
-            if base_prompt is None or base_prompt.strip() == "":
-                base_prompt = ""  # Force empty string
-            else:
-                base_prompt = base_prompt.replace("/", "").strip()
-            
-            # Debug: Print processed base_prompt
-            print(f"Processed base_prompt: '{base_prompt}'")
+    # Replace "/" and strip whitespace in both 'prompt' and 'base_prompt' columns
+    df['prompt'] = df['prompt'].str.replace("/", "").str.strip()
+    df['base_prompt'] = df['base_prompt'].fillna("").str.replace("/", "").str.strip()
 
+    # Debug: Print original and processed 'base_prompt'
+    for index, row in df.iterrows():
+        print(f"Original base_prompt: '{row['base_prompt']}'")
+        print(f"Processed base_prompt: '{row['base_prompt']}'")
 
-            # Raise an error if prompt is empty
-            if not prompt:
-                print(f"Error: 'prompt' column cannot be empty for row: {row}")
-                sys.exit(1)
+    # Check for empty 'prompt' values and exit if any are found
+    if df['prompt'].eq("").any():
+        print(f"Error: 'prompt' column cannot be empty.")
+        sys.exit(1)
 
-            # Check if any prompt exceeds 650 characters
-            if len(prompt) > 650 or len(base_prompt) > 650:
-                offending_prompt = prompt if len(prompt) > 650 else base_prompt
-                print(f"Error: The following prompt exceeds 650 characters:\n{offending_prompt}")
-                sys.exit(1)
+    # Check if any prompt exceeds 650 characters and exit if any are found
+    long_prompt = df[df['prompt'].str.len() > 650]
+    long_base_prompt = df[df['base_prompt'].str.len() > 650]
 
-            # Ensure base_prompt is written as an empty string if it's empty
-            cleaned_rows.append({'prompt': prompt, 'base_prompt': base_prompt})
-            prompts_only.append(prompt)
+    if not long_prompt.empty or not long_base_prompt.empty:
+        offending_prompt = long_prompt if not long_prompt.empty else long_base_prompt
+        print(f"Error: The following prompt exceeds 650 characters:\n{offending_prompt.iloc[0]}")
+        sys.exit(1)
 
     # Save the cleaned CSV file with original columns
-    with open(file_path, 'w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=['prompt', 'base_prompt'])
-        writer.writeheader()
-        writer.writerows(cleaned_rows)
+    df.to_csv(file_path, index=False)
 
-    # Save the new file prompts.txt with only the first column (prompts)
+    # Save the 'prompts' column to prompts.txt
     prompt_txt_path = os.path.join(os.path.dirname(file_path), 'prompts.txt')
-    with open(prompt_txt_path, 'w') as file:
-        for prompt in prompts_only:
-            file.write(prompt + '\n')
-
+    df['prompt'].to_csv(prompt_txt_path, index=False, header=False)
 
 if __name__ == "__main__":
 
     import argparse
-    parser = argparse.ArgumentParser(description="Process prompts from a text file")
-    parser.add_argument("--prompt_path", type=str, default="/home/ubuntu/t2v-view/prompts.csv", help="Path to the prompt text file")
+    parser = argparse.ArgumentParser(description="Process prompts from a CSV file")
+    parser.add_argument("--prompt_path", type=str, default="/home/ubuntu/t2v-view/prompts.csv", help="Path to the prompt CSV file")
     prompt_path = parser.parse_args().prompt_path
 
     try:
