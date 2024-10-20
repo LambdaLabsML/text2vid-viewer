@@ -59,7 +59,7 @@ fi
 
 # Create prompts.txt from prompts.csv
 echo "Preprocessing prompts..."
-python /home/ubuntu/text2vid-viewer/backend/utils/validate_prompts.py --prompt_path "$PROMPT_TXT_PATH" || { echo "Invalid prompts"; exit 1; }
+python /home/ubuntu/text2vid-viewer/backend/utils/validate_prompts.py --prompt_path "$PROMPT_CSV_PATH" || { echo "Invalid prompts"; exit 1; }
 
 # Install backend dependencies (that are common across models)
 if ! command -v pip &> /dev/null; then
