@@ -6,7 +6,7 @@ import csv
 def process_prompts(file_path):
     # Read CSV into a DataFrame
     try:
-        df = pd.read_csv(file_path, dtype=str)
+        df = pd.read_csv(file_path).fillna("")
     except Exception as e:
         raise RuntimeError(f"Error loading CSV file: {e}")
 
