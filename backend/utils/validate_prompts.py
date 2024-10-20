@@ -59,27 +59,30 @@ import os
 import pandas as pd
 
 def validate_and_process_csv(file_path):
-    """Validates and processes the CSV with better error handling and diagnostics."""
+    """Validates and processes the CSV, ensuring correct field count and empty values."""
     
     try:
-        # Attempt to read the CSV file, specifying that it uses commas as the delimiter
-        df = pd.read_csv(file_path, dtype=str, keep_default_na=False, error_bad_lines=False, quoting=1)  # quoting=1 ensures proper handling of quotes
+        # First, read the file manually to diagnose malformed lines
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
 
-        # Check for correct number of columns (prompt and base_prompt)
-        if len(df.columns) != 2 or 'prompt' not in df.columns or 'base_prompt' not in df.columns:
+        # Detect lines with incorrect number of commas
+        for i, line in enumerate(lines, start=1):
+            fields = line.split(',')
+            if len(fields) != 2:
+                print(f"Warning: Line {i} does not have exactly two fields:\n{line}")
+
+        # Read CSV with appropriate quoting
+        df = pd.read_csv(file_path, dtype=str, keep_default_na=False, quoting=1, error_bad_lines=False)
+
+        # Check for correct number of columns
+        if 'prompt' not in df.columns or 'base_prompt' not in df.columns:
             print(f"Error: CSV file must contain exactly two columns: 'prompt' and 'base_prompt'.")
             sys.exit(1)
 
         # Replace "/" and strip whitespace in both 'prompt' and 'base_prompt' columns
         df['prompt'] = df['prompt'].str.replace("/", "").str.strip()
         df['base_prompt'] = df['base_prompt'].fillna("").str.replace("/", "").str.strip()
-
-        # Check for rows with too many commas (split into extra columns)
-        with open(file_path, 'r') as f:
-            lines = f.readlines()
-            for i, line in enumerate(lines[1:], 2):  # Start from line 2 (skip header)
-                if line.count(",") > 1:  # More than one comma suggests extra columns
-                    print(f"Warning: Line {i} may have an issue due to excess commas:\n{line}")
 
         # Check for empty 'prompt' values and raise an error if found
         empty_prompts = df[df['prompt'].str.strip() == ""]
