@@ -54,20 +54,18 @@
 #     except Exception as e:
 #         print(f"An error occurred: {e}")
 #         sys.exit(1)
-
-
 import sys
 import os
 import pandas as pd
 
 def validate_and_process_csv(file_path):
-    """Validates and processes the CSV ensuring correct field count and empty values."""
+    """Validates and processes the CSV with better error handling and diagnostics."""
     
     try:
-        # Read CSV and treat missing values as empty strings
-        df = pd.read_csv(file_path, dtype=str, keep_default_na=False)
+        # Attempt to read the CSV file, specifying that it uses commas as the delimiter
+        df = pd.read_csv(file_path, dtype=str, keep_default_na=False, error_bad_lines=False, quoting=1)  # quoting=1 ensures proper handling of quotes
 
-        # Ensure the CSV has exactly 2 columns ('prompt' and 'base_prompt')
+        # Check for correct number of columns (prompt and base_prompt)
         if len(df.columns) != 2 or 'prompt' not in df.columns or 'base_prompt' not in df.columns:
             print(f"Error: CSV file must contain exactly two columns: 'prompt' and 'base_prompt'.")
             sys.exit(1)
@@ -75,6 +73,13 @@ def validate_and_process_csv(file_path):
         # Replace "/" and strip whitespace in both 'prompt' and 'base_prompt' columns
         df['prompt'] = df['prompt'].str.replace("/", "").str.strip()
         df['base_prompt'] = df['base_prompt'].fillna("").str.replace("/", "").str.strip()
+
+        # Check for rows with too many commas (split into extra columns)
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+            for i, line in enumerate(lines[1:], 2):  # Start from line 2 (skip header)
+                if line.count(",") > 1:  # More than one comma suggests extra columns
+                    print(f"Warning: Line {i} may have an issue due to excess commas:\n{line}")
 
         # Check for empty 'prompt' values and raise an error if found
         empty_prompts = df[df['prompt'].str.strip() == ""]
