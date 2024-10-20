@@ -64,7 +64,7 @@ def add_quotes_to_fields(line):
     fields = []
     for field in csv.reader([line], skipinitialspace=True).__next__():
         field = field.strip()
-        if not field.startswith('"') and "," not in field and field != "":
+        if not field.startswith('"') and "," not in field:
             field = f'"{field}"'  # Add quotes around fields that are not quoted and don't contain commas
         fields.append(field)
     return ",".join(fields)
