@@ -1,13 +1,15 @@
 #!/bin/bash
 
+MODEL="opensora-v1-2-720p"
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
         --model)
             MODEL="$2"
-            shift
-            shift
+            shift # past argument
+            shift # past value
             ;;
         *)
             echo "Unknown argument: $1"
@@ -15,6 +17,8 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+echo "Using model: $MODEL"
 
 # Load environment variables from the .env file
 ENV_PATH="/home/ubuntu/text2vid-viewer/.env"
