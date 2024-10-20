@@ -3,17 +3,16 @@ import os
 import pandas as pd
 
 def process_prompts(file_path):
+    # Read the CSV file into a DataFrame, handling inconsistent quotation marks
+    df = pd.read_csv(file_path, quotechar='"', skipinitialspace=True, dtype=str)
     
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(file_path)
-
-    # Check for required headers
+    # Ensure required columns are present
     if 'prompt' not in df.columns or 'base_prompt' not in df.columns:
         print(f"Error: CSV file must have 'prompt' and 'base_prompt' columns.")
         sys.exit(1)
 
     # Replace "/" and strip whitespace in both 'prompt' and 'base_prompt' columns
-    df['prompt'] = df['prompt'].str.replace("/", "").str.strip()
+    df['prompt'] = df['prompt'].fillna("").str.replace("/", "").str.strip()
     df['base_prompt'] = df['base_prompt'].fillna("").str.replace("/", "").str.strip()
 
     # Debug: Print original and processed 'base_prompt'
@@ -21,10 +20,8 @@ def process_prompts(file_path):
         print(f"Original base_prompt: '{row['base_prompt']}'")
         print(f"Processed base_prompt: '{row['base_prompt']}'")
 
-    # Check for empty 'prompt' values and exit if any are found
-    if df['prompt'].eq("").any():
-        print(f"Error: 'prompt' column cannot be empty.")
-        sys.exit(1)
+    # Check for empty 'prompt' values and replace with empty string
+    df['prompt'] = df['prompt'].replace("", '""')
 
     # Check if any prompt exceeds 650 characters and exit if any are found
     long_prompt = df[df['prompt'].str.len() > 650]
@@ -35,15 +32,14 @@ def process_prompts(file_path):
         print(f"Error: The following prompt exceeds 650 characters:\n{offending_prompt.iloc[0]}")
         sys.exit(1)
 
-    # Save the cleaned CSV file with original columns
-    df.to_csv(file_path, index=False)
+    # Save the cleaned CSV file with original columns, ensuring proper quotes for all values
+    df.to_csv(file_path, index=False, quoting=pd.io.common.csv.QUOTE_ALL)
 
-    # Save the 'prompts' column to prompts.txt
+    # Save the 'prompt' column to prompts.txt, ensuring all prompts are quoted
     prompt_txt_path = os.path.join(os.path.dirname(file_path), 'prompts.txt')
-    df['prompt'].to_csv(prompt_txt_path, index=False, header=False)
+    df['prompt'].to_csv(prompt_txt_path, index=False, header=False, quoting=pd.io.common.csv.QUOTE_ALL)
 
 if __name__ == "__main__":
-
     import argparse
     parser = argparse.ArgumentParser(description="Process prompts from a CSV file")
     parser.add_argument("--prompt_path", type=str, default="/home/ubuntu/t2v-view/prompts.csv", help="Path to the prompt CSV file")
