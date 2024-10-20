@@ -36,7 +36,7 @@ if __name__ == "__main__":
     print()
 
     # Export to S3
-    generated_files = glob.glob(os.path.join("/home/ubuntu/data", '*.mp4'))
+    generated_files = glob.glob(os.path.join(f"/home/ubuntu/data/{model}", '*.mp4'))
 
     print("generated_files")
     print(generated_files)

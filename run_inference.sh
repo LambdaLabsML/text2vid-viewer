@@ -76,6 +76,7 @@ mkdir -p /home/ubuntu/logs /home/ubuntu/data
 if [ "$MODEL" == "all" ]; then
     echo "Running inference for all models..."
     for model in $(ls -d /home/ubuntu/text2vid-viewer/backend/models/*/ | xargs -n 1 basename); do
+        mkdir -p /home/ubuntu/data/"$model"
         run_inference "$model"
     done
 else

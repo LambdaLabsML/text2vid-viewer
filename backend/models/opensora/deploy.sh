@@ -76,7 +76,7 @@ sudo docker run \
     --rm \
     --gpus all \
     --env-file /home/ubuntu/text2vid-viewer/.env \
-    -v /home/ubuntu/data:/data \
+    -v /home/ubuntu/data/opensora:/data \
     -v /home/ubuntu/logs:/app/logs \
     --name opensora_inference \
     opensora-inference:latest \
