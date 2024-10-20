@@ -31,7 +31,6 @@ fi
 
 echo "Model set to: $MODEL"
 
-
 # Function to run inference for a single model (and export to S3)
 run_inference() {
     MODEL="$1"
@@ -42,7 +41,6 @@ run_inference() {
     echo "Completed inference for model: $MODEL"
 }
 
-
 # Load environment variables from the .env file
 if [ -f $ENV_PATH ]; then
     source $ENV_PATH
@@ -50,7 +48,6 @@ else
     echo "file not found: $ENV_PATH"
     exit 1
 fi
-
 
 cd "$ROOT_DIR"
 
@@ -84,6 +81,5 @@ if [ "$MODEL" == "all" ]; then
 else
     run_inference "$MODEL"
 fi
-
 
 echo "Completed run_inference.sh"
