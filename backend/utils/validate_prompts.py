@@ -59,23 +59,13 @@ import os
 import pandas as pd
 
 def validate_and_process_csv(file_path):
-    """Validates and processes the CSV, ensuring correct field count and empty values."""
+    """Validates and processes the CSV, ensuring correct field count and treating empty base_prompt as empty strings."""
     
     try:
-        # First, read the file manually to diagnose malformed lines
-        with open(file_path, 'r') as file:
-            lines = file.readlines()
+        # Read the file and ensure that missing base_prompt values are treated as empty strings
+        df = pd.read_csv(file_path, dtype=str, keep_default_na=False, quoting=1)
 
-        # Detect lines with incorrect number of commas
-        for i, line in enumerate(lines, start=1):
-            fields = line.split(',')
-            if len(fields) != 2:
-                print(f"Warning: Line {i} does not have exactly two fields:\n{line}")
-
-        # Read CSV with appropriate quoting
-        df = pd.read_csv(file_path, dtype=str, keep_default_na=False, quoting=1, error_bad_lines=False)
-
-        # Check for correct number of columns
+        # Check if the CSV contains the correct columns
         if 'prompt' not in df.columns or 'base_prompt' not in df.columns:
             print(f"Error: CSV file must contain exactly two columns: 'prompt' and 'base_prompt'.")
             sys.exit(1)
