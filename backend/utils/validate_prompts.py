@@ -63,7 +63,7 @@ def validate_and_process_csv(file_path):
     
     try:
         # Read the file and ensure that missing base_prompt values are treated as empty strings
-        df = pd.read_csv(file_path, dtype=str, keep_default_na=False, quoting=1)
+        df = pd.read_csv(file_path, dtype=str, keep_default_na=False)
 
         # Check if the CSV contains the correct columns
         if 'prompt' not in df.columns or 'base_prompt' not in df.columns:
