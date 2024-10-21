@@ -127,8 +127,21 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
     df.to_csv(csv_fpath, index=False, quoting=csv.QUOTE_ALL, encoding='utf-8')
 
 
-import boto3
-import os
+def get_s3_object_metadata(bucket_name, object_name):
+    # Initialize S3 client
+    s3_client = boto3.client('s3')
+    
+    try:
+        # Get the object's metadata
+        response = s3_client.head_object(Bucket=bucket_name, Key=object_name)
+        
+        # Return the metadata from the response (stored in the "Metadata" field)
+        return response.get("Metadata", {})
+    
+    except Exception as e:
+        print(f"Error retrieving metadata for object {object_name} in bucket {bucket_name}: {str(e)}")
+        return {}
+
 
 def clean_prompt(prompt):
     """
