@@ -20,10 +20,11 @@ else
     sleep 2  # Sleep for 2 seconds to allow the environment to refresh
 fi
 
-
+conda init bash
+source ~/.bashrc
 
 conda create -n pyramid python=3.8.10 -y
-conda activate pyramid
+source activate pyramid
 pip install -r requirements.txt
 pip install pandas
 

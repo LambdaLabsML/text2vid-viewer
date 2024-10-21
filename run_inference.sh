@@ -39,6 +39,8 @@ run_inference() {
     /bin/bash "${DEPLOY_SCRIPT}" || { echo "Failed to run inference for model: $MODEL"; exit 1; }
     python /home/ubuntu/text2vid-viewer/backend/utils/s3_export.py --model "$MODEL" --prompt_csv "$PROMPT_CSV_PATH" || { echo "Failed to export videos to S3"; exit 1; }
     echo "Completed inference for model: $MODEL"
+    echo "-----------------------------------"
+    echo ""
 }
 
 # Load environment variables from the .env file
