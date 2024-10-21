@@ -22,4 +22,4 @@ echo "Refreshed db.csv"
 # Run frontend server
 echo "Running frontend server"
 cd frontend
-python3 -m http.server 8080
+python3 -m http.server 8000
