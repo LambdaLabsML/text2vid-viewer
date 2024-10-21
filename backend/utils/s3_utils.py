@@ -122,7 +122,7 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
 
 
     # Update name "opensora-v1-2-720p" to "opensora-v1.2"
-    df["model"] = df["model"].replace({"opensora-v1-2-720p": "opensora-v1.2"})
+    df["model"] = df["model"].replace({"opensora": "opensora-v1.2"})
 
     df.to_csv(csv_fpath, index=False, quoting=csv.QUOTE_ALL, encoding='utf-8')
 
