@@ -1,6 +1,7 @@
 import pandas as pd
 from s3_utils import list_s3_bucket_items, get_s3_object_metadata
 import csv
+from tqdm import tqdm
 
 # Function to update CSV with model and prompt derived from object_name
 def update_csv(csv_fpath, bucket_name="text2videoviewer"):
@@ -76,11 +77,13 @@ def filter_records_based_on_model(df, sota_models=["cog", "pyramidflow", "openso
     
     return filtered_df
 
+
 # Function to add base_prompt metadata to the DataFrame
 def add_base_prompt_metadata(df, bucket_name):
     base_prompts = []
     
-    for index, row in df.iterrows():
+    # Iterate over the DataFrame rows with a progress bar
+    for index, row in tqdm(df.iterrows(), total=len(df), desc="Fetching Metadata", unit="object"):
         object_name = row["object_name"]
         
         # Get metadata for the object
@@ -95,6 +98,7 @@ def add_base_prompt_metadata(df, bucket_name):
     print("Added base_prompt metadata to DataFrame.")
     
     return df
+
 
 if __name__ == "__main__":
 
