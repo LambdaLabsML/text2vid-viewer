@@ -34,7 +34,7 @@
 
         .tab-buttons button {
             flex: 1;
-            padding: 15px 0;
+            padding: 10px 0;
             background-color: #7030C4; /* #7030C4 for the tab buttons */
             border: none;
             color: #ffffff;
@@ -54,7 +54,7 @@
             align-items: center;
             justify-content: flex-start; /* Left align */
             color: #ffffff;
-            padding: 20px;
+            padding: 10px 20px;
             background-color: #1f1f1f;
             font-size: 24px;
             flex: 0 0 auto;
@@ -67,13 +67,6 @@
             background-color: #ffffff; /* White background for logo */
             padding: 5px;
             border-radius: 8px; /* Optional: adds a rounded border */
-        }
-
-        .description {
-            padding: 10px 20px;
-            background-color: #1f1f1f;
-            color: #ffffff;
-            font-size: 16px;
         }
 
         .nav-links {
@@ -149,7 +142,7 @@
         .grid {
             display: grid;
             flex: 1 1 auto;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr); /* Adjusted to 2 columns */
             gap: 10px;
             overflow-y: auto;
             padding-bottom: 10px;
@@ -217,6 +210,12 @@
         .pagination span {
             font-size: 14px;
         }
+
+        /* Additional styling for Prompt Side-by-Side */
+        .pair-container {
+            display: flex;
+            flex-direction: column;
+        }
     </style>
     <!-- Include Papa Parse library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -225,14 +224,12 @@
     <div class="container">
         <div class="tab-buttons">
             <button id="model-view-btn" onclick="showTab('model-view')" class="active">Model preview</button>
-            <button id="prompt-view-btn" onclick="showTab('prompt-view')">Side-by-side comparison</button>
+            <button id="prompt-view-btn" onclick="showTab('prompt-view')">Model side-by-side</button>
+            <button id="prompt-side-by-side-btn" onclick="showTab('prompt-side-by-side')">Prompt side-by-side</button>
         </div>
         <div class="page-title">
             <img src="lambda.png" alt="Lambda Labs Logo" class="logo">
             <span>T2V-View: visual evaluation for top text-to-video models</span>
-        </div>
-        <div class="description">
-            <i>Neither the prompts nor the generations were cherry-picked so as to give an unbiased representation of the models performance.</i>
         </div>
         <div class="nav-links">
             <a href="https://lambdalabs.com/blog">Blog</a>
@@ -246,7 +243,7 @@
             <p id="description-text"></p>
             <div id="model-controls" class="controls" style="display: none;">
                 <!-- <label for="model-select">Choose a Model:</label>-->
-                <select id="model-select" onchange="updateModelView()"></select>
+                <select id="model-select" onchange="updateModelView(); updatePromptSideBySideView();"></select>
             </div>
             <div id="prompt-controls" class="controls" style="display: none;">
                 <!-- <label for="prompt-select">Choose a Prompt:</label>-->
@@ -273,13 +270,24 @@
                 <button id="prompt-next-btn" onclick="nextPrompt()">Next Prompt</button>
             </div>
         </div>
+
+        <!-- Prompt Side-by-Side Tab -->
+        <div id="prompt-side-by-side" class="tab">
+            <div id="prompt-side-by-side-grid" class="grid"></div>
+            <div class="pagination">
+                <button id="prompt-side-by-side-prev-btn" onclick="prevPage('prompt-side-by-side')">Previous</button>
+                <span id="prompt-side-by-side-page-indicator">Page 1</span>
+                <button id="prompt-side-by-side-next-btn" onclick="nextPage('prompt-side-by-side')">Next</button>
+            </div>
+        </div>
     </div>
 
     <script>
         const bucketName = "text2videoviewer";
         let videoData = [];
         let modelPage = 1;
-        const itemsPerPage = 6;
+        let promptSideBySidePage = 1;
+        const itemsPerPage = 4; // Adjusted for 2 columns
         let prompts = [];
         let currentPromptIndex = 0;
 
@@ -308,9 +316,10 @@
                         try {
                             const model = row.model.trim();
                             const prompt = row.prompt.trim();
+                            const base_prompt = row.base_prompt.trim();
                             const object_name = row.object_name.trim();
                             const location = `https://${bucketName}.s3.amazonaws.com/${encodeURIComponent(object_name)}`;
-                            return { model, prompt, location };
+                            return { model, prompt, base_prompt, location };
                         } catch (error) {
                             console.error('Error processing row:', row, error);
                             return null;
@@ -374,6 +383,14 @@
                 descriptionText.innerHTML = '<b>Side-by-side output comparison of the top models for the selected prompt:</b>';
                 modelControls.style.display = 'none';
                 promptControls.style.display = 'flex';
+            }
+            if (tabId === 'prompt-side-by-side') {
+                document.getElementById('prompt-side-by-side-btn').classList.add('active');
+                promptSideBySidePage = 1; // Reset page number when switching tabs
+                updatePromptSideBySideView();
+                descriptionText.innerHTML = '<b>The prompt side-by-side view shows pairs of videos where the base prompt matches the prompt of another video:</b>';
+                modelControls.style.display = 'flex';
+                promptControls.style.display = 'none';
             }
         }
 
@@ -456,6 +473,106 @@
             document.getElementById('prompt-next-btn').disabled = currentPromptIndex >= prompts.length - 1;
         }
 
+        function updatePromptSideBySideView() {
+            const selectedModel = document.getElementById("model-select").value;
+            const grid = document.getElementById("prompt-side-by-side-grid");
+            grid.innerHTML = "";
+
+            // Filter videos by selected model
+            const videosByModel = videoData.filter(video => video.model === selectedModel);
+
+            // Find pairs where videoA.prompt matches videoB.base_prompt
+            const pairs = [];
+            for (let i = 0; i < videosByModel.length; i++) {
+                const videoA = videosByModel[i];
+                for (let j = 0; j < videosByModel.length; j++) {
+                    const videoB = videosByModel[j];
+                    if (videoA.prompt === videoB.base_prompt) {
+                        pairs.push({ videoA, videoB });
+                    }
+                }
+            }
+
+            // Remove duplicates
+            const uniquePairs = [];
+            const seen = new Set();
+            pairs.forEach(pair => {
+                const key = pair.videoA.location + '-' + pair.videoB.location;
+                if (!seen.has(key)) {
+                    uniquePairs.push(pair);
+                    seen.add(key);
+                }
+            });
+
+            // Paginate the pairs
+            const paginatedPairs = paginate(uniquePairs, promptSideBySidePage, 2); // Adjusted for 2 columns
+
+            paginatedPairs.forEach(pair => {
+                // Create a container for the pair
+                const pairContainer = document.createElement("div");
+                pairContainer.className = "pair-container grid-item";
+
+                // First video
+                const gridItemA = document.createElement("div");
+                gridItemA.className = "grid-item";
+
+                const videoContainerA = document.createElement("div");
+                videoContainerA.className = "video-container";
+
+                const videoElementA = document.createElement("video");
+                videoElementA.src = pair.videoA.location;
+                videoElementA.loop = true;
+                videoElementA.muted = true;
+                videoElementA.autoplay = true;
+                videoElementA.addEventListener('loadeddata', () => {
+                    videoContainerA.style.backgroundColor = 'transparent';
+                });
+
+                const promptLabelA = document.createElement("p");
+                promptLabelA.textContent = pair.videoA.prompt;
+
+                videoContainerA.appendChild(videoElementA);
+                gridItemA.appendChild(videoContainerA);
+                gridItemA.appendChild(promptLabelA);
+
+                // Second video
+                const gridItemB = document.createElement("div");
+                gridItemB.className = "grid-item";
+
+                const videoContainerB = document.createElement("div");
+                videoContainerB.className = "video-container";
+
+                const videoElementB = document.createElement("video");
+                videoElementB.src = pair.videoB.location;
+                videoElementB.loop = true;
+                videoElementB.muted = true;
+                videoElementB.autoplay = true;
+                videoElementB.addEventListener('loadeddata', () => {
+                    videoContainerB.style.backgroundColor = 'transparent';
+                });
+
+                const promptLabelB = document.createElement("p");
+                promptLabelB.textContent = pair.videoB.prompt;
+
+                videoContainerB.appendChild(videoElementB);
+                gridItemB.appendChild(videoContainerB);
+                gridItemB.appendChild(promptLabelB);
+
+                // Append both grid items to the pair container
+                pairContainer.appendChild(gridItemA);
+                pairContainer.appendChild(gridItemB);
+
+                // Append the pair container to the grid
+                grid.appendChild(pairContainer);
+            });
+
+            document.getElementById('prompt-side-by-side-page-indicator').textContent = `Page ${promptSideBySidePage}`;
+
+            // Disable next/prev buttons if there are no more pages
+            document.getElementById('prompt-side-by-side-prev-btn').disabled = promptSideBySidePage <= 1;
+            document.getElementById('prompt-side-by-side-next-btn').disabled = promptSideBySidePage * 2 >= uniquePairs.length;
+        }
+
         function nextPrompt() {
             if (currentPromptIndex < prompts.length - 1) {
                 currentPromptIndex++;
@@ -480,6 +597,9 @@
             if (view === 'model') {
                 modelPage++;
                 updateModelView();
+            } else if (view === 'prompt-side-by-side') {
+                promptSideBySidePage++;
+                updatePromptSideBySideView();
             }
         }
 
@@ -487,6 +607,9 @@
             if (view === 'model' && modelPage > 1) {
                 modelPage--;
                 updateModelView();
+            } else if (view === 'prompt-side-by-side' && promptSideBySidePage > 1) {
+                promptSideBySidePage--;
+                updatePromptSideBySideView();
             }
         }
     </script>
