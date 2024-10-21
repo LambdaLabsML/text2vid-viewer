@@ -1,7 +1,6 @@
 import pandas as pd
-from s3_utils import list_s3_bucket_items
+from s3_utils import list_s3_bucket_items, get_s3_object_metadata
 import csv
-
 
 # Function to update CSV with model and prompt derived from object_name
 def update_csv(csv_fpath, bucket_name="text2videoviewer"):
@@ -45,8 +44,10 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
     # Update name "opensora" to "opensora-v1.2"
     df["model"] = df["model"].replace({"opensora": "opensora-v1.2"})
 
-    df.to_csv(csv_fpath, index=False, quoting=csv.QUOTE_ALL, encoding='utf-8')
+    # Add base_prompt metadata after filtering
+    df = add_base_prompt_metadata(df, bucket_name)
 
+    df.to_csv(csv_fpath, index=False, quoting=csv.QUOTE_ALL, encoding='utf-8')
 
 # Function to filter DataFrame based on records in prompts.csv
 def filter_records_based_on_prompts(df, prompts_csv_fpath):
@@ -75,6 +76,25 @@ def filter_records_based_on_model(df, sota_models=["cog", "pyramidflow", "openso
     
     return filtered_df
 
+# Function to add base_prompt metadata to the DataFrame
+def add_base_prompt_metadata(df, bucket_name):
+    base_prompts = []
+    
+    for index, row in df.iterrows():
+        object_name = row["object_name"]
+        
+        # Get metadata for the object
+        metadata = get_s3_object_metadata(bucket_name, object_name)
+        
+        # Extract base_prompt from metadata (assuming it's part of the metadata)
+        base_prompt = metadata.get("base_prompt", "")
+        base_prompts.append(base_prompt)
+    
+    # Add base_prompt as a new column in the DataFrame
+    df["base_prompt"] = base_prompts
+    print("Added base_prompt metadata to DataFrame.")
+    
+    return df
 
 if __name__ == "__main__":
 
