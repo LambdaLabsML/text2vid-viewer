@@ -1,34 +1,28 @@
-import csv
 import pandas as pd
-import boto3
-from s3_utils import list_s3_bucket_items
-#from s3_utils import update_csv
 
-
-# Function to get metadata from an S3 object
-def get_s3_object_metadata(bucket_name, object_name):
-    s3_client = boto3.client("s3")
-    response = s3_client.head_object(Bucket=bucket_name, Key=object_name)
-    return response["Metadata"]
-
-# Function to update CSV with metadata fields
+# Function to update CSV with model and prompt derived from object_name
 def update_csv(csv_fpath, bucket_name="text2videoviewer"):
-    all_objects = list_s3_bucket_items(bucket_name)
+    all_objects = list_s3_bucket_items(bucket_name)  # List of object names in the bucket
     records = []
     
     for obj in all_objects:
-        # Get the metadata for each object
-        metadata = get_s3_object_metadata(bucket_name, obj)
-
-        # Check if the expected metadata keys exist
-        model = metadata.get("model", "unknown_model")
-        prompt = metadata.get("prompt", "unknown_prompt")
-        base_prompt = metadata.get("base_prompt", "unknown_base_prompt")
+        # Split the object name into model and prompt using the provided pattern
+        parts = obj.rsplit("/", 1)
+        if len(parts) != 2:
+            continue  # Skip if the object name doesn't match the expected pattern
+        
+        model = parts[0]  # model is before the "/"
+        prompt_with_extension = parts[1]  # prompt with the ".mp4" extension
+        
+        # Remove the file extension (.mp4) to extract the prompt
+        if prompt_with_extension.endswith(".mp4"):
+            prompt = prompt_with_extension[:-4]  # Remove the ".mp4" extension
+        else:
+            continue  # Skip if the object name doesn't end with .mp4
 
         records.append({
             "model": model, 
             "prompt": prompt, 
-            "base_prompt": base_prompt, 
             "object_name": obj
         })
 
@@ -79,15 +73,7 @@ def filter_records_based_on_model(df, sota_models=["cog", "pyramidflow", "openso
     return filtered_df
 
 
-
-def refresh_db():
-
-    # csv_fpath is located in the parent of the script's parent directory
-    csv_fpath = "/home/ubuntu/text2vid-viewer/frontend/db.csv"
-
-    # Call the function with the dynamically constructed path as a string
-    update_csv(csv_fpath=str(csv_fpath))
-
 if __name__ == "__main__":
 
-    refresh_db()
+    csv_fpath = "/home/ubuntu/text2vid-viewer/frontend/db.csv"
+    update_csv(csv_fpath)
