@@ -101,14 +101,25 @@ def update_csv(csv_fpath, bucket_name="text2videoviewer"):
     print("Found a total of {} videos in S3.".format(len(records)))
 
     # Filter to SOTA models only
-    sota_models = ["cog", "pyramidflow", "opensora-v1-2-720p"]
+    sota_models = ["cog", "pyramidflow", "opensora"]
     df = df[df["model"].isin(sota_models)]
 
     # Filter prompts in prompts.csv only
     df = df[df["prompt"].isin(pd.read_csv("prompts.csv")["prompt"])]
     # Print number of prompts filtered out and number of prompts kept
-    print(f"Filtered out {len(records) - len(df)} videos.")
+    print(f"Filtered out  videos.")
     print(f"Kept {len(df)} videos.")
+
+    # Print each kept prompt
+    for model in df["model"].unique():
+        print(f"Kept prompts for model {model} ({len(df[df["model"] == model]["prompt"].unique())} videos):")
+        for prompt in df[df["model"] == model]["prompt"].unique():
+            print(f"\t{prompt}") 
+        print(f"Excluded prompts for model  {model} ({len(records) - len(df)} videos):")
+        excluded_prompts = set(pd.read_csv("prompts.csv")["prompt"]) - set(df[df["model"] == model]["prompt"].unique())
+        for prompt in excluded_prompts:
+            print(f"\t{prompt}")
+
 
     # Update name "opensora-v1-2-720p" to "opensora-v1.2"
     df["model"] = df["model"].replace({"opensora-v1-2-720p": "opensora-v1.2"})
