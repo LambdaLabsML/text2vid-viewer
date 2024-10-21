@@ -72,59 +72,59 @@ def list_s3_bucket_items(bucket_name):
 
     return object_keys
 
-import re
-def make_safe_filename(s: str) -> str:
-    """Creates a filesystem-safe filename from a string, allowing spaces."""
-    # Allow letters, numbers, underscores, hyphens, dots, and spaces
-    return re.sub(r'[^A-Za-z0-9_\-\. ]+', '', s)
+# import re
+# def make_safe_filename(s: str) -> str:
+#     """Creates a filesystem-safe filename from a string, allowing spaces."""
+#     # Allow letters, numbers, underscores, hyphens, dots, and spaces
+#     return re.sub(r'[^A-Za-z0-9_\-\. ]+', '', s)
 
-def update_csv(csv_fpath, bucket_name="text2videoviewer"):
-    all_objects = list_s3_bucket_items(bucket_name)
-    records = []
-    for obj in all_objects:
-        # Split the object name into model and the rest
-        parts = obj.split("/", 1)
-        if len(parts) != 2:
-            continue  # Skip if the object name doesn't match expected pattern
-        model = parts[0]
-        filename = parts[1]
+# def update_csv(csv_fpath, bucket_name="text2videoviewer"):
+#     all_objects = list_s3_bucket_items(bucket_name)
+#     records = []
+#     for obj in all_objects:
+#         # Split the object name into model and the rest
+#         parts = obj.split("/", 1)
+#         if len(parts) != 2:
+#             continue  # Skip if the object name doesn't match expected pattern
+#         model = parts[0]
+#         filename = parts[1]
 
-        # Remove the file extension to get the prompt
-        prompt = filename.rsplit(".", 1)[0]
-        #prompt = make_safe_filename(prompt)
+#         # Remove the file extension to get the prompt
+#         prompt = filename.rsplit(".", 1)[0]
+#         #prompt = make_safe_filename(prompt)
 
-        # No longer removing commas from prompts
-        records.append({"model": model, "prompt": prompt, "object_name": obj})
+#         # No longer removing commas from prompts
+#         records.append({"model": model, "prompt": prompt, "object_name": obj})
 
-    # Save as CSV with proper quoting
-    df = pd.DataFrame(records)
-    print("Found a total of {} videos in S3.".format(len(records)))
+#     # Save as CSV with proper quoting
+#     df = pd.DataFrame(records)
+#     print("Found a total of {} videos in S3.".format(len(records)))
 
-    # Filter to SOTA models only
-    sota_models = ["cog", "pyramidflow", "opensora"]
-    df = df[df["model"].isin(sota_models)]
+#     # Filter to SOTA models only
+#     sota_models = ["cog", "pyramidflow", "opensora"]
+#     df = df[df["model"].isin(sota_models)]
 
-    # Filter prompts in prompts.csv only
-    df = df[df["prompt"].isin(pd.read_csv("prompts.csv")["prompt"])]
-    # Print number of prompts filtered out and number of prompts kept
-    print(f"Filtered out  videos.")
-    print(f"Kept {len(df)} videos.")
+#     # Filter prompts in prompts.csv only
+#     df = df[df["prompt"].isin(pd.read_csv("prompts.csv")["prompt"])]
+#     # Print number of prompts filtered out and number of prompts kept
+#     print(f"Filtered out  videos.")
+#     print(f"Kept {len(df)} videos.")
 
-    # Print each kept prompt
-    for model in df["model"].unique():
-        print(f"Kept prompts for model {model} ({len(df[df["model"] == model]["prompt"].unique())} videos):")
-        for prompt in df[df["model"] == model]["prompt"].unique():
-            print(f"\t{prompt}") 
-        print(f"Excluded prompts for model  {model} ({len(records) - len(df)} videos):")
-        excluded_prompts = set(pd.read_csv("prompts.csv")["prompt"]) - set(df[df["model"] == model]["prompt"].unique())
-        for prompt in excluded_prompts:
-            print(f"\t{prompt}")
+#     # Print each kept prompt
+#     for model in df["model"].unique():
+#         print(f"Kept prompts for model {model} ({len(df[df["model"] == model]["prompt"].unique())} videos):")
+#         for prompt in df[df["model"] == model]["prompt"].unique():
+#             print(f"\t{prompt}") 
+#         print(f"Excluded prompts for model  {model} ({len(records) - len(df)} videos):")
+#         excluded_prompts = set(pd.read_csv("prompts.csv")["prompt"]) - set(df[df["model"] == model]["prompt"].unique())
+#         for prompt in excluded_prompts:
+#             print(f"\t{prompt}")
 
 
-    # Update name "opensora-v1-2-720p" to "opensora-v1.2"
-    df["model"] = df["model"].replace({"opensora": "opensora-v1.2"})
+#     # Update name "opensora-v1-2-720p" to "opensora-v1.2"
+#     df["model"] = df["model"].replace({"opensora": "opensora-v1.2"})
 
-    df.to_csv(csv_fpath, index=False, quoting=csv.QUOTE_ALL, encoding='utf-8')
+#     df.to_csv(csv_fpath, index=False, quoting=csv.QUOTE_ALL, encoding='utf-8')
 
 
 def get_s3_object_metadata(bucket_name, object_name):
