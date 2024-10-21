@@ -12,7 +12,7 @@ def load_prompts(prompt_path, start_idx=None, end_idx=None):
 
 def dl_model():
     from huggingface_hub import snapshot_download
-    model_path = '/home/ubuntu/text2video-viewer/backend/models/pyramidflow/'   # The local directory to save downloaded checkpoint
+    model_path = '/home/ubuntu/text2vid-viewer/backend/models/pyramidflow/'   # The local directory to save downloaded checkpoint
     snapshot_download("rain1011/pyramid-flow-sd3", local_dir=model_path, local_dir_use_symlinks=False, repo_type='model')
 
 
@@ -20,7 +20,7 @@ def run_inference(prompts):
     torch.cuda.set_device(0)
     model_dtype, torch_dtype = 'bf16', torch.bfloat16   # Use bf16 (not support fp16 yet)
 
-    MODEL_PATH = "/home/ubuntu/text2video-viewer/backend/models/pyramidflow/"
+    MODEL_PATH = "/home/ubuntu/text2vid-viewer/backend/models/pyramidflow/"
     model = PyramidDiTForVideoGeneration(
         MODEL_PATH,
         model_dtype,
