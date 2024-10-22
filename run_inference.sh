@@ -65,8 +65,9 @@ python /home/ubuntu/text2vid-viewer/backend/utils/validate_prompts.py --prompt_p
 
 # Install backend dependencies (that are common across models)
 if ! command -v pip &> /dev/null; then
-    echo "pip not found. Please install pip and try again."
-    exit 1
+    echo "Pip not found. Installing pip"
+    sudo apt-get update
+    sudo apt-get install python3-pip -y || { echo "Failed to install pip"; exit 1; }
 fi
 
 echo "Installing dependencies..."
