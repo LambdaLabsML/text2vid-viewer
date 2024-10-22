@@ -32,7 +32,7 @@ if [ ! -f "venv/bin/pip" ]; then
 fi
 
 # Upgrade pip inside the virtual environment
-$HOME/venv/bin/python3 -m pip install --upgrade pip || { echo "Failed to upgrade pip"; exit 1; }
+venv/bin/python3 -m pip install --upgrade pip || { echo "Failed to upgrade pip"; exit 1; }
 
 
 # Install dependencies in the virtual environment
