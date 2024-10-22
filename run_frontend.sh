@@ -32,7 +32,7 @@ if [ ! -f "venv/bin/pip" ]; then
 fi
 
 # Upgrade pip inside the virtual environment
-venv/bin/python3 -m pip install --upgrade pip || { echo "Failed to upgrade pip"; exit 1; }
+$HOME/venv/bin/python3 -m pip install --upgrade pip || { echo "Failed to upgrade pip"; exit 1; }
 
 
 # Install dependencies in the virtual environment
@@ -46,4 +46,4 @@ echo "Refreshed db.csv"
 # Run frontend server
 echo "Running frontend server"
 cd frontend
-venv/bin/python3 -m http.server 8000
+../venv/bin/python3 -m http.server 8000
