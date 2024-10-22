@@ -1,8 +1,21 @@
-# T2V-viewer
+# t2v-eval
 
-`T2V-viewer` is a solution for visual evaluation of state-of-the-art open source text-to-video models.
+[t2v-eval.com](https://t2v-eval.com) is a solution to compare state-of-the-art open source text-to-video (T2V) models:
+* OpenSora v1.2
+* CogVideo
+* PyramidFlow
 
-Generative text-to-video models are challenging to evaluate automatically but it is easy for a human observer to determine which generated video look best between multiple options.
+*We are working to include the best open-source T2V models available.*
+
+
+## Why `t2v-eval`?
+
+The most basic way to develop a sense of the qualitative differences between t2v models is to see their outputs side-by-side and `t2v-eval` does exactly that.
+
+It relies on many dimensions that have to do with coherence of attributes, of their relationship, of the prompt and the video output [[1](https://t2v-compbench.github.io/)]. 
+A valuable way to understand the strengths and weaknesses of a model is to compare its outputs with other models on a similar task
+
+Howeveis easy for a human observer to determine which generated video look best between multiple options.
 
 `T2V-viewer` was built to offer an easy way to compare model side-by-side and quickly evaluate where lies the strength and weaknesses.
 
@@ -11,21 +24,12 @@ Two modes can be used for model evaluation:
 * Prompt centric view: preview generation by batch of 6 models for a given prompt
 
 
-**Models supported**
-
-We are working to include the best open-source models available.
-Currently `T2V-viewer` supports the following:
-
-* OpenSora v1.2
-* CogVideo
-* PyramidFlow
-
-
-Note: Adding a new model is easy (cf instructions to add a new model)
-
 ## Usage
 
 **Setup**
+Models weights are downloaded from HuggingFace and videos are stored on AWS.
+Running inference and frontend assumes that a HuggingFace account and a AWS S3 bucket are setup.
+
 Prepare env variable file at `/home/ubuntu/text2vid-viewer/.env`
 ```
 AWS_ACCESS_KEY_ID=<your-access-key-id>
@@ -44,31 +48,4 @@ HF_TOKEN=<your-hf-token>
 /bin/bash run_frontend.sh
 ```
 
-Then, open your browser at http://<instance_IP>:8080/
-
-
-
- 
-
-1. Setup
-
-Backend serves T2V models and generates video from user submitted prompts.
-Frontend renders model outputs for visual comparisons:
-
-
-## Usage guide
-
-
-
-### Run web application (frontend)
-
-1. Clone the repository not already done
-```bash
-git clone https://github.com/LambdaLabsML/text2vid-viewer.git
-```
-
-2. Run the frontend
-```bash
-python3 text2vid-viewer/run_frontend.sh
-```
-Note: http://<instance_IP>:8000/ to access the frontend
+Then, open your browser at http://<instance_IP>:8000/
