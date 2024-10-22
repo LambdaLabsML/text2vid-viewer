@@ -3,9 +3,9 @@
 [t2v-eval.com](https://t2v-eval.com) is a solution to compare state-of-the-art open source text-to-video (T2V) models visually.
 
 Models featured:
-* OpenSora v1.2
-* CogVideo
-* PyramidFlow
+* [OpenSora v1.2](https://github.com/hpcaitech/Open-Sora)
+* [CogVideo](https://github.com/THUDM/CogVideo)
+* [PyramidFlow](https://github.com/gasharper/PyramidFlow)
 
 *We are working to include the best open-source T2V models available.*
 
@@ -13,6 +13,7 @@ Models featured:
 ## Usage
 
 **Setup**
+
 Models weights are downloaded from HuggingFace and videos are stored on AWS.
 Running inference and frontend assumes that a HuggingFace account and a AWS S3 bucket are setup.
 
