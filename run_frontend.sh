@@ -23,22 +23,22 @@ if [ ! -d "venv" ]; then
     echo "Created virtual environment"
 fi
 
-# Activate the virtual environment
-source venv/bin/activate || { echo "Failed to activate virtual environment"; exit 1; }
-echo "Activated virtual environment"
+# # Activate the virtual environment
+# source venv/bin/activate || { echo "Failed to activate virtual environment"; exit 1; }
+# echo "Activated virtual environment"
 
 # Upgrade pip inside the virtual environment
-python3 -m pip install --upgrade pip || { echo "Failed to upgrade pip"; exit 1; }
+venv/bin/python3 -m pip install --upgrade pip || { echo "Failed to upgrade pip"; exit 1; }
 
 # Install dependencies in the virtual environment
-python3 -m pip install flatbuffers boto3 python-dotenv pandas || { echo "Failed to install dependencies"; exit 1; }
+venv/bin/python3 -m pip install flatbuffers boto3 python-dotenv pandas || { echo "Failed to install dependencies"; exit 1; }
 echo "Installed dependencies"
 
 # Refresh db.csv
-python3 backend/utils/refresh_db.py || { echo "Failed to refresh db.csv"; exit 1; }
+venv/bin/python3 backend/utils/refresh_db.py || { echo "Failed to refresh db.csv"; exit 1; }
 echo "Refreshed db.csv"
 
 # Run frontend server
 echo "Running frontend server"
 cd frontend
-python3 -m http.server 8000
+venv/bin/python3 -m http.server 8000
