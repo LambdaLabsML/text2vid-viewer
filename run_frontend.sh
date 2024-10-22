@@ -36,7 +36,7 @@ venv/bin/python3 -m pip install --upgrade pip || { echo "Failed to upgrade pip";
 
 
 # Install dependencies in the virtual environment
-venv/bin/python3 -m pip install flatbuffers boto3 python-dotenv pandas || { echo "Failed to install dependencies"; exit 1; }
+venv/bin/python3 -m pip install flatbuffers boto3 python-dotenv pandas tqdm || { echo "Failed to install dependencies"; exit 1; }
 echo "Installed dependencies"
 
 # Refresh db.csv
