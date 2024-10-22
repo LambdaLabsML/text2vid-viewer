@@ -23,9 +23,11 @@ if [ ! -d "venv" ]; then
     echo "Created virtual environment"
 fi
 
-# # Activate the virtual environment
-# source venv/bin/activate || { echo "Failed to activate virtual environment"; exit 1; }
-# echo "Activated virtual environment"
+# Install pip in the virtual environment if it's not already installed
+if [ ! -f "venv/bin/pip" ]; then
+    echo "Pip not found in virtual environment. Installing pip."
+    venv/bin/python3 -m ensurepip || { echo "Failed to install pip in virtual environment"; exit 1; }
+fi
 
 # Upgrade pip inside the virtual environment
 venv/bin/python3 -m pip install --upgrade pip || { echo "Failed to upgrade pip"; exit 1; }
