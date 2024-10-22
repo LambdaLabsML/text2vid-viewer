@@ -10,9 +10,6 @@ fi
 export $(grep -v '^#' .env | xargs)
 echo "Sourced .env file"
 
-# Make sure venv is installed
-apt install python3.12-venv
-
 # Make sure pip and venv are installed
 if ! command -v pip &> /dev/null; then
     echo "Pip not found. Installing pip"
