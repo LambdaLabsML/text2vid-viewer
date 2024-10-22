@@ -23,14 +23,17 @@ if [ ! -d "venv" ]; then
     echo "Created virtual environment"
 fi
 
-# Install pip in the virtual environment if it's not already installed
+# Install pip manually if not present in the virtual environment
 if [ ! -f "venv/bin/pip" ]; then
-    echo "Pip not found in virtual environment. Installing pip."
-    venv/bin/python3 -m ensurepip || { echo "Failed to install pip in virtual environment"; exit 1; }
+    echo "Pip not found in virtual environment. Installing pip manually."
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py || { echo "Failed to download get-pip.py"; exit 1; }
+    venv/bin/python3 get-pip.py || { echo "Failed to install pip manually in virtual environment"; exit 1; }
+    rm get-pip.py
 fi
 
 # Upgrade pip inside the virtual environment
 venv/bin/python3 -m pip install --upgrade pip || { echo "Failed to upgrade pip"; exit 1; }
+
 
 # Install dependencies in the virtual environment
 venv/bin/python3 -m pip install flatbuffers boto3 python-dotenv pandas || { echo "Failed to install dependencies"; exit 1; }
