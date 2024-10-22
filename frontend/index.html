@@ -318,7 +318,8 @@
                             const prompt = row.prompt.trim();
                             const base_prompt = row.base_prompt.trim();
                             const object_name = row.object_name.trim();
-                            const location = `https://${bucketName}.s3.amazonaws.com/${encodeURIComponent(object_name)}`;
+                            //const location = `https://${bucketName}.s3.amazonaws.com/${encodeURIComponent(object_name)}`;
+                            const location = `https://d33195xzb21qs9.cloudfront.net/${encodeURIComponent(object_name)}`;
                             return { model, prompt, base_prompt, location };
                         } catch (error) {
                             console.error('Error processing row:', row, error);
