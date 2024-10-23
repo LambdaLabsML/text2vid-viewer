@@ -5,7 +5,7 @@ pip install uv
 
 uv venv .venv
 source .venv/bin/activate
-uv install -e . --no-build-isolation
+uv pip install -e . --no-build-isolation
 .venv/bin/python3 -m pip install -r requirements.txt
 .venv/bin/python3 -m pip install huggingface_hub[cli]
 
