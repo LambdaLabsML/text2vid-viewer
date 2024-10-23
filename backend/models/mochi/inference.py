@@ -129,7 +129,6 @@ def generate_video(
 
     return output_path
 
-
 def generate_videos(
     prompts,
     negative_prompt,
@@ -140,7 +139,7 @@ def generate_videos(
     cfg_scale,
     num_inference_steps,
 ):
-    load_model()
+    #load_model()
     for prompt in prompts:
     
         # sigma_schedule should be a list of floats of length (num_inference_steps + 1),
@@ -202,10 +201,18 @@ def generate_videos(
 
 
 
-
+def load_prompts(prompt_path, start_idx=None, end_idx=None):
+    with open(prompt_path, "r") as f:
+        prompts = [line.strip() for line in f.readlines()]
+    if start_idx is not None and end_idx is not None:
+        return prompts[start_idx:end_idx]
+    return prompts
 
 @click.command()
-@click.option("--prompt", required=True, help="Prompt for video generation.")
+@click.option("--prompt_path", required=False, help="Prompt for video generation.")
+@click.option("--model_path", required=True, help="Path to the model directory.")
+@click.option("--save_dir", required=True, help="Path to save the generated videos")
+@click.option("--prompt", required=False, help="Prompt for video generation.")
 @click.option(
     "--negative_prompt", default="", help="Negative prompt for video generation."
 )
@@ -217,8 +224,10 @@ def generate_videos(
 @click.option(
     "--num_steps", default=64, type=int, help="Number of inference steps."
 )
-@click.option("--model_dir", required=True, help="Path to the model directory.")
 def generate_cli(
+    prompt_path,
+    model_path,
+    save_dir,
     prompt,
     negative_prompt,
     width,
@@ -227,34 +236,27 @@ def generate_cli(
     seed,
     cfg_scale,
     num_steps,
-    model_dir,
 ):
-    set_model_path(model_dir)
-    output = generate_video(
-        prompt,
-        negative_prompt,
-        width,
-        height,
-        num_frames,
-        seed,
-        cfg_scale,
-        num_steps,
-    )
-    click.echo(f"Video generated at: {output}")
+    prompts = load_prompts(prompt_path)
+    set_model_path(model_path)
+    load_model()
 
-def load_prompts(prompt_path, start_idx=None, end_idx=None):
-    with open(prompt_path, "r") as f:
-        prompts = [line.strip() for line in f.readlines()]
-    if start_idx is not None and end_idx is not None:
-        return prompts[start_idx:end_idx]
-    return prompts
+    for prompt in prompts:
+
+        output = generate_video(
+            prompt,
+            negative_prompt,
+            width,
+            height,
+            num_frames,
+            seed,
+            cfg_scale,
+            num_steps,
+        )
+        click.echo(f"Video generated at: {output}")
+
+
 
 
 if __name__ == "__main__":
-    
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--prompt_path", type=str, default=None)
-    prompt_path = parser.parse_args().prompt_path
-    prompts = load_prompts(prompt_path)
-    generate_videos(prompts)
+    generate_cli()
