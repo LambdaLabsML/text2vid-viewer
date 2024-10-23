@@ -78,11 +78,6 @@ def generate_video(
     export_to_video(video_generate, output_path, fps=8)
 
 
-def make_safe_filename(s: str) -> str:
-    """Creates a filesystem-safe filename from a string, allowing spaces."""
-    # Allow letters, numbers, underscores, hyphens, dots, and spaces
-    return re.sub(r'[^A-Za-z0-9_\-\. ]+', '', s)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate videos from text prompts using CogVideoX")
