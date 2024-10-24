@@ -12,11 +12,11 @@ uv pip install -e . --no-build-isolation
 cp /home/ubuntu/text2vid-viewer/backend/models/mochi/inference.py /home/ubuntu/mochi/src/mochi_preview/inference.py
 
 # Download model weights
-python3 /home/ubuntu/text2vid-viewer/backend/models/mochi/dl_weights.py
-
+MODEL_PATH=/home/ubuntu/text2vid-viewer/backend/models/mochi/weights
+python3 /home/ubuntu/text2vid-viewer/backend/models/mochi/dl_weights.py --model_path $MODEL_PATH
 
 # Run inference
 python3 /home/ubuntu/mochi/src/mochi_preview/inference.py \
     --prompt_path /home/ubuntu/text2vid-viewer/prompts.txt \
     --save_dir /home/ubuntu/data/mochi \
-    --model_path /home/ubuntu/text2vid-viewer/backend/models/mochi/
+    --model_path $MODEL_PATH
