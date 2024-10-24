@@ -69,7 +69,7 @@ def filter_records_based_on_prompts(df, prompts_csv_fpath):
     return filtered_df
 
 # Function to filter DataFrame based on model
-def filter_records_based_on_model(df, sota_models=["cog", "pyramidflow", "opensora"]):
+def filter_records_based_on_model(df, sota_models=["cog", "pyramidflow", "opensora", "mochi"]):
     filtered_df = df[df["model"].isin(sota_models)]
     
     # Print filtering result for models
