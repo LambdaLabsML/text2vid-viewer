@@ -62,6 +62,8 @@ def linear_quadratic_schedule(num_steps, threshold_noise, linear_steps=None):
 
 def generate_video(
     prompt,
+    save_dir,
+    prompt_idx,
     negative_prompt,
     width,
     height,
@@ -70,7 +72,7 @@ def generate_video(
     cfg_scale,
     num_inference_steps,
 ):
-    load_model()
+    #load_model()
 
     # sigma_schedule should be a list of floats of length (num_inference_steps + 1),
     # such that sigma_schedule[0] == 1.0 and sigma_schedule[-1] == 0.0 and monotonically decreasing.
@@ -107,8 +109,8 @@ def generate_video(
     final_frames = rearrange(final_frames, "t b h w c -> b t h w c")
     final_frames = final_frames[0]
 
-    os.makedirs("outputs", exist_ok=True)
-    output_path = os.path.join("outputs", f"output_{int(time.time())}.mp4")
+    os.makedirs(save_dir, exist_ok=True)
+    output_path = os.path.join(save_dir, f"sample_{prompt_idx}.mp4")
 
     with tempfile.TemporaryDirectory() as tmpdir:
         frame_paths = []
@@ -241,10 +243,12 @@ def generate_cli(
     set_model_path(model_path)
     load_model()
 
-    for prompt in prompts:
+    for prompt_idx, prompt in enumerate(prompts):
 
         output = generate_video(
             prompt,
+            save_dir,
+            prompt_idx,
             negative_prompt,
             width,
             height,

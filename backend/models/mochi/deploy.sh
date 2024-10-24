@@ -19,4 +19,4 @@ python3 /home/ubuntu/text2vid-viewer/backend/models/mochi/dl_weights.py
 python3 /home/ubuntu/mochi/src/mochi_preview/inference.py \
     --prompt_path /home/ubuntu/text2vid-viewer/prompts.txt \
     --save_dir /home/ubuntu/data/mochi \
-    --model_path /home/ubuntu/text2vid-viewer/backend/models/mochi1/
+    --model_path /home/ubuntu/text2vid-viewer/backend/models/mochi/
